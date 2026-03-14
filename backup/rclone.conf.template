@@ -1,0 +1,6 @@
+# rclone B2 config template
+# Do NOT put real credentials here — substituted at container startup from env vars
+[b2]
+type = b2
+account = B2_KEY_ID_PLACEHOLDER
+key = B2_APPLICATION_KEY_PLACEHOLDER
