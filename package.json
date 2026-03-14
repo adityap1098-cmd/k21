@@ -1,15 +1,21 @@
 {
   "name": "k21",
-  "version": "1.0.0",
   "private": true,
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
   "scripts": {
-    "dev": "pnpm --parallel -r dev",
-    "build": "pnpm -r build",
-    "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
-    "type-check": "pnpm -r type-check"
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r run test"
   },
   "devDependencies": {
-    "typescript": "^5.4.5"
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.4.0"
   }
 }

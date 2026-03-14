@@ -1,7 +1,9 @@
-node_modules
-dist
+node_modules/
+dist/
 .env
 .env.local
-*.env
-coverage
+*.log
 .DS_Store
+nginx/certbot/conf/
+nginx/certbot/www/
+coverage
