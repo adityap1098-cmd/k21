@@ -33,7 +33,19 @@ K21 is built from the ground up as a domain-modular monolith on a single VPS. Th
   3. PostgreSQL is accessible only through PgBouncer in transaction mode; Redis and BullMQ queues are operational
   4. An encrypted backup of the database is uploaded to Backblaze B2 each night and backups older than 7 days are automatically deleted
   5. Netdata dashboard (localhost only) shows CPU/RAM/Disk metrics and Docker log rotation is active on every service
-**Plans**: TBD
+**Plans**: 10 plans
+
+Plans:
+- [ ] 00-01-PLAN.md — Wave 0: Vitest config + test stubs (DB, Queue, Health) + backup dry-run + smoke test scripts
+- [ ] 00-02-PLAN.md — Wave 1: pnpm monorepo scaffold (@k21/shared, @k21/api, @k21/web stubs, .env.example)
+- [ ] 00-03-PLAN.md — Wave 1: Docker Compose base + prod override + dev override + PgBouncer config
+- [ ] 00-04-PLAN.md — Wave 1: Express API skeleton (health endpoint, DB client, BullMQ queues, Dockerfiles)
+- [ ] 00-05-PLAN.md — Wave 2: Nginx HTTPS config + SSL bootstrap script (two-phase certbot)
+- [ ] 00-06-PLAN.md — Wave 2: Backup container (GPG + rclone + B2 upload + 7-day retention)
+- [ ] 00-07-PLAN.md — Wave 2: Netdata localhost-only config + log rotation verification script
+- [ ] 00-08-PLAN.md — Wave 3: GitHub Actions CI/CD pipeline (lint → typecheck → test → deploy)
+- [ ] 00-09-PLAN.md — Wave 3: Backup restore script + disaster recovery runbook
+- [ ] 00-10-PLAN.md — Wave 4: VPS smoke-test checkpoint (final human verification of all INFRA-XX criteria)
 
 ### Phase 1: Auth & RBAC
 **Goal**: Every user can log in securely and every API endpoint enforces the correct role permissions
@@ -143,7 +155,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 0. Infrastructure | 0/TBD | Not started | - |
+| 0. Infrastructure | 0/10 | Planned | - |
 | 1. Auth & RBAC | 0/TBD | Not started | - |
 | 2. Product & Inventory | 0/TBD | Not started | - |
 | 3. POS with Offline Mode | 0/TBD | Not started | - |
