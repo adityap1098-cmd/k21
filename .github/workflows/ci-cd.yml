@@ -1,0 +1,134 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  PNPM_VERSION: "9"
+  NODE_VERSION: "20"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package (required for typecheck)
+        run: pnpm --filter @k21/shared build
+
+      - name: Type check
+        run: pnpm run typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: typecheck
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package (required for tests)
+        run: pnpm --filter @k21/shared build
+
+      - name: Run tests
+        run: pnpm run test
+
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs: test
+    # Only deploy on push to main — not on pull requests
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+
+            # Step 1: Write .env BEFORE git pull or docker commands
+            # Atomic write: write to temp file then move to avoid partial reads
+            cat > /opt/k21/.env.tmp << 'ENVEOF'
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+            GPG_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
+            B2_KEY_ID=${{ secrets.B2_KEY_ID }}
+            B2_APPLICATION_KEY=${{ secrets.B2_APPLICATION_KEY }}
+            B2_BUCKET=${{ secrets.B2_BUCKET }}
+            DOMAIN=${{ secrets.DOMAIN }}
+            LETSENCRYPT_EMAIL=${{ secrets.LETSENCRYPT_EMAIL }}
+            NODE_ENV=production
+            PORT=3001
+            ENVEOF
+            mv /opt/k21/.env.tmp /opt/k21/.env
+            echo ".env written."
+
+            # Step 2: Pull latest code
+            cd /opt/k21
+            git pull origin main
+            echo "git pull complete."
+
+            # Step 3: Build and restart containers
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build --no-cache
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+            echo "Deployment complete."
+
+            # Step 4: Verify API is healthy
+            sleep 10
+            curl -sf http://localhost:3001/health || (echo "Health check failed!" && exit 1)
+            echo "Health check passed."
