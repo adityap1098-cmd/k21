@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 00-infrastructure/00-04-PLAN.md
-last_updated: "2026-03-14T18:17:04.763Z"
+stopped_at: Completed 00-infrastructure/00-06-PLAN.md
+last_updated: "2026-03-14T18:21:16.587Z"
 last_activity: 2026-03-14 — Roadmap created; all 63 v1 requirements mapped to 10 phases (0–9)
 progress:
   total_phases: 10
   completed_phases: 0
   total_plans: 10
-  completed_plans: 4
+  completed_plans: 7
   percent: 0
 ---
 
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 00-infrastructure P03 | 3 | 2 tasks | 5 files |
 | Phase 00-infrastructure P02 | 5 | 2 tasks | 13 files |
 | Phase 00-infrastructure P04 | 2 | 2 tasks | 9 files |
+| Phase 00-infrastructure P06 | 7 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,9 @@ Recent decisions affecting current work:
 - [Phase 00-02]: apps/api set as type:module to match NodeNext ESM expectations
 - [Phase 00-infrastructure]: queues.ts uses .js extension on relative import — NodeNext ESM resolution requirement
 - [Phase 00-infrastructure]: db/index.ts throws at startup if DATABASE_URL missing — fail fast over silent null
+- [Phase 00-infrastructure]: GPG symmetric AES256 for backup encryption — passphrase from env var, simpler than asymmetric for single-VPS
+- [Phase 00-infrastructure]: rclone config written at container startup from env vars — no credentials stored in image
+- [Phase 00-infrastructure]: Cron env vars explicitly written to /etc/cron.d/k21-backup — crond does not inherit shell environment
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -94,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T18:17:04.761Z
-Stopped at: Completed 00-infrastructure/00-04-PLAN.md
+Last session: 2026-03-14T18:20:57.901Z
+Stopped at: Completed 00-infrastructure/00-06-PLAN.md
 Resume file: None
