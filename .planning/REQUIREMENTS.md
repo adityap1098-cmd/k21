@@ -141,26 +141,88 @@
 
 ## Traceability
 
-Diisi saat roadmap dibuat.
-
 | Requirement | Phase | Status |
 |---|---|---|
-| INFRA-01 – INFRA-08 | Phase 0 | Pending |
-| AUTH-01 – AUTH-08 | Phase 1 | Pending |
-| PROD-01 – PROD-03, INV-01 – INV-08 | Phase 2 | Pending |
-| POS-01 – POS-11 | Phase 3 | Pending |
-| PROC-01 – PROC-05 | Phase 4 | Pending |
-| WH-01 – WH-04 | Phase 5 | Pending |
-| MKT-01 – MKT-08 | Phase 6 | Pending |
-| FIN-01 – FIN-09 | Phase 7 | Pending |
-| PAY-01 – PAY-06 | Phase 8 | Pending |
-| ANL-01 – ANL-04 | Phase 9 | Pending |
+| INFRA-01 | Phase 0: Infrastructure | Pending |
+| INFRA-02 | Phase 0: Infrastructure | Pending |
+| INFRA-03 | Phase 0: Infrastructure | Pending |
+| INFRA-04 | Phase 0: Infrastructure | Pending |
+| INFRA-05 | Phase 0: Infrastructure | Pending |
+| INFRA-06 | Phase 0: Infrastructure | Pending |
+| INFRA-07 | Phase 0: Infrastructure | Pending |
+| INFRA-08 | Phase 0: Infrastructure | Pending |
+| AUTH-01 | Phase 1: Auth & RBAC | Pending |
+| AUTH-02 | Phase 1: Auth & RBAC | Pending |
+| AUTH-03 | Phase 1: Auth & RBAC | Pending |
+| AUTH-04 | Phase 1: Auth & RBAC | Pending |
+| AUTH-05 | Phase 1: Auth & RBAC | Pending |
+| AUTH-06 | Phase 1: Auth & RBAC | Pending |
+| AUTH-07 | Phase 1: Auth & RBAC | Pending |
+| AUTH-08 | Phase 1: Auth & RBAC | Pending |
+| PROD-01 | Phase 2: Product & Inventory | Pending |
+| PROD-02 | Phase 2: Product & Inventory | Pending |
+| PROD-03 | Phase 2: Product & Inventory | Pending |
+| INV-01 | Phase 2: Product & Inventory | Pending |
+| INV-02 | Phase 2: Product & Inventory | Pending |
+| INV-03 | Phase 2: Product & Inventory | Pending |
+| INV-04 | Phase 2: Product & Inventory | Pending |
+| INV-05 | Phase 2: Product & Inventory | Pending |
+| INV-06 | Phase 2: Product & Inventory | Pending |
+| INV-07 | Phase 2: Product & Inventory | Pending |
+| INV-08 | Phase 2: Product & Inventory | Pending |
+| POS-01 | Phase 3: POS with Offline Mode | Pending |
+| POS-02 | Phase 3: POS with Offline Mode | Pending |
+| POS-03 | Phase 3: POS with Offline Mode | Pending |
+| POS-04 | Phase 3: POS with Offline Mode | Pending |
+| POS-05 | Phase 3: POS with Offline Mode | Pending |
+| POS-06 | Phase 3: POS with Offline Mode | Pending |
+| POS-07 | Phase 3: POS with Offline Mode | Pending |
+| POS-08 | Phase 3: POS with Offline Mode | Pending |
+| POS-09 | Phase 3: POS with Offline Mode | Pending |
+| POS-10 | Phase 3: POS with Offline Mode | Pending |
+| POS-11 | Phase 3: POS with Offline Mode | Pending |
+| PROC-01 | Phase 4: Procurement | Pending |
+| PROC-02 | Phase 4: Procurement | Pending |
+| PROC-03 | Phase 4: Procurement | Pending |
+| PROC-04 | Phase 4: Procurement | Pending |
+| PROC-05 | Phase 4: Procurement | Pending |
+| WH-01 | Phase 5: Warehouse Management | Pending |
+| WH-02 | Phase 5: Warehouse Management | Pending |
+| WH-03 | Phase 5: Warehouse Management | Pending |
+| WH-04 | Phase 5: Warehouse Management | Pending |
+| MKT-01 | Phase 6: Marketplace Integration | Pending |
+| MKT-02 | Phase 6: Marketplace Integration | Pending |
+| MKT-03 | Phase 6: Marketplace Integration | Pending |
+| MKT-04 | Phase 6: Marketplace Integration | Pending |
+| MKT-05 | Phase 6: Marketplace Integration | Pending |
+| MKT-06 | Phase 6: Marketplace Integration | Pending |
+| MKT-07 | Phase 6: Marketplace Integration | Pending |
+| MKT-08 | Phase 6: Marketplace Integration | Pending |
+| FIN-01 | Phase 7: Finance & Accounting | Pending |
+| FIN-02 | Phase 7: Finance & Accounting | Pending |
+| FIN-03 | Phase 7: Finance & Accounting | Pending |
+| FIN-04 | Phase 7: Finance & Accounting | Pending |
+| FIN-05 | Phase 7: Finance & Accounting | Pending |
+| FIN-06 | Phase 7: Finance & Accounting | Pending |
+| FIN-07 | Phase 7: Finance & Accounting | Pending |
+| FIN-08 | Phase 7: Finance & Accounting | Pending |
+| FIN-09 | Phase 7: Finance & Accounting | Pending |
+| PAY-01 | Phase 8: Payroll | Pending |
+| PAY-02 | Phase 8: Payroll | Pending |
+| PAY-03 | Phase 8: Payroll | Pending |
+| PAY-04 | Phase 8: Payroll | Pending |
+| PAY-05 | Phase 8: Payroll | Pending |
+| PAY-06 | Phase 8: Payroll | Pending |
+| ANL-01 | Phase 9: Analytics | Pending |
+| ANL-02 | Phase 9: Analytics | Pending |
+| ANL-03 | Phase 9: Analytics | Pending |
+| ANL-04 | Phase 9: Analytics | Pending |
 
 **Coverage:**
 - v1 requirements: 63 total
-- Mapped to phases: 63
+- Mapped to phases: 63/63
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-14*
-*Last updated: 2026-03-14 after initial definition*
+*Last updated: 2026-03-14 — traceability table completed after roadmap creation*
