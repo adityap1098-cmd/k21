@@ -10,7 +10,7 @@ K21 is built from the ground up as a domain-modular monolith on a single VPS. Th
 - Integer phases (0–9): Planned milestone work
 - Decimal phases (e.g., 3.1): Urgent insertions between integers (marked INSERTED)
 
-- [ ] **Phase 0: Infrastructure** - Deploy the Docker Compose stack with SSL, databases, monitoring, CI/CD, and encrypted backups
+- [x] **Phase 0: Infrastructure** - Deploy the Docker Compose stack with SSL, databases, monitoring, CI/CD, and encrypted backups
 - [ ] **Phase 1: Auth & RBAC** - Users can authenticate and every endpoint is protected by role-based access control
 - [ ] **Phase 2: Product & Inventory** - Products with variants are catalogued and every stock movement is recorded in an immutable append-only log
 - [ ] **Phase 3: POS with Offline Mode** - Cashiers can transact at the counter with or without internet connectivity
@@ -36,16 +36,16 @@ K21 is built from the ground up as a domain-modular monolith on a single VPS. Th
 **Plans**: 10 plans
 
 Plans:
-- [ ] 00-01-PLAN.md — Wave 0: Vitest config + test stubs (DB, Queue, Health) + backup dry-run + smoke test scripts
-- [ ] 00-02-PLAN.md — Wave 1: pnpm monorepo scaffold (@k21/shared, @k21/api, @k21/web stubs, .env.example)
-- [ ] 00-03-PLAN.md — Wave 1: Docker Compose base + prod override + dev override + PgBouncer config
-- [ ] 00-04-PLAN.md — Wave 1: Express API skeleton (health endpoint, DB client, BullMQ queues, Dockerfiles)
-- [ ] 00-05-PLAN.md — Wave 2: Nginx HTTPS config + SSL bootstrap script (two-phase certbot)
-- [ ] 00-06-PLAN.md — Wave 2: Backup container (GPG + rclone + B2 upload + 7-day retention)
-- [ ] 00-07-PLAN.md — Wave 2: Netdata localhost-only config + log rotation verification script
-- [ ] 00-08-PLAN.md — Wave 3: GitHub Actions CI/CD pipeline (lint → typecheck → test → deploy)
-- [ ] 00-09-PLAN.md — Wave 3: Backup restore script + disaster recovery runbook
-- [ ] 00-10-PLAN.md — Wave 4: VPS smoke-test checkpoint (final human verification of all INFRA-XX criteria)
+- [x] 00-01-PLAN.md — Wave 0: Vitest config + test stubs (DB, Queue, Health) + backup dry-run + smoke test scripts
+- [x] 00-02-PLAN.md — Wave 1: pnpm monorepo scaffold (@k21/shared, @k21/api, @k21/web stubs, .env.example)
+- [x] 00-03-PLAN.md — Wave 1: Docker Compose base + prod override + dev override + PgBouncer config
+- [x] 00-04-PLAN.md — Wave 1: Express API skeleton (health endpoint, DB client, BullMQ queues, Dockerfiles)
+- [x] 00-05-PLAN.md — Wave 2: Nginx HTTPS config + SSL bootstrap script (two-phase certbot)
+- [x] 00-06-PLAN.md — Wave 2: Backup container (GPG + rclone + B2 upload + 7-day retention)
+- [x] 00-07-PLAN.md — Wave 2: Netdata localhost-only config + log rotation verification script
+- [x] 00-08-PLAN.md — Wave 3: GitHub Actions CI/CD pipeline (lint → typecheck → test → deploy)
+- [x] 00-09-PLAN.md — Wave 3: Backup restore script + disaster recovery runbook
+- [x] 00-10-PLAN.md — Wave 4: VPS smoke-test checkpoint (final human verification of all INFRA-XX criteria)
 
 ### Phase 1: Auth & RBAC
 **Goal**: Every user can log in securely and every API endpoint enforces the correct role permissions
