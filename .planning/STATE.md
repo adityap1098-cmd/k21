@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 00-infrastructure/00-06-PLAN.md
-last_updated: "2026-03-14T18:21:16.587Z"
+stopped_at: Completed 00-infrastructure/00-05-PLAN.md
+last_updated: "2026-03-14T18:22:07.130Z"
 last_activity: 2026-03-14 — Roadmap created; all 63 v1 requirements mapped to 10 phases (0–9)
 progress:
   total_phases: 10
@@ -55,6 +55,8 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 00-infrastructure P02 | 5 | 2 tasks | 13 files |
 | Phase 00-infrastructure P04 | 2 | 2 tasks | 9 files |
 | Phase 00-infrastructure P06 | 7 | 2 tasks | 4 files |
+| Phase 00-infrastructure P07 | 2 | 2 tasks | 4 files |
+| Phase 00-infrastructure P05 | 2 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -80,6 +82,9 @@ Recent decisions affecting current work:
 - [Phase 00-infrastructure]: GPG symmetric AES256 for backup encryption — passphrase from env var, simpler than asymmetric for single-VPS
 - [Phase 00-infrastructure]: rclone config written at container startup from env vars — no credentials stored in image
 - [Phase 00-infrastructure]: Cron env vars explicitly written to /etc/cron.d/k21-backup — crond does not inherit shell environment
+- [Phase 00-infrastructure]: Netdata netdata.conf mounted as read-only bind mount over netdataconfig named volume — ensures security config is always applied from git-tracked file
+- [Phase 00-infrastructure]: verify-log-rotation.sh uses docker inspect to check live container config, not compose files — verifies what is actually running
+- [Phase 00-infrastructure]: Two-phase SSL bootstrap: HTTP-only bootstrap config first, certbot issues cert, then restore HTTPS config
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -98,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T18:20:57.901Z
-Stopped at: Completed 00-infrastructure/00-06-PLAN.md
+Last session: 2026-03-14T18:22:07.128Z
+Stopped at: Completed 00-infrastructure/00-05-PLAN.md
 Resume file: None
