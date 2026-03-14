@@ -1,0 +1,29 @@
+# docker-compose.dev.yml — development overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# IMPORTANT: Named docker-compose.dev.yml (NOT docker-compose.override.yml)
+# so it is NOT auto-applied by Docker — requires explicit -f flag.
+
+services:
+  api:
+    volumes:
+      - ./apps/api/src:/app/src
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+
+  web:
+    volumes:
+      - ./apps/web/src:/app/src
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+
+  postgres:
+    ports:
+      - "127.0.0.1:5433:5432"
+
+  redis:
+    ports:
+      - "127.0.0.1:6379:6379"
