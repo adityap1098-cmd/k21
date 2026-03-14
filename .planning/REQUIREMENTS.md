@@ -8,13 +8,13 @@
 ### Infrastructure (INFRA)
 
 - [ ] **INFRA-01**: System dapat di-deploy ke single VPS menggunakan Docker Compose (Nginx, SSL Let's Encrypt, auto-renew)
-- [ ] **INFRA-02**: Database PostgreSQL berjalan dengan PgBouncer connection pooling (TRANSACTION mode, `postgres.js` driver)
-- [ ] **INFRA-03**: Redis tersedia sebagai cache layer dan BullMQ job queue storage
+- [x] **INFRA-02**: Database PostgreSQL berjalan dengan PgBouncer connection pooling (TRANSACTION mode, `postgres.js` driver)
+- [x] **INFRA-03**: Redis tersedia sebagai cache layer dan BullMQ job queue storage
 - [ ] **INFRA-04**: CI/CD pipeline berjalan via GitHub Actions — auto-deploy ke VPS via SSH on push ke main
 - [ ] **INFRA-05**: Docker log rotation dikonfigurasi pada semua services (max-size: 10m, max-file: 5)
 - [ ] **INFRA-06**: Backup otomatis database setiap malam — pg_dump + gzip + enkripsi GPG + upload ke Backblaze B2
 - [ ] **INFRA-07**: Retention policy backup: simpan 7 hari terakhir, hapus otomatis yang lebih lama
-- [ ] **INFRA-08**: Monitoring aktif: UptimeRobot (external ping) + Netdata (internal CPU/RAM/Disk, bind ke localhost saja)
+- [x] **INFRA-08**: Monitoring aktif: UptimeRobot (external ping) + Netdata (internal CPU/RAM/Disk, bind ke localhost saja)
 
 ### Authentication & Access Control (AUTH)
 
@@ -144,13 +144,13 @@
 | Requirement | Phase | Status |
 |---|---|---|
 | INFRA-01 | Phase 0: Infrastructure | Pending |
-| INFRA-02 | Phase 0: Infrastructure | Pending |
-| INFRA-03 | Phase 0: Infrastructure | Pending |
+| INFRA-02 | Phase 0: Infrastructure | Complete |
+| INFRA-03 | Phase 0: Infrastructure | Complete |
 | INFRA-04 | Phase 0: Infrastructure | Pending |
 | INFRA-05 | Phase 0: Infrastructure | Pending |
 | INFRA-06 | Phase 0: Infrastructure | Pending |
 | INFRA-07 | Phase 0: Infrastructure | Pending |
-| INFRA-08 | Phase 0: Infrastructure | Pending |
+| INFRA-08 | Phase 0: Infrastructure | Complete |
 | AUTH-01 | Phase 1: Auth & RBAC | Pending |
 | AUTH-02 | Phase 1: Auth & RBAC | Pending |
 | AUTH-03 | Phase 1: Auth & RBAC | Pending |

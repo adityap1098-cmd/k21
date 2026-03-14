@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 0 planning complete — 10 plans in 4 waves
-last_updated: "2026-03-14T17:56:07.572Z"
+stopped_at: Completed 00-infrastructure/00-01-PLAN.md
+last_updated: "2026-03-14T18:05:13.536Z"
 last_activity: 2026-03-14 — Roadmap created; all 63 v1 requirements mapped to 10 phases (0–9)
 progress:
   total_phases: 10
   completed_phases: 0
   total_plans: 10
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -50,6 +50,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 00-infrastructure P01 | 4 | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,8 @@ Recent decisions affecting current work:
 - [Pre-Phase 0]: `@serwist/next` (not `next-pwa`) — only maintained PWA path for Next.js App Router
 - [Pre-Phase 0]: Inventory movements are append-only — corrections via ADJUSTMENT, never UPDATE
 - [Pre-Phase 0]: Accounting stub must exist in Phase 3 before full implementation in Phase 7
+- [Phase 00-01]: pnpm workspace root and tsconfig created as implicit prerequisites — Rule 3 auto-fixes; both required for pnpm --filter to work
+- [Phase 00-01]: Test stubs use vi.mock pattern to decouple from live services — tests run in RED state until implementation plans complete
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T17:56:07.570Z
-Stopped at: Phase 0 planning complete — 10 plans in 4 waves
-Resume file: .planning/phases/00-infrastructure/00-01-PLAN.md
+Last session: 2026-03-14T18:05:13.534Z
+Stopped at: Completed 00-infrastructure/00-01-PLAN.md
+Resume file: None
