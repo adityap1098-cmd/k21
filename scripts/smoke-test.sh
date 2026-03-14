@@ -56,3 +56,8 @@ else
   echo "=== SOME CHECKS FAILED — review above ==="
   exit 1
 fi
+
+# To access Netdata dashboard via SSH tunnel:
+#   ssh -L 19999:localhost:19999 user@${VPS_HOST}
+#   Then open: http://localhost:19999 in your browser
+#   Verify it is NOT accessible from internet: curl http://<VPS_PUBLIC_IP>:19999 should timeout/refuse
