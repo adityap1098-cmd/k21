@@ -54,6 +54,7 @@ services:
       - apparmor:unconfined
     volumes:
       - netdataconfig:/etc/netdata
+      - ./netdata/netdata.conf:/etc/netdata/netdata.conf:ro
       - netdatalib:/var/lib/netdata
       - netdatacache:/var/cache/netdata
       - /etc/passwd:/host/etc/passwd:ro
