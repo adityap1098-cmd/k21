@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 00-infrastructure/00-03-PLAN.md
-last_updated: "2026-03-14T18:10:23.113Z"
+stopped_at: Completed 00-infrastructure/00-02-PLAN.md
+last_updated: "2026-03-14T18:13:17.841Z"
 last_activity: 2026-03-14 — Roadmap created; all 63 v1 requirements mapped to 10 phases (0–9)
 progress:
   total_phases: 10
   completed_phases: 0
   total_plans: 10
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 *Updated after each plan completion*
 | Phase 00-infrastructure P01 | 4 | 2 tasks | 12 files |
 | Phase 00-infrastructure P03 | 3 | 2 tasks | 5 files |
+| Phase 00-infrastructure P02 | 5 | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,9 @@ Recent decisions affecting current work:
 - [Phase 00-01]: Test stubs use vi.mock pattern to decouple from live services — tests run in RED state until implementation plans complete
 - [Phase 00-infrastructure]: PgBouncer in TRANSACTION pool mode — requires postgres.js driver (not pg) in application layer
 - [Phase 00-infrastructure]: Dev override named docker-compose.dev.yml (not override.yml) to prevent Docker auto-merging into prod runs
+- [Phase 00-02]: NodeNext module resolution requires explicit .js extensions on relative imports — fixed in test stubs from plan 00-01
+- [Phase 00-02]: apps/web tsconfig uses ESNext+Bundler resolution overriding base NodeNext — required by Next.js App Router
+- [Phase 00-02]: apps/api set as type:module to match NodeNext ESM expectations
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -87,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T18:10:23.111Z
-Stopped at: Completed 00-infrastructure/00-03-PLAN.md
+Last session: 2026-03-14T18:13:17.838Z
+Stopped at: Completed 00-infrastructure/00-02-PLAN.md
 Resume file: None
