@@ -78,7 +78,15 @@ Plans:
   3. Concurrent stock decrements use `SELECT ... FOR UPDATE` in a single PostgreSQL transaction — two simultaneous sales cannot both succeed when only one unit remains
   4. Confirmed orders hold stock via a reservation; the reservation prevents that stock from being sold elsewhere until the order is fulfilled or cancelled
   5. When stock falls below a configured threshold, an automated low-stock alert fires; a staff member can run a stock opname (physical count) and the system auto-generates ADJUSTMENT movements for any discrepancy
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Wave 1: Redis client + BullMQ low-stock queue + test stubs in RED state
+- [ ] 02-02-PLAN.md — Wave 2: Drizzle schema (categories, products, product_variants, inventory_movements, stock_reservations, notifications) + migration
+- [ ] 02-03-PLAN.md — Wave 3: Categories module + Products module (service + router + tests GREEN)
+- [ ] 02-04-PLAN.md — Wave 3: Inventory core (stock cache, movement service with FOR UPDATE, reservation service)
+- [ ] 02-05-PLAN.md — Wave 4: Opname service + low-stock worker + inventory router
+- [ ] 02-06-PLAN.md — Wave 5: Wire all modules into index.ts + full suite GREEN + human checkpoint
 
 ### Phase 3: POS with Offline Mode
 **Goal**: Cashiers can complete sales transactions at the counter whether or not the internet is available, and offline transactions sync to the server reliably without duplicates
@@ -166,7 +174,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 |-------|----------------|--------|-----------|
 | 0. Infrastructure | 11/11 | Complete   | 2026-03-17 |
 | 1. Auth & RBAC | 6/6 | Complete   | 2026-03-17 |
-| 2. Product & Inventory | 0/TBD | Not started | - |
+| 2. Product & Inventory | 0/6 | Not started | - |
 | 3. POS with Offline Mode | 0/TBD | Not started | - |
 | 4. Procurement | 0/TBD | Not started | - |
 | 5. Warehouse Management | 0/TBD | Not started | - |
