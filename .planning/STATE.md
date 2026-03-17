@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 01-auth-rbac/01-05-PLAN.md (users service + router)
-last_updated: "2026-03-17T20:55:35.630Z"
+stopped_at: Completed 01-auth-rbac/01-06-PLAN.md (Express app integration — all Phase 1 routes wired)
+last_updated: "2026-03-17T21:00:49.707Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 17
-  completed_plans: 16
+  completed_plans: 17
   percent: 10
 ---
 
@@ -64,6 +64,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 01-auth-rbac P04 | 2 | 2 tasks | 6 files |
 | Phase 01-auth-rbac PP03 | 3 | 2 tasks | 4 files |
 | Phase 01-auth-rbac P05 | 5 | 2 tasks | 4 files |
+| Phase 01-auth-rbac P06 | 3 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,8 @@ Recent decisions affecting current work:
 - [Phase 01-auth-rbac]: deactivateUser accepts object param { userId, adminId?, ipAddress? } to match test call site
 - [Phase 01-auth-rbac]: createUser returns { ...user, auditLog } to satisfy AUTH-08 test assertion; router strips auditLog before response
 - [Phase 01-auth-rbac]: users.test.ts stubs updated to DB-layer mocks — consistent with auth.test.ts pattern, auto-mock stubs were permanently broken
+- [Phase 01-auth-rbac]: No COOKIE_SECRET needed — refresh token UUID validated against DB; cookie signing adds no security value
+- [Phase 01-auth-rbac]: JWT_SECRET fail-fast only in production mode — dev/test can run without it for convenience
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -124,6 +127,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T20:55:35.628Z
-Stopped at: Completed 01-auth-rbac/01-05-PLAN.md (users service + router)
+Last session: 2026-03-17T21:00:49.703Z
+Stopped at: Completed 01-auth-rbac/01-06-PLAN.md (Express app integration — all Phase 1 routes wired)
 Resume file: None
