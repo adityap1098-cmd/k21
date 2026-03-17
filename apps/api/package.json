@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "node --require tsx/cjs node_modules/drizzle-kit/bin.cjs generate:pg",
+    "db:push": "node --require tsx/cjs node_modules/drizzle-kit/bin.cjs push:pg"
   },
   "dependencies": {
     "@k21/shared": "workspace:*",

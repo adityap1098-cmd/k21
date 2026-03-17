@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1773779910644,
+      "tag": "0000_whole_black_tarantula",
+      "breakpoints": true
+    }
+  ]
+}
