@@ -33,7 +33,7 @@ K21 is built from the ground up as a domain-modular monolith on a single VPS. Th
   3. PostgreSQL is accessible only through PgBouncer in transaction mode; Redis and BullMQ queues are operational
   4. An encrypted backup of the database is uploaded to Backblaze B2 each night and backups older than 7 days are automatically deleted
   5. Netdata dashboard (localhost only) shows CPU/RAM/Disk metrics and Docker log rotation is active on every service
-**Plans**: 10 plans
+**Plans**: 11 plans
 
 Plans:
 - [x] 00-01-PLAN.md — Wave 0: Vitest config + test stubs (DB, Queue, Health) + backup dry-run + smoke test scripts
@@ -46,6 +46,7 @@ Plans:
 - [x] 00-08-PLAN.md — Wave 3: GitHub Actions CI/CD pipeline (lint → typecheck → test → deploy)
 - [x] 00-09-PLAN.md — Wave 3: Backup restore script + disaster recovery runbook
 - [x] 00-10-PLAN.md — Wave 4: VPS smoke-test checkpoint (final human verification of all INFRA-XX criteria)
+- [ ] 00-11-PLAN.md — Gap closure Wave 1: certbot nginx reload cron + restore drill documentation
 
 ### Phase 1: Auth & RBAC
 **Goal**: Every user can log in securely and every API endpoint enforces the correct role permissions
@@ -155,7 +156,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 0. Infrastructure | 7/10 | In Progress|  |
+| 0. Infrastructure | 10/11 | Gap closure |  |
 | 1. Auth & RBAC | 0/TBD | Not started | - |
 | 2. Product & Inventory | 0/TBD | Not started | - |
 | 3. POS with Offline Mode | 0/TBD | Not started | - |
