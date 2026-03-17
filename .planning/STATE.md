@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-17T21:15:04.002Z"
+stopped_at: Completed 02-product-inventory/02-01-PLAN.md
+last_updated: "2026-03-17T21:43:08.186Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 2
-  total_plans: 17
-  completed_plans: 17
+  total_plans: 23
+  completed_plans: 18
   percent: 10
 ---
 
@@ -65,6 +65,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 01-auth-rbac PP03 | 3 | 2 tasks | 4 files |
 | Phase 01-auth-rbac P05 | 5 | 2 tasks | 4 files |
 | Phase 01-auth-rbac P06 | 3 | 2 tasks | 3 files |
+| Phase 02-product-inventory P01 | 5 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -109,6 +110,9 @@ Recent decisions affecting current work:
 - [Phase 01-auth-rbac]: users.test.ts stubs updated to DB-layer mocks — consistent with auth.test.ts pattern, auto-mock stubs were permanently broken
 - [Phase 01-auth-rbac]: No COOKIE_SECRET needed — refresh token UUID validated against DB; cookie signing adds no security value
 - [Phase 01-auth-rbac]: JWT_SECRET fail-fast only in production mode — dev/test can run without it for convenience
+- [Phase 02-product-inventory]: Two separate ConnectionOptions for BullMQ vs cache — bullmqRedis uses maxRetriesPerRequest: null and enableReadyCheck: false
+- [Phase 02-product-inventory]: createLowStockWorker is lazy factory (not auto-instantiated) to avoid Redis connection side-effects during vitest runs
+- [Phase 02-product-inventory]: REDIS_URL parsed to host/port/password fields — uses ioredis RedisOptions shape, avoids need for Redis class instance
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -127,6 +131,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T21:15:03.999Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-product-inventory/02-CONTEXT.md
+Last session: 2026-03-17T21:43:08.183Z
+Stopped at: Completed 02-product-inventory/02-01-PLAN.md
+Resume file: None

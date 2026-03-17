@@ -29,17 +29,17 @@
 
 ### Product & Inventory (PROD / INV)
 
-- [ ] **PROD-01**: User dapat membuat produk dengan nama, SKU, barcode, kategori, dan harga jual
-- [ ] **PROD-02**: Produk mendukung variant (ukuran, warna, dll.) dengan stok terpisah per variant
-- [ ] **PROD-03**: Produk memiliki field klasifikasi PPN (kena pajak / tidak) untuk kebutuhan finance
-- [ ] **INV-01**: Sistem melacak stok real-time per produk/variant dengan Redis cache
-- [ ] **INV-02**: Setiap perubahan stok menghasilkan `inventory_movement` record yang tidak dapat dihapus (append-only)
-- [ ] **INV-03**: Tipe movement yang didukung: SALE, PURCHASE, TRANSFER, RETURN, ADJUSTMENT
-- [ ] **INV-04**: ADJUSTMENT wajib menyertakan alasan dan approver
-- [ ] **INV-05**: Decrement stok menggunakan `SELECT ... FOR UPDATE` dalam satu PostgreSQL transaction untuk mencegah oversell
-- [ ] **INV-06**: Sistem mendukung stock reservation untuk order confirmed yang belum dikirim
-- [ ] **INV-07**: Low stock alert dikirim otomatis saat stok di bawah threshold yang dikonfigurasi
-- [ ] **INV-08**: User dapat melakukan stock opname (input hitungan fisik) dan sistem menghasilkan ADJUSTMENT movement otomatis untuk selisih
+- [x] **PROD-01**: User dapat membuat produk dengan nama, SKU, barcode, kategori, dan harga jual
+- [x] **PROD-02**: Produk mendukung variant (ukuran, warna, dll.) dengan stok terpisah per variant
+- [x] **PROD-03**: Produk memiliki field klasifikasi PPN (kena pajak / tidak) untuk kebutuhan finance
+- [x] **INV-01**: Sistem melacak stok real-time per produk/variant dengan Redis cache
+- [x] **INV-02**: Setiap perubahan stok menghasilkan `inventory_movement` record yang tidak dapat dihapus (append-only)
+- [x] **INV-03**: Tipe movement yang didukung: SALE, PURCHASE, TRANSFER, RETURN, ADJUSTMENT
+- [x] **INV-04**: ADJUSTMENT wajib menyertakan alasan dan approver
+- [x] **INV-05**: Decrement stok menggunakan `SELECT ... FOR UPDATE` dalam satu PostgreSQL transaction untuk mencegah oversell
+- [x] **INV-06**: Sistem mendukung stock reservation untuk order confirmed yang belum dikirim
+- [x] **INV-07**: Low stock alert dikirim otomatis saat stok di bawah threshold yang dikonfigurasi
+- [x] **INV-08**: User dapat melakukan stock opname (input hitungan fisik) dan sistem menghasilkan ADJUSTMENT movement otomatis untuk selisih
 
 ### POS — Point of Sale (POS)
 
@@ -159,17 +159,17 @@
 | AUTH-06 | Phase 1: Auth & RBAC | Complete |
 | AUTH-07 | Phase 1: Auth & RBAC | Complete |
 | AUTH-08 | Phase 1: Auth & RBAC | Complete |
-| PROD-01 | Phase 2: Product & Inventory | Pending |
-| PROD-02 | Phase 2: Product & Inventory | Pending |
-| PROD-03 | Phase 2: Product & Inventory | Pending |
-| INV-01 | Phase 2: Product & Inventory | Pending |
-| INV-02 | Phase 2: Product & Inventory | Pending |
-| INV-03 | Phase 2: Product & Inventory | Pending |
-| INV-04 | Phase 2: Product & Inventory | Pending |
-| INV-05 | Phase 2: Product & Inventory | Pending |
-| INV-06 | Phase 2: Product & Inventory | Pending |
-| INV-07 | Phase 2: Product & Inventory | Pending |
-| INV-08 | Phase 2: Product & Inventory | Pending |
+| PROD-01 | Phase 2: Product & Inventory | Complete |
+| PROD-02 | Phase 2: Product & Inventory | Complete |
+| PROD-03 | Phase 2: Product & Inventory | Complete |
+| INV-01 | Phase 2: Product & Inventory | Complete |
+| INV-02 | Phase 2: Product & Inventory | Complete |
+| INV-03 | Phase 2: Product & Inventory | Complete |
+| INV-04 | Phase 2: Product & Inventory | Complete |
+| INV-05 | Phase 2: Product & Inventory | Complete |
+| INV-06 | Phase 2: Product & Inventory | Complete |
+| INV-07 | Phase 2: Product & Inventory | Complete |
+| INV-08 | Phase 2: Product & Inventory | Complete |
 | POS-01 | Phase 3: POS with Offline Mode | Pending |
 | POS-02 | Phase 3: POS with Offline Mode | Pending |
 | POS-03 | Phase 3: POS with Offline Mode | Pending |
