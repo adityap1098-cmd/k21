@@ -12,7 +12,7 @@ K21 is built from the ground up as a domain-modular monolith on a single VPS. Th
 
 - [x] **Phase 0: Infrastructure** - Deploy the Docker Compose stack with SSL, databases, monitoring, CI/CD, and encrypted backups
 - [x] **Phase 1: Auth & RBAC** - Users can authenticate and every endpoint is protected by role-based access control (completed 2026-03-17)
-- [ ] **Phase 2: Product & Inventory** - Products with variants are catalogued and every stock movement is recorded in an immutable append-only log
+- [x] **Phase 2: Product & Inventory** - Products with variants are catalogued and every stock movement is recorded in an immutable append-only log (completed 2026-03-17)
 - [ ] **Phase 3: POS with Offline Mode** - Cashiers can transact at the counter with or without internet connectivity
 - [ ] **Phase 4: Procurement** - Purchase Orders flow from creation through approval to goods receipt, updating inventory atomically
 - [ ] **Phase 5: Warehouse Management** - Goods are received into a physical location hierarchy and picked/packed for outbound orders
@@ -174,7 +174,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 |-------|----------------|--------|-----------|
 | 0. Infrastructure | 11/11 | Complete   | 2026-03-17 |
 | 1. Auth & RBAC | 6/6 | Complete   | 2026-03-17 |
-| 2. Product & Inventory | 5/6 | In Progress|  |
+| 2. Product & Inventory | 6/6 | Complete   | 2026-03-17 |
 | 3. POS with Offline Mode | 0/TBD | Not started | - |
 | 4. Procurement | 0/TBD | Not started | - |
 | 5. Warehouse Management | 0/TBD | Not started | - |

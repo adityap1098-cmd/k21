@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-product-inventory/02-05-PLAN.md
-last_updated: "2026-03-17T22:10:15.271Z"
+stopped_at: "Completed 02-product-inventory/02-06-PLAN.md (paused at checkpoint:human-verify)"
+last_updated: "2026-03-17T22:15:19.720Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 23
-  completed_plans: 22
+  completed_plans: 23
   percent: 10
 ---
 
@@ -70,6 +70,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 02-product-inventory P03 | 6 | 2 tasks | 8 files |
 | Phase 02-product-inventory P04 | 5 | 2 tasks | 7 files |
 | Phase 02-product-inventory P05 | 4 | 2 tasks | 6 files |
+| Phase 02-product-inventory P06 | 8 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,7 @@ Recent decisions affecting current work:
 - [Phase 02-product-inventory]: Drizzle sql template JSON.stringify required for FOR UPDATE test assertion — .toString() returns [object Object]; queryChunks are in JSON representation
 - [Phase 02-product-inventory]: opname.service.ts signature changed from positional (counts, performedBy, approvedBy) to object param {items, performedBy, ipAddress} — matches plan 02-05 spec and test call sites
 - [Phase 02-product-inventory]: processLowStockAlert extracted to lowstock.service.ts — BullMQ worker calls it; enables unit testing without BullMQ connection
+- [Phase 02-product-inventory]: Mock Phase 2 routers in index.test.ts with mini routers that return 401 — avoids transitive Redis/DB connections from cacheRedisClient instantiated at module load in queues/redis.ts
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -144,6 +146,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T22:10:15.269Z
-Stopped at: Completed 02-product-inventory/02-05-PLAN.md
+Last session: 2026-03-17T22:15:19.717Z
+Stopped at: Completed 02-product-inventory/02-06-PLAN.md (paused at checkpoint:human-verify)
 Resume file: None
