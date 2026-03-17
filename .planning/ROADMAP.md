@@ -58,7 +58,15 @@ Plans:
   3. An Admin can create a new user, assign a role, and deactivate that user — and the user immediately loses access
   4. Accessing an endpoint without the required role returns HTTP 403; all endpoints are under the `/api/v1/` prefix
   5. Every CREATE, UPDATE, and DELETE action on protected resources writes a record to `audit_logs` with user ID, action, before/after values, IP, and timestamp
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Wave 0: Install auth packages (jose, argon2, cookie-parser, zod) + create test stubs (RED state)
+- [ ] 01-02-PLAN.md — Wave 1: Drizzle schema (users, refresh_tokens, audit_logs tables + enums) + migration
+- [ ] 01-03-PLAN.md — Wave 2: Auth service (login/refresh/logout) + auth router (POST /login, /refresh, /logout)
+- [ ] 01-04-PLAN.md — Wave 2: authenticate middleware + requireRole factory + logAudit helper + Express type augmentation
+- [ ] 01-05-PLAN.md — Wave 3: Users module (createUser/updateUser/deactivateUser service + Admin-only router)
+- [ ] 01-06-PLAN.md — Wave 4: Wire all modules into index.ts + AUTH-07 integration tests + full suite GREEN
 
 ### Phase 2: Product & Inventory
 **Goal**: Products with variants are catalogued and every stock movement is permanently recorded — the data foundation for POS, Procurement, Warehouse, and Marketplace
@@ -157,7 +165,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 0. Infrastructure | 11/11 | Complete   | 2026-03-17 |
-| 1. Auth & RBAC | 0/TBD | Not started | - |
+| 1. Auth & RBAC | 0/6 | Planned | - |
 | 2. Product & Inventory | 0/TBD | Not started | - |
 | 3. POS with Offline Mode | 0/TBD | Not started | - |
 | 4. Procurement | 0/TBD | Not started | - |
