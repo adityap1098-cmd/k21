@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-product-inventory/02-03-PLAN.md
-last_updated: "2026-03-17T21:56:13.607Z"
+stopped_at: Completed 02-product-inventory/02-04-PLAN.md
+last_updated: "2026-03-17T22:03:35.187Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 2
   total_plans: 23
-  completed_plans: 20
+  completed_plans: 21
   percent: 10
 ---
 
@@ -68,6 +68,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 02-product-inventory P01 | 5 | 2 tasks | 5 files |
 | Phase 02-product-inventory P02 | 2 | 2 tasks | 7 files |
 | Phase 02-product-inventory P03 | 6 | 2 tasks | 8 files |
+| Phase 02-product-inventory P04 | 5 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -120,6 +121,8 @@ Recent decisions affecting current work:
 - [Phase 02-product-inventory]: vi.hoisted() required for DB mock variables — vitest hoists vi.mock() factories before const declarations
 - [Phase 02-product-inventory]: ppnType and categoryId validated at service layer — services called programmatically without router Zod validation
 - [Phase 02-product-inventory]: db.transaction() wraps product + default variant inserts atomically in createProduct
+- [Phase 02-product-inventory]: cacheRedisClient added as ioredis instance to queues/redis.ts — ConnectionOptions does not expose .get/.setex/.del; ioredis instance required for direct cache operations
+- [Phase 02-product-inventory]: Drizzle sql template JSON.stringify required for FOR UPDATE test assertion — .toString() returns [object Object]; queryChunks are in JSON representation
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -138,6 +141,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T21:56:13.604Z
-Stopped at: Completed 02-product-inventory/02-03-PLAN.md
+Last session: 2026-03-17T22:03:35.185Z
+Stopped at: Completed 02-product-inventory/02-04-PLAN.md
 Resume file: None
