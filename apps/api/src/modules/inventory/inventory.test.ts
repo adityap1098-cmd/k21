@@ -40,6 +40,7 @@ import { getStockCached, invalidateStockCache } from './stock.service.js'
 import { recordMovement, decrementStock } from './movement.service.js'
 import { createReservation, cancelReservation, fulfillReservation, getActiveReservedQty } from './reservation.service.js'
 import { runStockOpname } from './opname.service.js'
+import { processLowStockAlert } from './lowstock.service.js'
 
 const mockDb = db as any
 const mockCache = cacheRedisClient as any
@@ -477,7 +478,101 @@ describe('inventory — INV-07: low-stock alerts', () => {
 })
 
 describe('inventory — INV-08: stock opname', () => {
-  it('runStockOpname inserts ADJUSTMENT movements for variants with discrepancy')
-  it('runStockOpname skips variants where physicalCount matches current stock')
-  it('runStockOpname returns count of adjusted variants')
+  it('runStockOpname inserts ADJUSTMENT movements for variants with discrepancy', async () => {
+    const VARIANT_A = '44444444-4444-4444-4444-444444444444'
+    const mockTx = {
+      execute: vi.fn(),
+      insert: vi.fn(),
+    }
+    // FOR UPDATE returns stock_qty=10 for variant A
+    mockTx.execute
+      .mockResolvedValueOnce([{ id: VARIANT_A, stock_qty: 10 }])  // SELECT FOR UPDATE
+      .mockResolvedValueOnce(undefined)                             // UPDATE stock_qty
+
+    const mockTxInsert = { values: vi.fn().mockResolvedValue(undefined) }
+    mockTx.insert.mockReturnValue(mockTxInsert)
+
+    mockDb.transaction.mockImplementation(async (fn: (tx: any) => Promise<void>) => {
+      await fn(mockTx)
+    })
+    mockCache.del.mockResolvedValue(1)
+
+    // physicalCount=15, stock=10 → discrepancy=5 → ADJUSTMENT inserted
+    const result = await runStockOpname({
+      items: [{ variantId: VARIANT_A, physicalCount: 15 }],
+      performedBy: USER_ID,
+      ipAddress: '127.0.0.1',
+    })
+
+    expect(mockDb.transaction).toHaveBeenCalled()
+    expect(mockTx.execute).toHaveBeenCalled()
+    expect(mockTx.insert).toHaveBeenCalled()
+    const insertedValues = mockTxInsert.values.mock.calls[0][0]
+    expect(insertedValues.movementType).toBe('ADJUSTMENT')
+    expect(result.adjustments).toBe(1)
+    expect(result.opnameId).toBeTruthy()
+  })
+
+  it('runStockOpname skips variants where physicalCount matches current stock', async () => {
+    const VARIANT_B = '55555555-5555-5555-5555-555555555555'
+    const mockTx = {
+      execute: vi.fn(),
+      insert: vi.fn(),
+    }
+    // FOR UPDATE returns stock_qty=10 — same as physicalCount → no discrepancy
+    mockTx.execute.mockResolvedValueOnce([{ id: VARIANT_B, stock_qty: 10 }])
+    const mockTxInsert = { values: vi.fn().mockResolvedValue(undefined) }
+    mockTx.insert.mockReturnValue(mockTxInsert)
+
+    mockDb.transaction.mockImplementation(async (fn: (tx: any) => Promise<void>) => {
+      await fn(mockTx)
+    })
+    mockCache.del.mockResolvedValue(1)
+
+    const result = await runStockOpname({
+      items: [{ variantId: VARIANT_B, physicalCount: 10 }],
+      performedBy: USER_ID,
+      ipAddress: '127.0.0.1',
+    })
+
+    // No insert should happen for zero-discrepancy variant
+    expect(mockTxInsert.values).not.toHaveBeenCalled()
+    expect(result.adjustments).toBe(0)
+  })
+
+  it('runStockOpname returns count of adjusted variants', async () => {
+    const VARIANT_C = '66666666-6666-6666-6666-666666666666'
+    const VARIANT_D = '77777777-7777-7777-7777-777777777777'
+    const mockTx = {
+      execute: vi.fn(),
+      insert: vi.fn(),
+    }
+    // Variant C: stock=5, physical=8 → discrepancy (+3)
+    // Variant D: stock=10, physical=10 → no discrepancy
+    mockTx.execute
+      .mockResolvedValueOnce([{ id: VARIANT_C, stock_qty: 5 }])   // C FOR UPDATE
+      .mockResolvedValueOnce(undefined)                             // C UPDATE
+      .mockResolvedValueOnce([{ id: VARIANT_D, stock_qty: 10 }])  // D FOR UPDATE
+
+    const mockTxInsert = { values: vi.fn().mockResolvedValue(undefined) }
+    mockTx.insert.mockReturnValue(mockTxInsert)
+
+    mockDb.transaction.mockImplementation(async (fn: (tx: any) => Promise<void>) => {
+      await fn(mockTx)
+    })
+    mockCache.del.mockResolvedValue(1)
+
+    const result = await runStockOpname({
+      items: [
+        { variantId: VARIANT_C, physicalCount: 8 },
+        { variantId: VARIANT_D, physicalCount: 10 },
+      ],
+      performedBy: USER_ID,
+      ipAddress: '127.0.0.1',
+    })
+
+    // Only C was adjusted (D had no discrepancy)
+    expect(result.adjustments).toBe(1)
+    expect(result.opnameId).toBeTruthy()
+  })
 })

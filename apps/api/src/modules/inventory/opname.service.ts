@@ -1,48 +1,62 @@
-import { eq } from 'drizzle-orm'
+import { randomUUID } from 'crypto'
+import { sql } from 'drizzle-orm'
 import { db } from '../../db/index.js'
-import { productVariants } from '../../db/schema/index.js'
 import { recordMovement } from './movement.service.js'
+import { invalidateStockCache } from './stock.service.js'
 
 /**
- * Runs a stock opname (physical count reconciliation).
- * For each variant where physicalCount differs from current stock_qty,
- * inserts an ADJUSTMENT movement to record the discrepancy.
+ * Runs a stock opname (physical count reconciliation) for a batch of variants.
  *
- * @param counts - Array of { variantId, physicalCount } items
- * @param performedBy - User ID performing the opname
- * @param approvedBy - User ID who approved the opname
- * @returns Number of variants that had discrepancies and were adjusted
+ * For each variant where physicalCount differs from the current stock_qty:
+ * - Acquires a row-level FOR UPDATE lock inside a transaction
+ * - Inserts an ADJUSTMENT movement recording the discrepancy magnitude
+ * - Updates stock_qty to the physicalCount (authoritative value)
+ *
+ * Zero-discrepancy variants are skipped — no movement is inserted.
+ * The entire batch runs in a single transaction.
+ *
+ * @returns { adjustments: number, opnameId: string }
  */
-export async function runStockOpname(
-  counts: Array<{ variantId: string; physicalCount: number }>,
-  performedBy: string,
-  approvedBy: string
-): Promise<number> {
-  let adjustedCount = 0
+export async function runStockOpname(params: {
+  items: Array<{ variantId: string; physicalCount: number }>
+  performedBy: string
+  ipAddress: string
+}): Promise<{ adjustments: number; opnameId: string }> {
+  const opnameId = randomUUID()
+  const adjustedVariantIds: string[] = []
 
-  for (const { variantId, physicalCount } of counts) {
-    const rows = await db
-      .select({ stockQty: productVariants.stockQty })
-      .from(productVariants)
-      .where(eq(productVariants.id, variantId))
-      .limit(1)
+  await db.transaction(async (tx) => {
+    for (const item of params.items) {
+      const rows = await tx.execute(
+        sql`SELECT id, stock_qty FROM product_variants WHERE id = ${item.variantId} FOR UPDATE`
+      )
+      const variant = (rows as unknown as Array<{ id: string; stock_qty: number }>)[0]
+      if (!variant) continue // skip missing variants rather than failing entire batch
 
-    const currentStock = rows[0]?.stockQty ?? 0
+      const discrepancy = item.physicalCount - variant.stock_qty
+      if (discrepancy === 0) continue
 
-    if (physicalCount === currentStock) continue
+      // recordMovement stores movement magnitude; explicit UPDATE sets the authoritative value
+      await recordMovement({
+        variantId: item.variantId,
+        movementType: 'ADJUSTMENT',
+        qty: Math.abs(discrepancy),
+        reference: `OPNAME-${opnameId}`,
+        reason: `Stock opname ${opnameId}`,
+        approvedBy: params.performedBy, // v1: performer is also approver
+        performedBy: params.performedBy,
+      }, tx)
 
-    const diff = Math.abs(physicalCount - currentStock)
-    await recordMovement({
-      variantId,
-      movementType: 'ADJUSTMENT',
-      qty: diff,
-      reason: `Opname: physical count ${physicalCount}, system count ${currentStock}`,
-      approvedBy,
-      performedBy,
-    })
+      await tx.execute(
+        sql`UPDATE product_variants SET stock_qty = ${item.physicalCount}, updated_at = now() WHERE id = ${item.variantId}`
+      )
 
-    adjustedCount++
-  }
+      adjustedVariantIds.push(item.variantId)
+    }
+  })
 
-  return adjustedCount
+  // Invalidate Redis cache for adjusted variants after transaction commits
+  await Promise.all(adjustedVariantIds.map(id => invalidateStockCache(id)))
+
+  return { adjustments: adjustedVariantIds.length, opnameId }
 }
