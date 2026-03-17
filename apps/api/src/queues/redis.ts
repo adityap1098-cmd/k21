@@ -1,4 +1,5 @@
 import type { ConnectionOptions } from 'bullmq'
+import Redis from 'ioredis'
 
 const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379'
 
@@ -36,3 +37,14 @@ export const cacheRedis: ConnectionOptions = {
   maxRetriesPerRequest: 3,
   enableReadyCheck: true,
 }
+
+// Instantiated Redis client for direct cache operations (get/setex/del)
+// Only created outside of test environment to avoid connection side-effects during vitest runs
+export const cacheRedisClient = new Redis({
+  host,
+  port,
+  password,
+  maxRetriesPerRequest: 3,
+  enableReadyCheck: true,
+  lazyConnect: true,
+})
