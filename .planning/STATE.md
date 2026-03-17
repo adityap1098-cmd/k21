@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Completed 00-infrastructure/00-10-PLAN.md
-last_updated: "2026-03-15T00:00:00Z"
+status: completed
+stopped_at: Completed 00-infrastructure/00-11-PLAN.md (Phase 0 all gaps closed)
+last_updated: "2026-03-17T14:46:10.287Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 1
-  total_plans: 10
-  completed_plans: 10
+  total_plans: 11
+  completed_plans: 11
   percent: 10
 ---
 
@@ -58,6 +58,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 00-infrastructure P07 | 2 | 2 tasks | 4 files |
 | Phase 00-infrastructure P05 | 2 | 2 tasks | 6 files |
 | Phase 00-infrastructure P10 | checkpoint | 2 tasks | 0 files |
+| Phase 00-infrastructure P11 | multi-session | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,8 @@ Recent decisions affecting current work:
 - [Phase 00-infrastructure]: verify-log-rotation.sh uses docker inspect to check live container config, not compose files — verifies what is actually running
 - [Phase 00-infrastructure]: Two-phase SSL bootstrap: HTTP-only bootstrap config first, certbot issues cert, then restore HTTPS config
 - [Phase 00-10]: Phase gate pattern — all Phase 0 success criteria collected into one blocking human-verify checkpoint; operator signed off on 2026-03-15 after all 8 VPS checks passed
+- [Phase 00-infrastructure]: Nginx reload cron at 03:00 and 15:00 via host /etc/cron.d/k21-nginx-reload — certbot container has no docker CLI, host cron handles post-renewal reload
+- [Phase 00-infrastructure]: install-vps-crons.sh called on every deploy (idempotent) — ensures cron survives VPS reprovisioning
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -105,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T00:00:00Z
-Stopped at: Completed 00-infrastructure/00-10-PLAN.md (Phase 0 complete)
+Last session: 2026-03-17T14:46:10.285Z
+Stopped at: Completed 00-infrastructure/00-11-PLAN.md (Phase 0 all gaps closed)
 Resume file: None
