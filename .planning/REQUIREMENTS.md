@@ -18,14 +18,14 @@
 
 ### Authentication & Access Control (AUTH)
 
-- [ ] **AUTH-01**: User dapat login dengan email dan password
-- [ ] **AUTH-02**: Session dikelola dengan JWT access token + refresh token (access token expiry pendek)
-- [ ] **AUTH-03**: User dapat logout dan invalidate session
-- [ ] **AUTH-04**: RBAC diterapkan dengan 5 role: Owner, Finance, Warehouse Staff, Cashier, Admin
-- [ ] **AUTH-05**: Setiap endpoint diproteksi sesuai permission role yang sesuai
-- [ ] **AUTH-06**: Admin dapat membuat, mengedit, dan menonaktifkan user
+- [x] **AUTH-01**: User dapat login dengan email dan password
+- [x] **AUTH-02**: Session dikelola dengan JWT access token + refresh token (access token expiry pendek)
+- [x] **AUTH-03**: User dapat logout dan invalidate session
+- [x] **AUTH-04**: RBAC diterapkan dengan 5 role: Owner, Finance, Warehouse Staff, Cashier, Admin
+- [x] **AUTH-05**: Setiap endpoint diproteksi sesuai permission role yang sesuai
+- [x] **AUTH-06**: Admin dapat membuat, mengedit, dan menonaktifkan user
 - [ ] **AUTH-07**: Semua API endpoint menggunakan prefix `/api/v1/`
-- [ ] **AUTH-08**: Semua perubahan data penting (CREATE/UPDATE/DELETE) tercatat di `audit_logs` dengan user_id, action, old_value, new_value, ip_address, timestamp
+- [x] **AUTH-08**: Semua perubahan data penting (CREATE/UPDATE/DELETE) tercatat di `audit_logs` dengan user_id, action, old_value, new_value, ip_address, timestamp
 
 ### Product & Inventory (PROD / INV)
 
@@ -151,14 +151,14 @@
 | INFRA-06 | Phase 0: Infrastructure | Complete |
 | INFRA-07 | Phase 0: Infrastructure | Complete |
 | INFRA-08 | Phase 0: Infrastructure | Complete |
-| AUTH-01 | Phase 1: Auth & RBAC | Pending |
-| AUTH-02 | Phase 1: Auth & RBAC | Pending |
-| AUTH-03 | Phase 1: Auth & RBAC | Pending |
-| AUTH-04 | Phase 1: Auth & RBAC | Pending |
-| AUTH-05 | Phase 1: Auth & RBAC | Pending |
-| AUTH-06 | Phase 1: Auth & RBAC | Pending |
+| AUTH-01 | Phase 1: Auth & RBAC | Complete |
+| AUTH-02 | Phase 1: Auth & RBAC | Complete |
+| AUTH-03 | Phase 1: Auth & RBAC | Complete |
+| AUTH-04 | Phase 1: Auth & RBAC | Complete |
+| AUTH-05 | Phase 1: Auth & RBAC | Complete |
+| AUTH-06 | Phase 1: Auth & RBAC | Complete |
 | AUTH-07 | Phase 1: Auth & RBAC | Pending |
-| AUTH-08 | Phase 1: Auth & RBAC | Pending |
+| AUTH-08 | Phase 1: Auth & RBAC | Complete |
 | PROD-01 | Phase 2: Product & Inventory | Pending |
 | PROD-02 | Phase 2: Product & Inventory | Pending |
 | PROD-03 | Phase 2: Product & Inventory | Pending |

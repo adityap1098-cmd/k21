@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 00-infrastructure/00-11-PLAN.md (Phase 0 all gaps closed)
-last_updated: "2026-03-17T15:02:27.399Z"
+stopped_at: Completed 01-auth-rbac/01-01-PLAN.md
+last_updated: "2026-03-17T20:40:32.466Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 1
-  total_plans: 11
-  completed_plans: 11
+  total_plans: 17
+  completed_plans: 12
   percent: 10
 ---
 
@@ -59,6 +59,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 00-infrastructure P05 | 2 | 2 tasks | 6 files |
 | Phase 00-infrastructure P10 | checkpoint | 2 tasks | 0 files |
 | Phase 00-infrastructure P11 | multi-session | 2 tasks | 4 files |
+| Phase 01-auth-rbac P01 | 5 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,7 @@ Recent decisions affecting current work:
 - [Phase 00-10]: Phase gate pattern — all Phase 0 success criteria collected into one blocking human-verify checkpoint; operator signed off on 2026-03-15 after all 8 VPS checks passed
 - [Phase 00-infrastructure]: Nginx reload cron at 03:00 and 15:00 via host /etc/cron.d/k21-nginx-reload — certbot container has no docker CLI, host cron handles post-renewal reload
 - [Phase 00-infrastructure]: install-vps-crons.sh called on every deploy (idempotent) — ensures cron survives VPS reprovisioning
+- [Phase 01-auth-rbac]: vi.mock() without factory achieves RED state: auto-mock returns undefined exports causing import errors and is-not-a-function failures when implementation files don't exist
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -108,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T14:46:10.285Z
-Stopped at: Completed 00-infrastructure/00-11-PLAN.md (Phase 0 all gaps closed)
+Last session: 2026-03-17T20:40:32.463Z
+Stopped at: Completed 01-auth-rbac/01-01-PLAN.md
 Resume file: None
