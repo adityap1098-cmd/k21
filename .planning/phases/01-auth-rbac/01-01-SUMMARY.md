@@ -119,6 +119,17 @@ None - no external service configuration required.
 - `pnpm --filter @k21/api test` exits with non-zero (14 failing tests confirm RED state)
 - Ready for Plan 01-02 (Drizzle schema) and Plan 01-03 (auth service implementation) to turn tests GREEN
 
+## Self-Check: PASSED
+
+- FOUND: apps/api/src/modules/auth/auth.test.ts
+- FOUND: apps/api/src/modules/users/users.test.ts
+- FOUND: apps/api/src/middleware/authenticate.test.ts
+- FOUND: apps/api/src/middleware/require-role.test.ts
+- FOUND: apps/api/src/db/schema/users.test.ts
+- FOUND: .planning/phases/01-auth-rbac/01-01-SUMMARY.md
+- FOUND: commit bf3e678 (chore: install auth packages)
+- FOUND: commit b59ab52 (test: add failing test stubs)
+
 ---
 *Phase: 01-auth-rbac*
 *Completed: 2026-03-17*
