@@ -62,7 +62,7 @@ productsRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Warehouse 
 
   try {
     const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
-    const data = await createProduct(parsed.data, req.user!.id, ipAddress)
+    const data = await createProduct(parsed.data, req.user!.sub, ipAddress)
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
@@ -93,7 +93,7 @@ productsRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner'), async 
 
   try {
     const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
-    const data = await updateProduct({ id: req.params.id, ...parsed.data }, req.user!.id, ipAddress)
+    const data = await updateProduct({ id: req.params.id, ...parsed.data }, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
@@ -116,7 +116,7 @@ productsRouter.post('/:id/variants', authenticate, requireRole('Admin', 'Owner',
     const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
     const data = await addVariant(
       { productId: req.params.id, ...parsed.data },
-      req.user!.id,
+      req.user!.sub,
       ipAddress
     )
     res.status(201).json({ success: true, data, error: null })
@@ -141,7 +141,7 @@ productsRouter.patch('/:id/variants/:variantId', authenticate, requireRole('Admi
     const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
     const data = await updateVariant(
       { variantId: req.params.variantId, ...parsed.data },
-      req.user!.id,
+      req.user!.sub,
       ipAddress
     )
     res.json({ success: true, data, error: null })

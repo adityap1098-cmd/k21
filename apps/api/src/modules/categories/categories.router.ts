@@ -33,7 +33,7 @@ categoriesRouter.post('/', authenticate, requireRole('Admin', 'Owner'), async (r
 
   try {
     const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
-    const data = await createCategory(parsed.data, req.user!.id, ipAddress)
+    const data = await createCategory(parsed.data, req.user!.sub, ipAddress)
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
@@ -54,7 +54,7 @@ categoriesRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner'), asyn
 
   try {
     const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
-    const data = await updateCategory({ id: req.params.id, ...parsed.data }, req.user!.id, ipAddress)
+    const data = await updateCategory({ id: req.params.id, ...parsed.data }, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
@@ -69,7 +69,7 @@ categoriesRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner'), asyn
 categoriesRouter.delete('/:id', authenticate, requireRole('Admin', 'Owner'), async (req, res) => {
   try {
     const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
-    await deleteCategory(req.params.id, req.user!.id, ipAddress)
+    await deleteCategory(req.params.id, req.user!.sub, ipAddress)
     res.json({ success: true, data: null, error: null })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
