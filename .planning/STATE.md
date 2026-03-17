@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-product-inventory/02-04-PLAN.md
-last_updated: "2026-03-17T22:03:35.187Z"
+stopped_at: Completed 02-product-inventory/02-05-PLAN.md
+last_updated: "2026-03-17T22:10:15.271Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 2
   total_plans: 23
-  completed_plans: 21
+  completed_plans: 22
   percent: 10
 ---
 
@@ -69,6 +69,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 02-product-inventory P02 | 2 | 2 tasks | 7 files |
 | Phase 02-product-inventory P03 | 6 | 2 tasks | 8 files |
 | Phase 02-product-inventory P04 | 5 | 2 tasks | 7 files |
+| Phase 02-product-inventory P05 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -123,6 +124,8 @@ Recent decisions affecting current work:
 - [Phase 02-product-inventory]: db.transaction() wraps product + default variant inserts atomically in createProduct
 - [Phase 02-product-inventory]: cacheRedisClient added as ioredis instance to queues/redis.ts — ConnectionOptions does not expose .get/.setex/.del; ioredis instance required for direct cache operations
 - [Phase 02-product-inventory]: Drizzle sql template JSON.stringify required for FOR UPDATE test assertion — .toString() returns [object Object]; queryChunks are in JSON representation
+- [Phase 02-product-inventory]: opname.service.ts signature changed from positional (counts, performedBy, approvedBy) to object param {items, performedBy, ipAddress} — matches plan 02-05 spec and test call sites
+- [Phase 02-product-inventory]: processLowStockAlert extracted to lowstock.service.ts — BullMQ worker calls it; enables unit testing without BullMQ connection
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -141,6 +144,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T22:03:35.185Z
-Stopped at: Completed 02-product-inventory/02-04-PLAN.md
+Last session: 2026-03-17T22:10:15.269Z
+Stopped at: Completed 02-product-inventory/02-05-PLAN.md
 Resume file: None
