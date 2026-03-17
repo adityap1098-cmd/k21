@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Request, Response, NextFunction } from 'express'
 
-// Actual module does not exist yet → RED state
-vi.mock('./require-role.js')
-
 function makeRes() {
   const res = {
     status: vi.fn().mockReturnThis(),
@@ -67,5 +64,19 @@ describe('requireRole middleware', () => {
 
     expect(res.status).toHaveBeenCalledWith(401)
     expect(next).not.toHaveBeenCalled()
+  })
+
+  // AUTH-05: multiple allowed roles → next() called when role matches one
+  it('calls next() when the user role matches one of multiple allowed roles', async () => {
+    const { requireRole } = await import('./require-role.js')
+
+    const req = makeReq({ user: { id: 'user-uuid', role: 'Finance', mustChangePassword: false } })
+    const res = makeRes()
+    const middleware = requireRole('Owner', 'Finance')
+
+    middleware(req, res, next)
+
+    expect(next).toHaveBeenCalledOnce()
+    expect(res.status).not.toHaveBeenCalled()
   })
 })
