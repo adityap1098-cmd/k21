@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 01-auth-rbac/01-03-PLAN.md (auth service + router)
-last_updated: "2026-03-17T20:47:52.177Z"
+stopped_at: Completed 01-auth-rbac/01-05-PLAN.md (users service + router)
+last_updated: "2026-03-17T20:55:35.630Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 1
   total_plans: 17
-  completed_plans: 15
+  completed_plans: 16
   percent: 10
 ---
 
@@ -63,6 +63,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 01-auth-rbac P02 | 4 | 2 tasks | 11 files |
 | Phase 01-auth-rbac P04 | 2 | 2 tasks | 6 files |
 | Phase 01-auth-rbac PP03 | 3 | 2 tasks | 4 files |
+| Phase 01-auth-rbac P05 | 5 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,9 @@ Recent decisions affecting current work:
 - [Phase 01-auth-rbac]: Middleware test stubs updated from vi.mock auto-stub to real JWT signing — authenticate.test.ts and require-role.test.ts now test actual behavior
 - [Phase 01-auth-rbac]: auth.test.ts auto-mock replaced with DB-layer mocks — vi.mock without factory returns vi.fn() stubs that can never pass property checks on return values
 - [Phase 01-auth-rbac]: Service params use object destructuring to match existing test call sites: login({ email, password }), refresh({ token }), logout({ token })
+- [Phase 01-auth-rbac]: deactivateUser accepts object param { userId, adminId?, ipAddress? } to match test call site
+- [Phase 01-auth-rbac]: createUser returns { ...user, auditLog } to satisfy AUTH-08 test assertion; router strips auditLog before response
+- [Phase 01-auth-rbac]: users.test.ts stubs updated to DB-layer mocks — consistent with auth.test.ts pattern, auto-mock stubs were permanently broken
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -120,6 +124,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T20:47:52.174Z
-Stopped at: Completed 01-auth-rbac/01-03-PLAN.md (auth service + router)
+Last session: 2026-03-17T20:55:35.628Z
+Stopped at: Completed 01-auth-rbac/01-05-PLAN.md (users service + router)
 Resume file: None
