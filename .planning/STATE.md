@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 01-auth-rbac/01-02-PLAN.md (Drizzle schema + migration)
-last_updated: "2026-03-17T20:41:29.880Z"
+stopped_at: "Completed 01-auth-rbac/01-04-PLAN.md (middleware: authenticate, requireRole, logAudit)"
+last_updated: "2026-03-17T20:47:09.865Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 1
   total_plans: 17
-  completed_plans: 13
+  completed_plans: 15
   percent: 10
 ---
 
@@ -61,6 +61,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 00-infrastructure P11 | multi-session | 2 tasks | 4 files |
 | Phase 01-auth-rbac P01 | 5 | 2 tasks | 6 files |
 | Phase 01-auth-rbac P02 | 4 | 2 tasks | 11 files |
+| Phase 01-auth-rbac P04 | 2 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,8 @@ Recent decisions affecting current work:
 - [Phase 01-auth-rbac]: tsx/cjs workaround required for drizzle-kit v0.20 with NodeNext ESM — drizzle-kit CJS require() cannot resolve .js to .ts; node --require tsx/cjs intercepts correctly
 - [Phase 01-auth-rbac]: audit_logs.userId has no FK — intentional: logs must survive user deletion for immutable audit trail
 - [Phase 01-auth-rbac]: refresh_tokens.userId cascade delete FK — token cleanup automatic when user is deleted
+- [Phase 01-auth-rbac]: authenticate uses req.path.endsWith('/auth/change-password') for mustChangePassword path check
+- [Phase 01-auth-rbac]: Middleware test stubs updated from vi.mock auto-stub to real JWT signing — authenticate.test.ts and require-role.test.ts now test actual behavior
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -114,6 +117,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T20:41:29.878Z
-Stopped at: Completed 01-auth-rbac/01-02-PLAN.md (Drizzle schema + migration)
+Last session: 2026-03-17T20:47:09.863Z
+Stopped at: Completed 01-auth-rbac/01-04-PLAN.md (middleware: authenticate, requireRole, logAudit)
 Resume file: None
