@@ -105,14 +105,14 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml \
 
 Before Phase 0 is marked complete, perform this drill on the VPS:
 
-1. [ ] Trigger a manual backup: `docker exec k21-backup-1 /backup/backup.sh`
-2. [ ] Verify the file appears in B2: `rclone ls b2:k21-backups/backups/`
-3. [ ] Download the backup file
-4. [ ] Decrypt with GPG and verify it gunzips to valid SQL
-5. [ ] Run `restore.sh` against a test database (not production)
-6. [ ] Verify the restored database has the expected tables/rows
-7. [ ] Document the drill result and date in this runbook
+1. [x] Trigger a manual backup: `docker exec k21-backup-1 /backup/backup.sh`
+2. [x] Verify the file appears in B2: `rclone ls b2:k21-backups/backups/`
+3. [x] Download the backup file
+4. [x] Decrypt with GPG and verify it gunzips to valid SQL
+5. [x] Run `restore.sh` against a test database (not production)
+6. [x] Verify the restored database has the expected tables/rows
+7. [x] Document the drill result and date in this runbook
 
-**Drill result:** _Pending — complete before Phase 0 sign-off_
-**Drill date:** _Not yet performed_
-**Performed by:** _TBD_
+**Drill result:** All 6 restore steps completed successfully — database restored to test instance with correct tables and rows
+**Drill date:** 2026-03-15
+**Performed by:** Aditya
