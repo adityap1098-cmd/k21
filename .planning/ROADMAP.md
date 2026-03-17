@@ -174,7 +174,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 |-------|----------------|--------|-----------|
 | 0. Infrastructure | 11/11 | Complete   | 2026-03-17 |
 | 1. Auth & RBAC | 6/6 | Complete   | 2026-03-17 |
-| 2. Product & Inventory | 1/6 | In Progress|  |
+| 2. Product & Inventory | 3/6 | In Progress|  |
 | 3. POS with Offline Mode | 0/TBD | Not started | - |
 | 4. Procurement | 0/TBD | Not started | - |
 | 5. Warehouse Management | 0/TBD | Not started | - |

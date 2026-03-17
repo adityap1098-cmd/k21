@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-product-inventory/02-02-PLAN.md
-last_updated: "2026-03-17T21:47:58.497Z"
+stopped_at: Completed 02-product-inventory/02-03-PLAN.md
+last_updated: "2026-03-17T21:56:13.607Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 2
   total_plans: 23
-  completed_plans: 19
+  completed_plans: 20
   percent: 10
 ---
 
@@ -67,6 +67,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 01-auth-rbac P06 | 3 | 2 tasks | 3 files |
 | Phase 02-product-inventory P01 | 5 | 2 tasks | 5 files |
 | Phase 02-product-inventory P02 | 2 | 2 tasks | 7 files |
+| Phase 02-product-inventory P03 | 6 | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,9 @@ Recent decisions affecting current work:
 - [Phase 02-product-inventory]: REDIS_URL parsed to host/port/password fields — uses ioredis RedisOptions shape, avoids need for Redis class instance
 - [Phase 02-product-inventory]: categories.parentId defined as plain uuid — self-ref FK added manually in migration SQL; Drizzle v0.30 lazy getter pattern causes TS2740 type error
 - [Phase 02-product-inventory]: db:push skipped — DATABASE_URL not available in local dev; migration SQL files are the deliverable applied on deployment
+- [Phase 02-product-inventory]: vi.hoisted() required for DB mock variables — vitest hoists vi.mock() factories before const declarations
+- [Phase 02-product-inventory]: ppnType and categoryId validated at service layer — services called programmatically without router Zod validation
+- [Phase 02-product-inventory]: db.transaction() wraps product + default variant inserts atomically in createProduct
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -134,6 +138,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T21:47:58.494Z
-Stopped at: Completed 02-product-inventory/02-02-PLAN.md
+Last session: 2026-03-17T21:56:13.604Z
+Stopped at: Completed 02-product-inventory/02-03-PLAN.md
 Resume file: None
