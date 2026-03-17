@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: "Completed 01-auth-rbac/01-04-PLAN.md (middleware: authenticate, requireRole, logAudit)"
-last_updated: "2026-03-17T20:47:09.865Z"
+stopped_at: Completed 01-auth-rbac/01-03-PLAN.md (auth service + router)
+last_updated: "2026-03-17T20:47:52.177Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
@@ -62,6 +62,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 01-auth-rbac P01 | 5 | 2 tasks | 6 files |
 | Phase 01-auth-rbac P02 | 4 | 2 tasks | 11 files |
 | Phase 01-auth-rbac P04 | 2 | 2 tasks | 6 files |
+| Phase 01-auth-rbac PP03 | 3 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,8 @@ Recent decisions affecting current work:
 - [Phase 01-auth-rbac]: refresh_tokens.userId cascade delete FK — token cleanup automatic when user is deleted
 - [Phase 01-auth-rbac]: authenticate uses req.path.endsWith('/auth/change-password') for mustChangePassword path check
 - [Phase 01-auth-rbac]: Middleware test stubs updated from vi.mock auto-stub to real JWT signing — authenticate.test.ts and require-role.test.ts now test actual behavior
+- [Phase 01-auth-rbac]: auth.test.ts auto-mock replaced with DB-layer mocks — vi.mock without factory returns vi.fn() stubs that can never pass property checks on return values
+- [Phase 01-auth-rbac]: Service params use object destructuring to match existing test call sites: login({ email, password }), refresh({ token }), logout({ token })
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -117,6 +120,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T20:47:09.863Z
-Stopped at: Completed 01-auth-rbac/01-04-PLAN.md (middleware: authenticate, requireRole, logAudit)
+Last session: 2026-03-17T20:47:52.174Z
+Stopped at: Completed 01-auth-rbac/01-03-PLAN.md (auth service + router)
 Resume file: None
