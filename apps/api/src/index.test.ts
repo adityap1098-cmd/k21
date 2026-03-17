@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import request from 'supertest'
+import { Router } from 'express'
 
 // Mock DB and Redis so app starts without live connections
 vi.mock('./db/index.js', () => ({ db: {} }))
@@ -21,6 +22,24 @@ vi.mock('./db/schema/index.js', () => ({
   actionEnum: { enumValues: ['CREATE', 'UPDATE', 'DELETE'] },
 }))
 
+// Phase 2 module mocks — mini routers that reject unauthenticated requests (401)
+vi.mock('./modules/categories/index.js', () => {
+  const r = Router()
+  r.use((_req, res) => res.status(401).json({ success: false, data: null, error: 'Missing or invalid Authorization header' }))
+  return { categoriesRouter: r }
+})
+vi.mock('./modules/products/index.js', () => {
+  const r = Router()
+  r.use((_req, res) => res.status(401).json({ success: false, data: null, error: 'Missing or invalid Authorization header' }))
+  return { productsRouter: r }
+})
+vi.mock('./modules/inventory/index.js', () => {
+  const r = Router()
+  r.use((_req, res) => res.status(401).json({ success: false, data: null, error: 'Missing or invalid Authorization header' }))
+  return { inventoryRouter: r }
+})
+vi.mock('./queues/lowstock.queue.js', () => ({ createLowStockWorker: vi.fn() }))
+
 describe('GET /health', () => {
   it('returns 200 with status ok', async () => {
     const { app } = await import('./index.js')
@@ -40,6 +59,24 @@ describe('AUTH-07: /api/v1/ prefix', () => {
   it('GET /api/v1/users without token returns 401 (route exists and is protected)', async () => {
     const { app } = await import('./index.js')
     const res = await request(app).get('/api/v1/users')
+    expect(res.status).toBe(401)
+  })
+})
+
+describe('Phase 2: Product & Inventory routes', () => {
+  it('GET /api/v1/categories returns 401 without auth', async () => {
+    const { app } = await import('./index.js')
+    const res = await request(app).get('/api/v1/categories')
+    expect(res.status).toBe(401)
+  })
+  it('GET /api/v1/products returns 401 without auth', async () => {
+    const { app } = await import('./index.js')
+    const res = await request(app).get('/api/v1/products')
+    expect(res.status).toBe(401)
+  })
+  it('GET /api/v1/inventory/stock/some-id returns 401 without auth', async () => {
+    const { app } = await import('./index.js')
+    const res = await request(app).get('/api/v1/inventory/stock/00000000-0000-0000-0000-000000000000')
     expect(res.status).toBe(401)
   })
 })

@@ -2,6 +2,10 @@ import express from 'express'
 import cookieParser from 'cookie-parser'
 import { authRouter } from './modules/auth/index.js'
 import { usersRouter } from './modules/users/index.js'
+import { categoriesRouter } from './modules/categories/index.js'
+import { productsRouter } from './modules/products/index.js'
+import { inventoryRouter } from './modules/inventory/index.js'
+import { createLowStockWorker } from './queues/lowstock.queue.js'
 
 export const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -30,9 +34,16 @@ app.use('/api/v1', v1Router)
 v1Router.use('/auth', authRouter)
 v1Router.use('/users', usersRouter)
 
+// Phase 2: Product & Inventory
+v1Router.use('/categories', categoriesRouter)
+v1Router.use('/products', productsRouter)
+v1Router.use('/inventory', inventoryRouter)
+
 // Only start listening when run directly (not during tests)
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`K21 API listening on port ${PORT}`)
   })
+  createLowStockWorker()
+  console.log('[startup] low-stock worker started')
 }
