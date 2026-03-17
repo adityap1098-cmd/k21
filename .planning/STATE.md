@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 01-auth-rbac/01-01-PLAN.md
-last_updated: "2026-03-17T20:40:32.466Z"
+stopped_at: Completed 01-auth-rbac/01-02-PLAN.md (Drizzle schema + migration)
+last_updated: "2026-03-17T20:41:29.880Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 1
   total_plans: 17
-  completed_plans: 12
+  completed_plans: 13
   percent: 10
 ---
 
@@ -60,6 +60,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 00-infrastructure P10 | checkpoint | 2 tasks | 0 files |
 | Phase 00-infrastructure P11 | multi-session | 2 tasks | 4 files |
 | Phase 01-auth-rbac P01 | 5 | 2 tasks | 6 files |
+| Phase 01-auth-rbac P02 | 4 | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Recent decisions affecting current work:
 - [Phase 00-infrastructure]: Nginx reload cron at 03:00 and 15:00 via host /etc/cron.d/k21-nginx-reload — certbot container has no docker CLI, host cron handles post-renewal reload
 - [Phase 00-infrastructure]: install-vps-crons.sh called on every deploy (idempotent) — ensures cron survives VPS reprovisioning
 - [Phase 01-auth-rbac]: vi.mock() without factory achieves RED state: auto-mock returns undefined exports causing import errors and is-not-a-function failures when implementation files don't exist
+- [Phase 01-auth-rbac]: tsx/cjs workaround required for drizzle-kit v0.20 with NodeNext ESM — drizzle-kit CJS require() cannot resolve .js to .ts; node --require tsx/cjs intercepts correctly
+- [Phase 01-auth-rbac]: audit_logs.userId has no FK — intentional: logs must survive user deletion for immutable audit trail
+- [Phase 01-auth-rbac]: refresh_tokens.userId cascade delete FK — token cleanup automatic when user is deleted
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -110,6 +114,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T20:40:32.463Z
-Stopped at: Completed 01-auth-rbac/01-01-PLAN.md
+Last session: 2026-03-17T20:41:29.878Z
+Stopped at: Completed 01-auth-rbac/01-02-PLAN.md (Drizzle schema + migration)
 Resume file: None

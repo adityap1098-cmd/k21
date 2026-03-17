@@ -24,7 +24,7 @@
 - [x] **AUTH-04**: RBAC diterapkan dengan 5 role: Owner, Finance, Warehouse Staff, Cashier, Admin
 - [x] **AUTH-05**: Setiap endpoint diproteksi sesuai permission role yang sesuai
 - [x] **AUTH-06**: Admin dapat membuat, mengedit, dan menonaktifkan user
-- [ ] **AUTH-07**: Semua API endpoint menggunakan prefix `/api/v1/`
+- [x] **AUTH-07**: Semua API endpoint menggunakan prefix `/api/v1/`
 - [x] **AUTH-08**: Semua perubahan data penting (CREATE/UPDATE/DELETE) tercatat di `audit_logs` dengan user_id, action, old_value, new_value, ip_address, timestamp
 
 ### Product & Inventory (PROD / INV)
@@ -157,7 +157,7 @@
 | AUTH-04 | Phase 1: Auth & RBAC | Complete |
 | AUTH-05 | Phase 1: Auth & RBAC | Complete |
 | AUTH-06 | Phase 1: Auth & RBAC | Complete |
-| AUTH-07 | Phase 1: Auth & RBAC | Pending |
+| AUTH-07 | Phase 1: Auth & RBAC | Complete |
 | AUTH-08 | Phase 1: Auth & RBAC | Complete |
 | PROD-01 | Phase 2: Product & Inventory | Pending |
 | PROD-02 | Phase 2: Product & Inventory | Pending |
