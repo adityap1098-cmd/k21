@@ -25,6 +25,9 @@ services:
         max-size: "10m"
         max-file: "5"
 
+  # Post-renewal nginx reload: the certbot container has no docker CLI, so nginx
+  # cannot be reloaded from inside the container. A host cron job handles this.
+  # Install it once (and on every deploy) via: bash scripts/install-vps-crons.sh
   certbot:
     image: certbot/certbot
     volumes:
