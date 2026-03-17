@@ -1,3 +1,7 @@
 export * from './users.js'
 export * from './refresh-tokens.js'
 export * from './audit-logs.js'
+export * from './categories.js'
+export * from './products.js'
+export * from './inventory.js'
+export * from './notifications.js'
