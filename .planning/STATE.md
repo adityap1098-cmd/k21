@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-17T23:40:00.967Z"
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-03-18T08:17:21.130Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 3
-  total_plans: 23
-  completed_plans: 23
+  total_plans: 31
+  completed_plans: 24
   percent: 10
 ---
 
@@ -72,6 +72,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 02-product-inventory P05 | 4 | 2 tasks | 6 files |
 | Phase 02-product-inventory P06 | 8 | 1 tasks | 2 files |
 | Phase 02-product-inventory P06 | 8 | 2 tasks | 2 files |
+| Phase 03-pos-with-offline-mode P01 | 3 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -130,6 +131,9 @@ Recent decisions affecting current work:
 - [Phase 02-product-inventory]: processLowStockAlert extracted to lowstock.service.ts — BullMQ worker calls it; enables unit testing without BullMQ connection
 - [Phase 02-product-inventory]: Mock Phase 2 routers in index.test.ts with mini routers that return 401 — avoids transitive Redis/DB connections from cacheRedisClient instantiated at module load in queues/redis.ts
 - [Phase 02-product-inventory]: Mock Phase 2 routers in index.test.ts with mini routers that return 401 — avoids transitive Redis/DB connections from cacheRedisClient instantiated at module load in queues/redis.ts
+- [Phase 03-pos-with-offline-mode]: Migration placed in apps/api/drizzle/ (drizzle-kit output dir) not apps/api/migrations/ as written in plan — correct path for drizzle-kit generated files
+- [Phase 03-pos-with-offline-mode]: transactionItems.variantId has no FK to productVariants — cross-schema import cycle avoidance; enforced at service layer
+- [Phase 03-pos-with-offline-mode]: UNIQUE constraint on transactions.client_uuid — idempotency key for offline sync deduplication
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -148,6 +152,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T23:40:00.964Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-pos-with-offline-mode/03-CONTEXT.md
+Last session: 2026-03-18T08:17:21.128Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: None

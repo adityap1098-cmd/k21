@@ -43,17 +43,17 @@
 
 ### POS — Point of Sale (POS)
 
-- [ ] **POS-01**: Kasir dapat scan barcode produk atau cari manual untuk tambah ke cart
-- [ ] **POS-02**: Kasir dapat tambah, kurangi, hapus item di cart, dan terapkan diskon per item
-- [ ] **POS-03**: Transaksi mendukung multi-payment: tunai, transfer bank, dan QRIS
-- [ ] **POS-04**: Setiap transaksi selesai menghasilkan receipt (cetak dan/atau digital)
-- [ ] **POS-05**: Kasir dapat membuka dan menutup shift dengan rekap total transaksi dan selisih kas
-- [ ] **POS-06**: Kasir dapat void/cancel transaksi yang sudah selesai (dengan alasan, tercatat di audit log)
-- [ ] **POS-07**: POS berjalan sebagai PWA dengan Service Worker — aset ter-cache untuk offline access
-- [ ] **POS-08**: Transaksi yang dibuat saat offline tersimpan di IndexedDB browser
-- [ ] **POS-09**: Saat koneksi pulih, transaksi offline auto-sync ke server dengan idempotency key (`client_uuid`) — tidak ada duplikasi
-- [ ] **POS-10**: Server memvalidasi stok saat sync transaksi offline; konflik diflag untuk resolusi kasir
-- [ ] **POS-11**: Setiap transaksi POS selesai otomatis menghasilkan `inventory_movement(SALE)` dan `journal_entry` dalam satu atomic DB transaction
+- [x] **POS-01**: Kasir dapat scan barcode produk atau cari manual untuk tambah ke cart
+- [x] **POS-02**: Kasir dapat tambah, kurangi, hapus item di cart, dan terapkan diskon per item
+- [x] **POS-03**: Transaksi mendukung multi-payment: tunai, transfer bank, dan QRIS
+- [x] **POS-04**: Setiap transaksi selesai menghasilkan receipt (cetak dan/atau digital)
+- [x] **POS-05**: Kasir dapat membuka dan menutup shift dengan rekap total transaksi dan selisih kas
+- [x] **POS-06**: Kasir dapat void/cancel transaksi yang sudah selesai (dengan alasan, tercatat di audit log)
+- [x] **POS-07**: POS berjalan sebagai PWA dengan Service Worker — aset ter-cache untuk offline access
+- [x] **POS-08**: Transaksi yang dibuat saat offline tersimpan di IndexedDB browser
+- [x] **POS-09**: Saat koneksi pulih, transaksi offline auto-sync ke server dengan idempotency key (`client_uuid`) — tidak ada duplikasi
+- [x] **POS-10**: Server memvalidasi stok saat sync transaksi offline; konflik diflag untuk resolusi kasir
+- [x] **POS-11**: Setiap transaksi POS selesai otomatis menghasilkan `inventory_movement(SALE)` dan `journal_entry` dalam satu atomic DB transaction
 
 ### Warehouse Management (WH)
 
@@ -170,17 +170,17 @@
 | INV-06 | Phase 2: Product & Inventory | Complete |
 | INV-07 | Phase 2: Product & Inventory | Complete |
 | INV-08 | Phase 2: Product & Inventory | Complete |
-| POS-01 | Phase 3: POS with Offline Mode | Pending |
-| POS-02 | Phase 3: POS with Offline Mode | Pending |
-| POS-03 | Phase 3: POS with Offline Mode | Pending |
-| POS-04 | Phase 3: POS with Offline Mode | Pending |
-| POS-05 | Phase 3: POS with Offline Mode | Pending |
-| POS-06 | Phase 3: POS with Offline Mode | Pending |
-| POS-07 | Phase 3: POS with Offline Mode | Pending |
-| POS-08 | Phase 3: POS with Offline Mode | Pending |
-| POS-09 | Phase 3: POS with Offline Mode | Pending |
-| POS-10 | Phase 3: POS with Offline Mode | Pending |
-| POS-11 | Phase 3: POS with Offline Mode | Pending |
+| POS-01 | Phase 3: POS with Offline Mode | Complete |
+| POS-02 | Phase 3: POS with Offline Mode | Complete |
+| POS-03 | Phase 3: POS with Offline Mode | Complete |
+| POS-04 | Phase 3: POS with Offline Mode | Complete |
+| POS-05 | Phase 3: POS with Offline Mode | Complete |
+| POS-06 | Phase 3: POS with Offline Mode | Complete |
+| POS-07 | Phase 3: POS with Offline Mode | Complete |
+| POS-08 | Phase 3: POS with Offline Mode | Complete |
+| POS-09 | Phase 3: POS with Offline Mode | Complete |
+| POS-10 | Phase 3: POS with Offline Mode | Complete |
+| POS-11 | Phase 3: POS with Offline Mode | Complete |
 | PROC-01 | Phase 4: Procurement | Pending |
 | PROC-02 | Phase 4: Procurement | Pending |
 | PROC-03 | Phase 4: Procurement | Pending |
