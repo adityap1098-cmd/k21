@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 03-pos-with-offline-mode/03-02-PLAN.md
-last_updated: "2026-03-18T08:20:21.755Z"
+stopped_at: Completed 03-pos-with-offline-mode/03-04-PLAN.md
+last_updated: "2026-03-18T08:27:51.104Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 3
   total_plans: 31
-  completed_plans: 26
+  completed_plans: 27
   percent: 10
 ---
 
@@ -75,6 +75,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 03-pos-with-offline-mode P01 | 3 | 2 tasks | 6 files |
 | Phase 03-pos-with-offline-mode P03 | 357 | 2 tasks | 4 files |
 | Phase 03-pos-with-offline-mode P02 | 7 | 2 tasks | 6 files |
+| Phase 03-pos-with-offline-mode P04 | 8 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -140,6 +141,8 @@ Recent decisions affecting current work:
 - [Phase 03-pos-with-offline-mode]: SHIFT_NOT_FOUND thrown for both non-existent and wrong-cashier shift close attempts — single error avoids user enumeration
 - [Phase 03-pos-with-offline-mode]: completeSale uses recordMovement(params, tx) + manual UPDATE SQL — never decrementStock() which opens its own db.transaction() causing nested transaction error in PgBouncer TRANSACTION mode
 - [Phase 03-pos-with-offline-mode]: pos.test.ts rewritten from vi.mock-without-factory RED stubs to DB-layer mocks — auto-mock pattern cannot make tests go GREEN; shifted to mock db + mock dependencies approach matching shifts.test.ts pattern
+- [Phase 03-pos-with-offline-mode]: voidTransaction kept in pos.service.ts (tests import from there); void.service.ts re-exports it
+- [Phase 03-pos-with-offline-mode]: logAudit uses action:UPDATE for void — audit_action pgEnum only supports CREATE/UPDATE/DELETE
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -158,6 +161,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T08:20:21.752Z
-Stopped at: Completed 03-pos-with-offline-mode/03-02-PLAN.md
+Last session: 2026-03-18T08:27:51.101Z
+Stopped at: Completed 03-pos-with-offline-mode/03-04-PLAN.md
 Resume file: None
