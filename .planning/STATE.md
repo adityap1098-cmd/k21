@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-18T08:17:21.130Z"
+stopped_at: Completed 03-pos-with-offline-mode-03-PLAN.md
+last_updated: "2026-03-18T08:19:07.078Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 3
   total_plans: 31
-  completed_plans: 24
+  completed_plans: 25
   percent: 10
 ---
 
@@ -73,6 +73,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 02-product-inventory P06 | 8 | 1 tasks | 2 files |
 | Phase 02-product-inventory P06 | 8 | 2 tasks | 2 files |
 | Phase 03-pos-with-offline-mode P01 | 3 | 2 tasks | 6 files |
+| Phase 03-pos-with-offline-mode P03 | 357 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -134,6 +135,8 @@ Recent decisions affecting current work:
 - [Phase 03-pos-with-offline-mode]: Migration placed in apps/api/drizzle/ (drizzle-kit output dir) not apps/api/migrations/ as written in plan — correct path for drizzle-kit generated files
 - [Phase 03-pos-with-offline-mode]: transactionItems.variantId has no FK to productVariants — cross-schema import cycle avoidance; enforced at service layer
 - [Phase 03-pos-with-offline-mode]: UNIQUE constraint on transactions.client_uuid — idempotency key for offline sync deduplication
+- [Phase 03-pos-with-offline-mode]: aggregateReconciliation extracted as internal helper to avoid redundant SELECT in closeShift — passes already-retrieved shift from .returning()
+- [Phase 03-pos-with-offline-mode]: SHIFT_NOT_FOUND thrown for both non-existent and wrong-cashier shift close attempts — single error avoids user enumeration
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -152,6 +155,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T08:17:21.128Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-03-18T08:19:07.075Z
+Stopped at: Completed 03-pos-with-offline-mode-03-PLAN.md
 Resume file: None
