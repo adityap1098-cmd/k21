@@ -101,7 +101,11 @@ function CartLine({ item, isExpanded, onToggle, onUpdateQty, onSetDiscount, onRe
   )
 }
 
-export function CartPanel() {
+interface CartPanelProps {
+  onPay: () => void
+}
+
+export function CartPanel({ onPay }: CartPanelProps) {
   const [expandedVariantId, setExpandedVariantId] = useState<string | null>(null)
 
   const {
@@ -204,6 +208,7 @@ export function CartPanel() {
         {/* BAYAR button */}
         <button
           disabled={isEmpty}
+          onClick={onPay}
           className="w-full mt-2 py-4 bg-blue-600 text-white text-lg font-bold rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           BAYAR
