@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 03-pos-with-offline-mode/03-05-PLAN.md
-last_updated: "2026-03-18T08:35:14.967Z"
+stopped_at: Completed 03-pos-with-offline-mode/03-06-PLAN.md
+last_updated: "2026-03-18T08:42:50.338Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
   completed_phases: 3
   total_plans: 31
-  completed_plans: 28
+  completed_plans: 29
   percent: 10
 ---
 
@@ -77,6 +77,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 03-pos-with-offline-mode P02 | 7 | 2 tasks | 6 files |
 | Phase 03-pos-with-offline-mode P04 | 8 | 2 tasks | 6 files |
 | Phase 03-pos-with-offline-mode P05 | 6 | 2 tasks | 11 files |
+| Phase 03-pos-with-offline-mode P06 | 5 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -146,6 +147,8 @@ Recent decisions affecting current work:
 - [Phase 03-pos-with-offline-mode]: logAudit uses action:UPDATE for void — audit_action pgEnum only supports CREATE/UPDATE/DELETE
 - [Phase 03-pos-with-offline-mode]: sw.ts uses WorkerGlobalScope cast (not ServiceWorkerGlobalScope) to avoid webworker lib in tsconfig — Serwist typings do not expose ServiceWorkerGlobalScope via ./typings; WorkerGlobalScope + unknown cast achieves same runtime behavior
 - [Phase 03-pos-with-offline-mode]: CompleteSaleParams inlined in offline-db.ts — not yet exported from @k21/shared; avoids cross-app import from apps/api
+- [Phase 03-pos-with-offline-mode]: useCartStore() destructure avoids implicit-any; CartState not exported from cart.store.ts so selector callbacks fail strict mode
+- [Phase 03-pos-with-offline-mode]: tsconfig paths @/* added for tsc --noEmit — Next.js configures at runtime but tsc standalone needs explicit paths mapping
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -164,6 +167,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T08:35:14.965Z
-Stopped at: Completed 03-pos-with-offline-mode/03-05-PLAN.md
+Last session: 2026-03-18T08:42:50.333Z
+Stopped at: Completed 03-pos-with-offline-mode/03-06-PLAN.md
 Resume file: None
