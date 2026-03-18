@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 03-pos-with-offline-mode/03-07-PLAN.md
-last_updated: "2026-03-18T08:44:04.492Z"
+stopped_at: Completed 03-pos-with-offline-mode/03-08-PLAN.md
+last_updated: "2026-03-18T19:24:54.115Z"
 last_activity: 2026-03-15 — Phase 0 infrastructure fully verified on live VPS; all 8 smoke-test checks approved by operator
 progress:
   total_phases: 10
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 31
-  completed_plans: 30
+  completed_plans: 31
   percent: 10
 ---
 
@@ -79,6 +79,7 @@ Progress: [█░░░░░░░░░] 10%
 | Phase 03-pos-with-offline-mode P05 | 6 | 2 tasks | 11 files |
 | Phase 03-pos-with-offline-mode P06 | 5 | 2 tasks | 5 files |
 | Phase 03-pos-with-offline-mode P07 | 6 | 2 tasks | 6 files |
+| Phase 03-pos-with-offline-mode P08 | multi-session | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -152,6 +153,9 @@ Recent decisions affecting current work:
 - [Phase 03-pos-with-offline-mode]: tsconfig paths @/* added for tsc --noEmit — Next.js configures at runtime but tsc standalone needs explicit paths mapping
 - [Phase 03-pos-with-offline-mode]: Ambient .d.ts created for @point-of-sale packages — no bundled TypeScript declarations; EncoderInstance interface models fluent builder chain
 - [Phase 03-pos-with-offline-mode]: connectPrinter() called exclusively in onClick handlers — Web Serial API requires transient user activation
+- [Phase 03-pos-with-offline-mode]: SyncStatusBar uses useLiveQuery internally for pendingCount — parent passes only isSyncing boolean
+- [Phase 03-pos-with-offline-mode]: forceComplete flag in syncOfflineTx skips stock FOR UPDATE check — stock may go negative; audit trail via [FORCE_COMPLETE] reference suffix
+- [Phase 03-pos-with-offline-mode]: Local-only void for conflicts with no serverId — IndexedDB record deleted locally, no server call since no server record was created
 
 ### Research Flags (from research/SUMMARY.md)
 
@@ -170,6 +174,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T08:44:04.489Z
-Stopped at: Completed 03-pos-with-offline-mode/03-07-PLAN.md
+Last session: 2026-03-18T19:24:54.112Z
+Stopped at: Completed 03-pos-with-offline-mode/03-08-PLAN.md
 Resume file: None

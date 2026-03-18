@@ -98,7 +98,7 @@ Each task was committed atomically:
 1. **Task 1: Install PWA dependencies + configure @serwist/next** - `923ab8d` (feat)
 2. **Task 2: Dexie offline DB + Zustand stores + sync manager** - `701cc0b` (feat)
 
-**Plan metadata:** `[pending]` (docs: complete plan)
+**Plan metadata:** `a5a5204` (docs: complete plan)
 
 ## Files Created/Modified
 
