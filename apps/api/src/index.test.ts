@@ -38,6 +38,16 @@ vi.mock('./modules/inventory/index.js', () => {
   r.use((_req, res) => res.status(401).json({ success: false, data: null, error: 'Missing or invalid Authorization header' }))
   return { inventoryRouter: r }
 })
+vi.mock('./modules/pos/index.js', () => {
+  const r = Router()
+  r.use((_req, res) => res.status(401).json({ success: false, data: null, error: 'Missing or invalid Authorization header' }))
+  return { posRouter: r }
+})
+vi.mock('./modules/shifts/index.js', () => {
+  const r = Router()
+  r.use((_req, res) => res.status(401).json({ success: false, data: null, error: 'Missing or invalid Authorization header' }))
+  return { shiftsRouter: r }
+})
 vi.mock('./queues/lowstock.queue.js', () => ({ createLowStockWorker: vi.fn() }))
 
 describe('GET /health', () => {
