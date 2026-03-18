@@ -32,6 +32,10 @@ const transactionBodySchema = z.object({
   payments: z.array(paymentSchema).min(1),
 })
 
+const syncBodySchema = transactionBodySchema.extend({
+  forceComplete: z.boolean().optional(),
+})
+
 const voidBodySchema = z.object({
   reason: z.string().min(1).max(500),
 })
@@ -91,7 +95,7 @@ posRouter.post(
   authenticate,
   requireRole('Cashier'),
   async (req, res) => {
-    const result = transactionBodySchema.safeParse(req.body)
+    const result = syncBodySchema.safeParse(req.body)
     if (!result.success) {
       res.status(400).json({
         success: false,

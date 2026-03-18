@@ -154,8 +154,19 @@ export async function completeSale(params: CompleteSaleParams): Promise<Transact
 /**
  * Thin wrapper around completeSale for offline sync use case.
  * Catches INSUFFICIENT_STOCK and returns a conflict result instead of throwing.
+ *
+ * When forceComplete=true, skips the stock validation check and proceeds
+ * with the insert even if stock would go negative. Used for conflict resolution
+ * from the SyncIssuesPanel. Adds [FORCE_COMPLETE] note to inventory movement
+ * reference and logs to audit_logs for audit trail.
  */
-export async function syncOfflineTx(params: CompleteSaleParams): Promise<SyncResult> {
+export async function syncOfflineTx(
+  params: CompleteSaleParams & { forceComplete?: boolean }
+): Promise<SyncResult> {
+  if (params.forceComplete) {
+    const transaction = await completeSaleForced(params)
+    return { status: 'synced', transactionId: transaction.id }
+  }
   try {
     const transaction = await completeSale(params)
     return { status: 'synced', transactionId: transaction.id }
@@ -165,6 +176,121 @@ export async function syncOfflineTx(params: CompleteSaleParams): Promise<SyncRes
     }
     throw err
   }
+}
+
+type DrizzleTxForced = Parameters<Parameters<typeof db.transaction>[0]>[0]
+
+/**
+ * Force-complete variant of completeSale that skips the stock check.
+ * Stock may go negative — this is intentional for conflict resolution.
+ * Adds [FORCE_COMPLETE] suffix to inventory movement reference for audit trail.
+ */
+async function completeSaleForced(params: CompleteSaleParams): Promise<Transaction> {
+  return db.transaction(async (tx) => {
+    // 1. Idempotency check
+    const existing = await (tx as unknown as typeof db)
+      .select()
+      .from(transactions)
+      .where(eq(transactions.clientUuid, params.clientUuid))
+      .limit(1)
+
+    if (existing.length > 0) {
+      return existing[0]
+    }
+
+    // 2. Validate shift is OPEN
+    const shiftRows = await (tx as unknown as typeof db)
+      .select()
+      .from(shifts)
+      .where(and(eq(shifts.id, params.shiftId), eq(shifts.status, 'OPEN')))
+      .limit(1)
+
+    if (shiftRows.length === 0) {
+      throw new Error('SHIFT_NOT_OPEN')
+    }
+
+    // 3. Insert transaction header (no stock check)
+    const txId = randomUUID()
+    const [transaction] = await (tx as unknown as typeof db)
+      .insert(transactions)
+      .values({
+        id: txId,
+        clientUuid: params.clientUuid,
+        shiftId: params.shiftId,
+        cashierId: params.cashierId,
+        subtotal: params.subtotal,
+        discountAmount: params.discountAmount,
+        total: params.total,
+        status: 'COMPLETED',
+        createdAt: new Date(),
+      })
+      .returning()
+
+    // 4. Insert transaction items
+    await (tx as unknown as typeof db)
+      .insert(transactionItems)
+      .values(
+        params.items.map((item) => ({
+          id: randomUUID(),
+          transactionId: transaction.id,
+          variantId: item.variantId,
+          qty: item.qty,
+          unitPrice: item.unitPrice,
+          discountAmount: item.discountAmount,
+          lineTotal: item.lineTotal,
+        }))
+      )
+
+    // 5. Insert transaction payments
+    await (tx as unknown as typeof db)
+      .insert(transactionPayments)
+      .values(
+        params.payments.map((payment) => ({
+          id: randomUUID(),
+          transactionId: transaction.id,
+          method: payment.method,
+          amount: payment.amount,
+          reference: payment.reference,
+        }))
+      )
+
+    // 6. For each item: recordMovement with [FORCE_COMPLETE] note + UPDATE stock
+    for (const item of params.items) {
+      await recordMovement(
+        {
+          variantId: item.variantId,
+          movementType: 'SALE',
+          qty: item.qty,
+          reference: `${transaction.id} [FORCE_COMPLETE]`,
+          performedBy: params.cashierId,
+        },
+        tx
+      )
+
+      await (tx as DrizzleTxForced).execute(
+        sql`UPDATE product_variants SET stock_qty = stock_qty - ${item.qty}, updated_at = now() WHERE id = ${item.variantId}`
+      )
+    }
+
+    // 7. Accounting stub
+    await createJournalEntryStub(
+      { transactionId: transaction.id, total: params.total },
+      tx
+    )
+
+    // 8. Audit log for force-complete
+    await logAudit({
+      userId: params.cashierId,
+      action: 'CREATE',
+      tableName: 'transactions',
+      recordId: transaction.id,
+      oldValue: null,
+      newValue: { status: 'COMPLETED', forceComplete: true, clientUuid: params.clientUuid },
+      ipAddress: '0.0.0.0',
+    })
+
+    return transaction
+  })
 }
 
 /**
