@@ -151,7 +151,8 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
           throw new Error((body as { message?: string }).message ?? `HTTP ${res.status}`)
         }
 
-        const { transactionId } = (await res.json()) as { transactionId: string }
+        const body = (await res.json()) as { data: { id: string } }
+        const transactionId = body.data.id
         clearCart()
         onSuccess(transactionId, { ...receiptData, transactionId })
       } else {
