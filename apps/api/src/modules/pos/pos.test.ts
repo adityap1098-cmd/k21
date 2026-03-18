@@ -23,6 +23,11 @@ vi.mock('../accounting/accounting.service.js', () => ({
   createJournalEntryReversal: vi.fn().mockResolvedValue(undefined),
 }))
 
+// Mock audit middleware
+vi.mock('../../middleware/audit.js', () => ({
+  logAudit: vi.fn().mockResolvedValue(undefined),
+}))
+
 import { db } from '../../db/index.js'
 import {
   completeSale,
@@ -32,11 +37,13 @@ import {
 } from './pos.service.js'
 import { recordMovement } from '../inventory/movement.service.js'
 import { createJournalEntryStub, createJournalEntryReversal } from '../accounting/accounting.service.js'
+import { logAudit } from '../../middleware/audit.js'
 
 const mockDb = db as any
 const mockRecordMovement = recordMovement as any
 const mockCreateJournalEntryStub = createJournalEntryStub as any
 const mockCreateJournalEntryReversal = createJournalEntryReversal as any
+const mockLogAudit = logAudit as any
 
 const TX_ID     = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
 const CLIENT_UUID = '11111111-1111-1111-1111-111111111111'
@@ -341,7 +348,7 @@ describe('voidTransaction — POS void path', () => {
       return fn(tx)
     })
 
-    const result = await voidTransaction({ transactionId: TX_ID, voidReason: 'Customer request', performedBy: CASHIER_ID })
+    const result = await voidTransaction({ transactionId: TX_ID, voidReason: 'Customer request', performedBy: CASHIER_ID, ipAddress: '127.0.0.1' })
 
     expect(result.status).toBe('VOIDED')
     expect(result.voidReason).toBe('Customer request')
@@ -350,6 +357,13 @@ describe('voidTransaction — POS void path', () => {
       expect.anything()
     )
     expect(mockCreateJournalEntryReversal).toHaveBeenCalledOnce()
+    expect(mockLogAudit).toHaveBeenCalledWith(expect.objectContaining({
+      userId: CASHIER_ID,
+      action: 'UPDATE',
+      tableName: 'transactions',
+      recordId: TX_ID,
+      ipAddress: '127.0.0.1',
+    }))
   })
 
   it('already voided → throws ALREADY_VOIDED', async () => {

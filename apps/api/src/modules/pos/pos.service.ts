@@ -5,6 +5,7 @@ import { transactions, transactionItems, transactionPayments, shifts } from '../
 import type { Transaction } from '../../db/schema/pos.js'
 import { recordMovement } from '../inventory/movement.service.js'
 import { createJournalEntryStub, createJournalEntryReversal } from '../accounting/accounting.service.js'
+import { logAudit } from '../../middleware/audit.js'
 
 type DrizzleTx = Parameters<Parameters<typeof db.transaction>[0]>[0]
 
@@ -189,6 +190,7 @@ export async function voidTransaction(params: {
   transactionId: string
   voidReason: string
   performedBy: string
+  ipAddress?: string
 }): Promise<Transaction> {
   return db.transaction(async (tx) => {
     // Fetch transaction
@@ -242,6 +244,17 @@ export async function voidTransaction(params: {
       })
       .where(eq(transactions.id, params.transactionId))
       .returning()
+
+    // Audit log — uses UPDATE action (audit_action enum only supports CREATE/UPDATE/DELETE)
+    await logAudit({
+      userId: params.performedBy,
+      action: 'UPDATE',
+      tableName: 'transactions',
+      recordId: params.transactionId,
+      oldValue: { status: 'COMPLETED' },
+      newValue: { status: 'VOIDED', voidReason: params.voidReason },
+      ipAddress: params.ipAddress ?? '0.0.0.0',
+    })
 
     return voided
   })
