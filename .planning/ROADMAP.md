@@ -98,7 +98,17 @@ Plans:
   3. Cashier can open a shift, record cash float, and close the shift to produce a reconciliation report showing total sales and any cash discrepancy
   4. Cashier can void a completed transaction with a mandatory reason; the void is recorded in the audit log and stock is restored
   5. When the browser has no internet, the POS continues to function — transactions are queued in IndexedDB; when connectivity returns they auto-sync to the server without creating duplicates (idempotency via `client_uuid`); stock conflicts detected at sync time are flagged for cashier resolution
-**Plans**: TBD
+**Plans**: 8 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Wave 0: Drizzle schema (shifts, transactions, transaction_items, transaction_payments, journal_entries stub) + migration SQL + RED test stubs
+- [ ] 03-02-PLAN.md — Wave 1: Accounting stub service (createJournalEntryStub) + POS sale service (completeSale, syncOfflineTx) — atomic transaction POS-11
+- [ ] 03-03-PLAN.md — Wave 1: Shifts module (openShift, closeShift, reconciliation) — parallel with 03-02
+- [ ] 03-04-PLAN.md — Wave 2: Void service + POS router (POST /transactions, /sync, /:id/void) + wire posRouter + shiftsRouter into index.ts
+- [ ] 03-05-PLAN.md — Wave 3: Install @serwist/next + Dexie offline DB + Zustand cart/shift stores + sync manager
+- [ ] 03-06-PLAN.md — Wave 4: POS split-screen UI — ProductPanel (search + barcode + quick-add) + CartPanel (inline editor + totals)
+- [ ] 03-07-PLAN.md — Wave 4: Payment + Receipt — PaymentModal (cash change + QRIS + transfer + split) + ReceiptModal (ESC/POS + WhatsApp) — parallel with 03-06
+- [ ] 03-08-PLAN.md — Wave 5: ShiftDrawer + SyncStatusBar + SyncIssuesPanel + full POS page wiring + human checkpoint
 
 ### Phase 4: Procurement
 **Goal**: The full inbound purchasing workflow — from PO creation through supplier approval to goods receipt — is operational and inventory is updated atomically on receipt
@@ -175,7 +185,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 0. Infrastructure | 11/11 | Complete   | 2026-03-17 |
 | 1. Auth & RBAC | 6/6 | Complete   | 2026-03-17 |
 | 2. Product & Inventory | 6/6 | Complete   | 2026-03-17 |
-| 3. POS with Offline Mode | 0/TBD | Not started | - |
+| 3. POS with Offline Mode | 0/8 | Not started | - |
 | 4. Procurement | 0/TBD | Not started | - |
 | 5. Warehouse Management | 0/TBD | Not started | - |
 | 6. Marketplace Integration | 0/TBD | Not started | - |
