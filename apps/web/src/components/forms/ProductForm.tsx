@@ -25,6 +25,8 @@ export function ProductForm({ open, onClose, onCreated, categories }: ProductFor
   const [ppnType, setPpnType] = useState('TAXABLE')
   const [defaultPrice, setDefaultPrice] = useState('')
   const [defaultCostPrice, setDefaultCostPrice] = useState('')
+  const [initialStock, setInitialStock] = useState('')
+  const [lowStockThreshold, setLowStockThreshold] = useState('')
   const [description, setDescription] = useState('')
 
   function reset() {
@@ -33,6 +35,8 @@ export function ProductForm({ open, onClose, onCreated, categories }: ProductFor
     setPpnType('TAXABLE')
     setDefaultPrice('')
     setDefaultCostPrice('')
+    setInitialStock('')
+    setLowStockThreshold('')
     setDescription('')
   }
 
@@ -48,6 +52,8 @@ export function ProductForm({ open, onClose, onCreated, categories }: ProductFor
         ppnType,
         defaultPrice: parseInt(defaultPrice) || 0,
         defaultCostPrice: parseInt(defaultCostPrice) || 0,
+        initialStock: initialStock ? parseInt(initialStock) : undefined,
+        lowStockThreshold: lowStockThreshold ? parseInt(lowStockThreshold) : undefined,
         description: description.trim() || undefined,
       }
 
@@ -103,6 +109,23 @@ export function ProductForm({ open, onClose, onCreated, categories }: ProductFor
           />
         </div>
 
+        <div className="grid grid-cols-2 gap-3">
+          <Input
+            label="Stok Awal"
+            type="number"
+            placeholder="0"
+            value={initialStock}
+            onChange={e => setInitialStock(e.target.value)}
+          />
+          <Input
+            label="Batas Stok Rendah"
+            type="number"
+            placeholder="10"
+            value={lowStockThreshold}
+            onChange={e => setLowStockThreshold(e.target.value)}
+          />
+        </div>
+
         <Select
           label="Klasifikasi PPN"
           options={[
@@ -121,7 +144,7 @@ export function ProductForm({ open, onClose, onCreated, categories }: ProductFor
         />
 
         <p className="text-xs text-ink-muted">
-          Variant default akan dibuat otomatis dengan SKU auto-generate. Tambah variant lain setelah produk dibuat.
+          Variant default dibuat otomatis dengan SKU auto-generate dan stok awal yang ditentukan. Tambah variant lain setelah produk dibuat.
         </p>
 
         <div className="flex items-center justify-end gap-3 pt-2 border-t border-border-light">

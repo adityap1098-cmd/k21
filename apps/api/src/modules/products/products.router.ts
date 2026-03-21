@@ -13,6 +13,8 @@ const createProductSchema = z.object({
   ppnType: z.enum(['TAXABLE', 'NON_TAXABLE']),
   defaultPrice: z.number().positive(),
   defaultCostPrice: z.number().nonnegative(),
+  initialStock: z.number().int().nonnegative().optional(),
+  lowStockThreshold: z.number().int().nonnegative().optional(),
 })
 
 const updateProductSchema = z.object({

@@ -26,11 +26,13 @@ export async function createProduct(
     ppnType: PpnType
     defaultPrice: number
     defaultCostPrice: number
+    initialStock?: number
+    lowStockThreshold?: number
   },
   userId: string,
   ipAddress: string
 ): Promise<ProductWithVariants> {
-  const { name, description, categoryId, ppnType, defaultPrice, defaultCostPrice } = params
+  const { name, description, categoryId, ppnType, defaultPrice, defaultCostPrice, initialStock, lowStockThreshold } = params
 
   // Validate ppnType at service layer
   if (!VALID_PPN_TYPES.includes(ppnType)) {
@@ -69,8 +71,8 @@ export async function createProduct(
         attributes: {} as VariantAttributes,
         price: String(defaultPrice),
         costPrice: String(defaultCostPrice),
-        stockQty: 0,
-        lowStockThreshold: null,
+        stockQty: initialStock ?? 0,
+        lowStockThreshold: lowStockThreshold ?? null,
       })
       .returning()
 

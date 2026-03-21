@@ -1,0 +1,375 @@
+                                                                    
+● Berikut struktur lengkap website K21 Retail ERP beserta fungsi dan    API yang dibutuhkan setiap halaman:                                 
+                                                                        ---                                                                 
+  Arsitektur Umum                                                                                                                           
+  ┌──────────┬─────────────────────────────────────────────────────┐    │  Layer   │                        Tech                         │    ├──────────┼─────────────────────────────────────────────────────┤    │ Frontend │ Next.js 14, React 18, Zustand, Tailwind CSS, Dexie  │    │          │ (offline)                                           │    ├──────────┼─────────────────────────────────────────────────────┤    │ Backend  │ Express.js, Drizzle ORM, PostgreSQL, Redis, BullMQ  │  
+  ├──────────┼─────────────────────────────────────────────────────┤
+  │ Auth     │ JWT (15min) + Refresh Token (30 hari, httpOnly      │
+  │          │ cookie)                                             │
+  ├──────────┼─────────────────────────────────────────────────────┤
+  │ Roles    │ Owner, Admin, Finance, Cashier, Warehouse Staff     │
+  └──────────┴─────────────────────────────────────────────────────┘
+
+  ---
+  Halaman & Fungsi Per Page
+
+  1. /login — Login Page
+
+  ┌────────────────────────────────────┬──────────────────────────┐
+  │               Fungsi               │       API Endpoint       │
+  ├────────────────────────────────────┼──────────────────────────┤
+  │ Login email + password             │ POST /api/v1/auth/login  │
+  ├────────────────────────────────────┼──────────────────────────┤   
+  │ Auto-refresh token                 │ POST                     │   
+  │                                    │ /api/v1/auth/refresh     │   
+  ├────────────────────────────────────┼──────────────────────────┤   
+  │ Redirect ke /dashboard setelah     │ —                        │   
+  │ login                              │                          │   
+  └────────────────────────────────────┴──────────────────────────┘   
+
+  UI: Form email + password, error handling, loading state
+
+  ---
+  2. /dashboard — Dashboard KPI
+
+  ┌────────────────────────┬──────────────────────────────────────┐   
+  │         Fungsi         │             API Endpoint             │   
+  ├────────────────────────┼──────────────────────────────────────┤   
+  │ Revenue chart          │ GET /api/v1/pos (agregasi)           │   
+  │ (Recharts)             │                                      │   
+  ├────────────────────────┼──────────────────────────────────────┤   
+  │ Ringkasan penjualan    │ GET /api/v1/shifts/active            │   
+  │ hari ini               │                                      │   
+  ├────────────────────────┼──────────────────────────────────────┤   
+  │ Low stock alerts       │ GET                                  │   
+  │                        │ /api/v1/inventory/stock/:variantId   │   
+  ├────────────────────────┼──────────────────────────────────────┤   
+  │ Notifikasi             │ GET /api/v1/notifications            │   
+  └────────────────────────┴──────────────────────────────────────┘   
+
+  UI: KPI cards, revenue chart, alerts panel, recent activity
+
+  ---
+  3. /pos — Point of Sale
+
+  ┌──────────────────────────┬────────────────────────────────────┐   
+  │          Fungsi          │            API Endpoint            │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Browse/search produk     │ GET /api/v1/products?variants=true │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Tambah ke cart (Zustand  │ — (client-side)                    │   
+  │ CartStore)               │                                    │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Apply diskon             │ — (client-side)                    │   
+  │ item/transaksi           │                                    │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Proses pembayaran        │ POST /api/v1/pos/complete-sale     │   
+  │ (Cash/Transfer/QRIS)     │                                    │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Cetak struk (thermal     │ — (client-side)                    │   
+  │ printer via WebSerial)   │                                    │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Kirim struk via WhatsApp │ — (client-side)                    │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Buka/tutup shift         │ POST /api/v1/shifts/open, POST     │   
+  │                          │ /api/v1/shifts/close               │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Cek shift aktif          │ GET /api/v1/shifts/active          │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Rekonsiliasi shift       │ GET /api/v1/shifts/reconciliation  │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Void transaksi           │ POST /api/v1/pos/:id/void          │   
+  ├──────────────────────────┼────────────────────────────────────┤   
+  │ Sync offline             │ POST /api/v1/pos/sync-offline-tx   │   
+  │ transactions             │                                    │   
+  └──────────────────────────┴────────────────────────────────────┘   
+
+  Komponen:
+  - ProductPanel — grid/list produk + search + barcode scan
+  - CartPanel — daftar item di cart, qty, diskon
+  - PaymentModal — pilih metode bayar, input nominal
+  - ReceiptModal — preview & cetak struk
+  - ShiftDrawer — buka/tutup shift
+  - SyncStatusBar — status koneksi offline/online
+  - SyncIssuesPanel — detail error sync
+
+  Sub-modul POS: Service (Bengkel)
+
+  ┌──────────────────────┬────────────────────────────────────────┐   
+  │        Fungsi        │              API Endpoint              │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Pilih tipe transaksi │ — (client-side)                        │   
+  │  (POS/Service)       │                                        │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Buat service order   │ POST /api/v1/service-orders            │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ List open orders     │ GET /api/v1/service-orders             │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Update status kerja  │ PATCH                                  │   
+  │                      │ /api/v1/service-orders/:id/work-status │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Pilih jasa/sparepart │ GET /api/v1/service-catalog            │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Input customer +     │ POST /api/v1/customers, POST           │   
+  │ kendaraan            │ /api/v1/vehicles                       │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Search customer      │ GET /api/v1/customers/search           │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Search kendaraan by  │ GET /api/v1/vehicles/search/plate      │   
+  │ plat                 │                                        │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Bayar service order  │ POST                                   │   
+  │                      │ /api/v1/service-orders/:id/payments    │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Lihat riwayat        │ GET /api/v1/service-orders (filtered)  │   
+  │ service              │                                        │   
+  ├──────────────────────┼────────────────────────────────────────┤   
+  │ Lihat                │ GET /api/v1/service-orders (filtered)  │   
+  │ piutang/receivables  │                                        │   
+  └──────────────────────┴────────────────────────────────────────┘   
+
+  Komponen Service:
+  - TransactionTypeSelector — toggle POS vs Service
+  - ServiceFlow — main workflow orchestrator
+  - ServiceOrderPanel — create/manage order
+  - ServiceProductSelector — pilih jasa & part
+  - CustomerVehicleForm — input data pelanggan & kendaraan
+  - OpenOrdersList — daftar order aktif
+  - ServicePaymentModal — pembayaran service
+  - ServiceHistoryView — histori service
+  - ReceivablesView — piutang outstanding
+
+  ---
+  4. /products — Manajemen Produk
+
+  ┌──────────────────┬────────────────────────────────────────────┐   
+  │      Fungsi      │                API Endpoint                │   
+  ├──────────────────┼────────────────────────────────────────────┤   
+  │ List semua       │ GET /api/v1/products                       │   
+  │ produk           │                                            │   
+  ├──────────────────┼────────────────────────────────────────────┤   
+  │ Tambah produk    │ POST /api/v1/products                      │   
+  │ baru             │                                            │   
+  ├──────────────────┼────────────────────────────────────────────┤   
+  │ Edit produk      │ PATCH /api/v1/products/:id                 │   
+  ├──────────────────┼────────────────────────────────────────────┤   
+  │ Tambah varian    │ POST /api/v1/products/:id/variants         │   
+  │ (SKU)            │                                            │   
+  ├──────────────────┼────────────────────────────────────────────┤   
+  │ Edit varian      │ PATCH /api/v1/products/variants/:id        │   
+  ├──────────────────┼────────────────────────────────────────────┤   
+  │ CRUD kategori    │ GET/POST /api/v1/categories, PATCH/DELETE  │   
+  │                  │ /:id                                       │   
+  └──────────────────┴────────────────────────────────────────────┘   
+
+  Komponen: ProductForm, EditProductForm, CategoryForm
+  UI: Tabel produk, modal form, filter by kategori, search
+
+  ---
+  5. /inventory — Stok & Pergerakan Barang
+
+  ┌────────────────────────┬──────────────────────────────────────┐   
+  │         Fungsi         │             API Endpoint             │   
+  ├────────────────────────┼──────────────────────────────────────┤   
+  │ Lihat stok per varian  │ GET                                  │   
+  │                        │ /api/v1/inventory/stock/:variantId   │   
+  ├────────────────────────┼──────────────────────────────────────┤   
+  │ Catat pergerakan stok  │ POST /api/v1/inventory/movements     │   
+  ├────────────────────────┼──────────────────────────────────────┤   
+  │ Stock opname (fisik vs │ POST /api/v1/inventory/opname        │   
+  │  sistem)               │                                      │   
+  ├────────────────────────┼──────────────────────────────────────┤   
+  │ Lihat reservasi stok   │ GET /api/v1/inventory/reservations   │   
+  └────────────────────────┴──────────────────────────────────────┘   
+
+  UI: Tabel stok, filter, movement history (append-only), opname form 
+
+  ---
+  6. /warehouse — Manajemen Gudang
+
+  ┌──────────────────┬────────────────────────────────────────────┐   
+  │      Fungsi      │                API Endpoint                │   
+  ├──────────────────┼────────────────────────────────────────────┤   
+  │ Overview gudang  │ GET /api/v1/inventory/stock                │   
+  ├──────────────────┼────────────────────────────────────────────┤   
+  │ Transfer antar   │ POST /api/v1/inventory/movements (type:    │   
+  │ lokasi           │ TRANSFER)                                  │   
+  └──────────────────┴────────────────────────────────────────────┘   
+
+  UI: Layout gudang, stok per lokasi, transfer form
+
+  ---
+  7. /procurement — Purchase Orders
+
+  ┌─────────────────────┬─────────────────────────────────────────┐   
+  │       Fungsi        │              API Endpoint               │   
+  ├─────────────────────┼─────────────────────────────────────────┤   
+  │ List PO             │ GET /api/v1/procurement                 │   
+  ├─────────────────────┼─────────────────────────────────────────┤   
+  │ Buat PO baru        │ POST /api/v1/procurement                │   
+  ├─────────────────────┼─────────────────────────────────────────┤   
+  │ Edit PO             │ PATCH /api/v1/procurement/:id           │   
+  ├─────────────────────┼─────────────────────────────────────────┤   
+  │ Approve PO          │ POST /api/v1/procurement/:id/approve    │   
+  ├─────────────────────┼─────────────────────────────────────────┤   
+  │ Terima barang       │ POST                                    │   
+  │ (goods receipt)     │ /api/v1/procurement/:id/receive-goods   │   
+  └─────────────────────┴─────────────────────────────────────────┘   
+
+  Status flow: DRAFT → PENDING_APPROVAL → APPROVED →
+  PARTIALLY_RECEIVED → RECEIVED
+  UI: Tabel PO, form create/edit, approval workflow, goods receipt    
+  form
+
+  ---
+  8. /users — Manajemen User (Admin/Owner only)
+
+  ┌─────────────┬──────────────────────────┐
+  │   Fungsi    │       API Endpoint       │
+  ├─────────────┼──────────────────────────┤
+  │ List users  │ GET /api/v1/users        │
+  ├─────────────┼──────────────────────────┤
+  │ Tambah user │ POST /api/v1/users       │
+  ├─────────────┼──────────────────────────┤
+  │ Edit user   │ PATCH /api/v1/users/:id  │
+  ├─────────────┼──────────────────────────┤
+  │ Hapus user  │ DELETE /api/v1/users/:id │
+  └─────────────┴──────────────────────────┘
+
+  Komponen: UserForm (email, password, role selector)
+  Roles: Owner, Admin, Finance, Cashier, Warehouse Staff
+
+  ---
+  9. /payroll — Penggajian (Finance/Owner)
+
+  ┌──────────────────────┬────────────────────┐
+  │        Fungsi        │    API Endpoint    │
+  ├──────────────────────┼────────────────────┤
+  │ List karyawan & gaji │ TBD (Phase future) │
+  ├──────────────────────┼────────────────────┤
+  │ Hitung gaji bulanan  │ TBD                │
+  ├──────────────────────┼────────────────────┤
+  │ Slip gaji            │ TBD                │
+  └──────────────────────┴────────────────────┘
+
+  UI: Tabel payroll, kalkulasi, export
+
+  ---
+  10. /reports — Laporan & Analitik (Finance/Owner)
+
+  ┌───────────────────┬───────────────────────────────────┐
+  │      Fungsi       │           API Endpoint            │
+  ├───────────────────┼───────────────────────────────────┤
+  │ Laporan penjualan │ Agregasi dari transactions        │
+  ├───────────────────┼───────────────────────────────────┤
+  │ Laporan stok      │ Agregasi dari inventory_movements │
+  ├───────────────────┼───────────────────────────────────┤
+  │ Laporan laba/rugi │ Agregasi dari journal_entries     │
+  ├───────────────────┼───────────────────────────────────┤
+  │ Export laporan    │ TBD                               │
+  └───────────────────┴───────────────────────────────────┘
+
+  Komponen: RevenueChart (Recharts), date range picker, filter        
+  UI: Charts, tabel summary, date range filter, export button
+
+  ---
+  11. /marketplace — Integrasi Shopee/TikTok
+
+  ┌────────────────────────────┬────────────────────┐
+  │           Fungsi           │    API Endpoint    │
+  ├────────────────────────────┼────────────────────┤
+  │ Sync produk ke marketplace │ TBD (Phase future) │
+  ├────────────────────────────┼────────────────────┤
+  │ Sync pesanan masuk         │ TBD                │
+  ├────────────────────────────┼────────────────────┤
+  │ Update stok otomatis       │ TBD                │
+  └────────────────────────────┴────────────────────┘
+
+  UI: Marketplace connection status, product sync, order list
+
+  ---
+  12. /settings — Pengaturan Sistem (Admin/Owner)
+
+  ┌───────────────────┬──────────────────┐
+  │      Fungsi       │   API Endpoint   │
+  ├───────────────────┼──────────────────┤
+  │ Profil toko       │ TBD              │
+  ├───────────────────┼──────────────────┤
+  │ Konfigurasi pajak │ TBD              │
+  ├───────────────────┼──────────────────┤
+  │ Integrasi printer │ WebSerial config │
+  ├───────────────────┼──────────────────┤
+  │ Backup & restore  │ TBD              │
+  └───────────────────┴──────────────────┘
+
+  UI: Settings form, tab-based navigation
+
+  ---
+  Database Tables (26 tabel)
+
+  ┌─────────────┬──────────────────────────────────────────────────┐  
+  │   Domain    │                      Tables                      │  
+  ├─────────────┼──────────────────────────────────────────────────┤  
+  │ Auth        │ users, refresh_tokens, audit_logs                │  
+  ├─────────────┼──────────────────────────────────────────────────┤  
+  │ Katalog     │ categories, products, product_variants           │  
+  ├─────────────┼──────────────────────────────────────────────────┤  
+  │ Inventori   │ inventory_movements, stock_reservations          │  
+  ├─────────────┼──────────────────────────────────────────────────┤  
+  │ POS         │ shifts, transactions, transaction_items,         │  
+  │             │ transaction_payments                             │  
+  ├─────────────┼──────────────────────────────────────────────────┤  
+  │             │ customers, vehicles, service_catalog,            │  
+  │ Service     │ service_orders, service_order_items,             │  
+  │             │ service_payments                                 │  
+  ├─────────────┼──────────────────────────────────────────────────┤  
+  │ Procurement │ purchase_orders, purchase_order_items,           │  
+  │             │ goods_receipts                                   │  
+  ├─────────────┼──────────────────────────────────────────────────┤  
+  │ Finance     │ journal_entries                                  │  
+  ├─────────────┼──────────────────────────────────────────────────┤  
+  │ Notifikasi  │ notifications                                    │  
+  └─────────────┴──────────────────────────────────────────────────┘  
+
+  ---
+  Shared Components (semua halaman)
+
+  ┌─────────────────┬───────────────────────────────────┐
+  │    Komponen     │              Fungsi               │
+  ├─────────────────┼───────────────────────────────────┤
+  │ AppShell        │ Root wrapper                      │
+  ├─────────────────┼───────────────────────────────────┤
+  │ AuthGuard       │ Proteksi route, redirect ke login │
+  ├─────────────────┼───────────────────────────────────┤
+  │ DashboardLayout │ Sidebar + main content            │
+  ├─────────────────┼───────────────────────────────────┤
+  │ Sidebar         │ Navigasi role-based               │
+  ├─────────────────┼───────────────────────────────────┤
+  │ Modal           │ Dialog generic                    │
+  ├─────────────────┼───────────────────────────────────┤
+  │ Toast           │ Notifikasi                        │
+  ├─────────────────┼───────────────────────────────────┤
+  │ ThemeToggle     │ Dark/light mode                   │
+  ├─────────────────┼───────────────────────────────────┤
+  │ ActionMenu      │ Dropdown menu                     │
+  ├─────────────────┼───────────────────────────────────┤
+  │ DateRangePicker │ Filter tanggal                    │
+  └─────────────────┴───────────────────────────────────┘
+
+  ---
+  State Management (Zustand)
+
+  ┌────────────┬───────────────────────────────────────────┐
+  │   Store    │                   Scope                   │
+  ├────────────┼───────────────────────────────────────────┤
+  │ CartStore  │ Items, qty, diskon, clear cart            │
+  ├────────────┼───────────────────────────────────────────┤
+  │ ShiftStore │ Shift status, opening float, closing cash │
+  └────────────┴───────────────────────────────────────────┘
+
+  ---
+  Offline & PWA
+
+  - Service Worker (sw.ts) untuk PWA
+  - Dexie (IndexedDB) untuk queue transaksi offline
+  - SyncManager untuk auto-sync saat online kembali
