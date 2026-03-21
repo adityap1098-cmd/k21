@@ -7,6 +7,7 @@ import { productsRouter } from './modules/products/index.js'
 import { inventoryRouter } from './modules/inventory/index.js'
 import { posRouter } from './modules/pos/index.js'
 import { shiftsRouter } from './modules/shifts/index.js'
+import { procurementRouter } from './modules/procurement/index.js'
 import { createLowStockWorker } from './queues/lowstock.queue.js'
 
 export const app = express()
@@ -44,6 +45,9 @@ v1Router.use('/inventory', inventoryRouter)
 // Phase 3: POS & Shifts
 v1Router.use('/pos', posRouter)
 v1Router.use('/shifts', shiftsRouter)
+
+// Phase 4: Procurement
+v1Router.use('/procurement', procurementRouter)
 
 // Only start listening when run directly (not during tests)
 if (process.env.NODE_ENV !== 'test') {
