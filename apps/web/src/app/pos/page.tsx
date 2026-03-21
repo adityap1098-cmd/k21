@@ -15,7 +15,12 @@ import { useAutoSyncCatalog } from '@/lib/catalog'
 import { computeCartTotals, useCartStore } from '@/lib/store/cart.store'
 import type { ReceiptData } from '@/lib/receipt/encoder'
 import { TransactionTypeSelector } from '@/components/pos/service/TransactionTypeSelector'
-import { ServiceFlow } from '@/components/pos/service/ServiceFlow'
+import dynamic from 'next/dynamic'
+
+const ServiceFlow = dynamic(
+  () => import('@/components/pos/service/ServiceFlow').then(m => ({ default: m.ServiceFlow })),
+  { ssr: false, loading: () => <div className="flex-1 flex items-center justify-center"><div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin" /></div> }
+)
 
 export default function PosPage() {
   const { activeShift, setActiveShift } = useShiftStore()

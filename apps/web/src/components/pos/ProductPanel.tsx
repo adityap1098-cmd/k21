@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, memo, useCallback } from 'react'
 import { useCatalogSearch, getQuickAddProducts, type CatalogProduct } from '@/lib/catalog'
 import { useCartStore } from '@/lib/store/cart.store'
 
@@ -13,7 +13,7 @@ interface ProductTileProps {
   onAdd: (product: CatalogProduct) => void
 }
 
-function ProductTile({ product, onAdd }: ProductTileProps) {
+const ProductTile = memo(function ProductTile({ product, onAdd }: ProductTileProps) {
   return (
     <button
       onClick={() => onAdd(product)}
@@ -24,14 +24,14 @@ function ProductTile({ product, onAdd }: ProductTileProps) {
       <span className="text-sm font-semibold text-brand">{formatRupiah(product.price)}</span>
     </button>
   )
-}
+})
 
 interface SearchResultRowProps {
   product: CatalogProduct
   onAdd: (product: CatalogProduct) => void
 }
 
-function SearchResultRow({ product, onAdd }: SearchResultRowProps) {
+const SearchResultRow = memo(function SearchResultRow({ product, onAdd }: SearchResultRowProps) {
   return (
     <div className="flex items-center justify-between px-4 py-3 border-b border-border-light hover:bg-surface">
       <div className="flex-1 min-w-0">
@@ -50,7 +50,7 @@ function SearchResultRow({ product, onAdd }: SearchResultRowProps) {
       </div>
     </div>
   )
-}
+})
 
 export function ProductPanel() {
   const [query, setQuery] = useState('')
@@ -59,6 +59,10 @@ export function ProductPanel() {
   const { addItem } = useCartStore()
 
   const searchResults = useCatalogSearch(query)
+
+  const handleAdd = useCallback((product: CatalogProduct) => {
+    addItem({ variantId: product.variantId, name: product.name, unitPrice: product.price })
+  }, [addItem])
 
   useEffect(() => {
     getQuickAddProducts().then(setQuickAddProducts).catch(() => setQuickAddProducts([]))
@@ -75,10 +79,6 @@ export function ProductPanel() {
     }
   }, [searchResults, query, addItem])
 
-  function handleAdd(product: CatalogProduct) {
-    addItem({ variantId: product.variantId, name: product.name, unitPrice: product.price })
-  }
-
   const showSearch = query.trim().length > 0
 
   return (
@@ -91,6 +91,7 @@ export function ProductPanel() {
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Scan barcode or search product..."
+          aria-label="Cari produk atau scan barcode"
           className="w-full px-4 py-3 border border-border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-brand"
           autoFocus
         />
