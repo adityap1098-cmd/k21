@@ -25,6 +25,7 @@ serviceCatalogRouter.get('/', authenticate, async (req, res) => {
     const data = await getServiceCatalog()
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[service-catalog] GET / failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -39,6 +40,7 @@ serviceCatalogRouter.get('/:id', authenticate, async (req, res) => {
     if (message === 'SERVICE_CATALOG_ITEM_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-catalog] GET /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -57,6 +59,7 @@ serviceCatalogRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Cash
     const data = await createServiceItem(parsed.data, req.user!.sub, ipAddress)
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[service-catalog] POST / failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -78,6 +81,7 @@ serviceCatalogRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner', '
     if (message === 'SERVICE_CATALOG_ITEM_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-catalog] PATCH /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }

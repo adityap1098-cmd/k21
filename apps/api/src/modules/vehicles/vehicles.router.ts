@@ -37,6 +37,7 @@ vehiclesRouter.get('/', authenticate, async (req, res) => {
     const data = await getVehicles(customerId ? { customerId } : undefined)
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[vehicles] GET / failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -48,6 +49,7 @@ vehiclesRouter.get('/search', authenticate, async (req, res) => {
     const data = await searchByPlateNumber(plateNumber)
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[vehicles] GET /search failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -62,6 +64,7 @@ vehiclesRouter.get('/:id', authenticate, async (req, res) => {
     if (message === 'VEHICLE_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[vehicles] GET /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -86,6 +89,7 @@ vehiclesRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Cashier'),
     } else if (message === 'DUPLICATE_PLATE_NUMBER') {
       res.status(409).json({ success: false, data: null, error: message })
     } else {
+      console.error('[vehicles] POST / failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -110,6 +114,7 @@ vehiclesRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner', 'Cashie
     } else if (message === 'DUPLICATE_PLATE_NUMBER') {
       res.status(409).json({ success: false, data: null, error: message })
     } else {
+      console.error('[vehicles] PATCH /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }

@@ -63,6 +63,7 @@ serviceOrdersRouter.get('/', authenticate, async (req, res) => {
     const data = await getOpenServiceOrders()
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[service-orders] GET / failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -74,6 +75,7 @@ serviceOrdersRouter.get('/receivables', authenticate, async (req, res) => {
     const data = await getReceivables(customerId)
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[service-orders] GET /receivables failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -84,6 +86,7 @@ serviceOrdersRouter.get('/history/:plateNumber', authenticate, async (req, res) 
     const data = await getServiceHistory(req.params.plateNumber)
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[service-orders] GET /history failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -98,6 +101,7 @@ serviceOrdersRouter.get('/:id', authenticate, async (req, res) => {
     if (message === 'SERVICE_ORDER_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] GET /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -124,6 +128,7 @@ serviceOrdersRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Cashi
     if (message === 'VEHICLE_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] POST / failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -148,6 +153,7 @@ serviceOrdersRouter.patch('/:id/status', authenticate, requireRole('Admin', 'Own
     } else if (message === 'INVALID_STATUS_TRANSITION') {
       res.status(422).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] PATCH /:id/status failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -170,6 +176,7 @@ serviceOrdersRouter.patch('/:id/mechanic', authenticate, requireRole('Admin', 'O
     if (message === 'SERVICE_ORDER_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] PATCH /:id/mechanic failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -192,6 +199,7 @@ serviceOrdersRouter.patch('/:id/estimate', authenticate, requireRole('Admin', 'O
     if (message === 'SERVICE_ORDER_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] PATCH /:id/estimate failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -210,6 +218,7 @@ serviceOrdersRouter.post('/:id/complete', authenticate, requireRole('Admin', 'Ow
     } else if (message === 'ORDER_NOT_IN_PROGRESS' || message === 'INSUFFICIENT_STOCK') {
       res.status(422).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] POST /:id/complete failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -239,6 +248,7 @@ serviceOrdersRouter.post('/:id/payments', authenticate, requireRole('Admin', 'Ow
     } else if (message === 'ORDER_NOT_COMPLETED' || message === 'OVERPAYMENT') {
       res.status(422).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] POST /:id/payments failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -250,6 +260,7 @@ serviceOrdersRouter.get('/:id/items', authenticate, async (req, res) => {
     const data = await getLineItems(req.params.id)
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[service-orders] GET /:id/items failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -279,6 +290,7 @@ serviceOrdersRouter.post('/:id/items', authenticate, requireRole('Admin', 'Owner
     } else if (message === 'LINE_ITEM_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] POST /:id/items failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -301,6 +313,7 @@ serviceOrdersRouter.delete('/:id/items/:itemId', authenticate, requireRole('Admi
     } else if (message === 'SERVICE_ORDER_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[service-orders] DELETE /:id/items/:itemId failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }

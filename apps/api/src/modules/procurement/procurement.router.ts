@@ -16,6 +16,31 @@ export const procurementRouter = Router()
 
 procurementRouter.use(authenticate)
 
+// --- Known error codes (safe to expose to client) ---
+
+const KNOWN_ERRORS = [
+  'PO_NOT_FOUND',
+  'INVALID_STATUS_TRANSITION',
+  'INSUFFICIENT_STOCK',
+  'ALREADY_APPROVED',
+  'PO_ITEM_NOT_FOUND',
+  'OVER_RECEIVE',
+  'RECEIVE_QTY_EXCEEDS_ORDERED',
+] as const
+
+function toSafeError(err: any): { status: number; message: string } {
+  if (err.name === 'ZodError') {
+    return { status: 400, message: err.errors }
+  }
+  if (err.message === 'PO_NOT_FOUND') {
+    return { status: 404, message: err.message }
+  }
+  if (KNOWN_ERRORS.includes(err.message)) {
+    return { status: 422, message: err.message }
+  }
+  return { status: 500, message: 'Internal server error' }
+}
+
 // --- Zod Schemas ---
 
 const createPOSchema = z.object({
@@ -61,11 +86,9 @@ procurementRouter.post(
       })
       res.status(201).json({ success: true, data: result, error: null })
     } catch (err: any) {
-      if (err.name === 'ZodError') {
-        res.status(400).json({ success: false, data: null, error: err.errors })
-        return
-      }
-      res.status(500).json({ success: false, data: null, error: err.message })
+      const { status, message } = toSafeError(err)
+      if (status === 500) console.error('[procurement] POST /purchase-orders failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )
@@ -83,15 +106,9 @@ procurementRouter.post(
       )
       res.json({ success: true, data: result, error: null })
     } catch (err: any) {
-      if (err.message === 'PO_NOT_FOUND') {
-        res.status(404).json({ success: false, data: null, error: err.message })
-        return
-      }
-      if (err.message === 'INVALID_STATUS_TRANSITION') {
-        res.status(409).json({ success: false, data: null, error: err.message })
-        return
-      }
-      res.status(500).json({ success: false, data: null, error: err.message })
+      const { status, message } = toSafeError(err)
+      if (status === 500) console.error('[procurement] POST /purchase-orders/:id/submit failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )
@@ -108,15 +125,9 @@ procurementRouter.post(
       })
       res.json({ success: true, data: result, error: null })
     } catch (err: any) {
-      if (err.message === 'PO_NOT_FOUND') {
-        res.status(404).json({ success: false, data: null, error: err.message })
-        return
-      }
-      if (err.message === 'INVALID_STATUS_TRANSITION') {
-        res.status(409).json({ success: false, data: null, error: err.message })
-        return
-      }
-      res.status(500).json({ success: false, data: null, error: err.message })
+      const { status, message } = toSafeError(err)
+      if (status === 500) console.error('[procurement] POST /purchase-orders/:id/approve failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )
@@ -133,15 +144,9 @@ procurementRouter.post(
       })
       res.json({ success: true, data: result, error: null })
     } catch (err: any) {
-      if (err.message === 'PO_NOT_FOUND') {
-        res.status(404).json({ success: false, data: null, error: err.message })
-        return
-      }
-      if (err.message === 'INVALID_STATUS_TRANSITION') {
-        res.status(409).json({ success: false, data: null, error: err.message })
-        return
-      }
-      res.status(500).json({ success: false, data: null, error: err.message })
+      const { status, message } = toSafeError(err)
+      if (status === 500) console.error('[procurement] POST /purchase-orders/:id/cancel failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )
@@ -161,19 +166,9 @@ procurementRouter.post(
       })
       res.json({ success: true, data: result, error: null })
     } catch (err: any) {
-      if (err.name === 'ZodError') {
-        res.status(400).json({ success: false, data: null, error: err.errors })
-        return
-      }
-      if (err.message === 'PO_NOT_FOUND') {
-        res.status(404).json({ success: false, data: null, error: err.message })
-        return
-      }
-      if (['INVALID_STATUS_TRANSITION', 'RECEIVE_QTY_EXCEEDS_ORDERED', 'PO_ITEM_NOT_FOUND'].includes(err.message)) {
-        res.status(409).json({ success: false, data: null, error: err.message })
-        return
-      }
-      res.status(500).json({ success: false, data: null, error: err.message })
+      const { status, message } = toSafeError(err)
+      if (status === 500) console.error('[procurement] POST /purchase-orders/:id/receive failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )
@@ -187,11 +182,9 @@ procurementRouter.get(
       const result = await getPurchaseOrder(req.params.id)
       res.json({ success: true, data: result, error: null })
     } catch (err: any) {
-      if (err.message === 'PO_NOT_FOUND') {
-        res.status(404).json({ success: false, data: null, error: err.message })
-        return
-      }
-      res.status(500).json({ success: false, data: null, error: err.message })
+      const { status, message } = toSafeError(err)
+      if (status === 500) console.error('[procurement] GET /purchase-orders/:id failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )
@@ -208,7 +201,8 @@ procurementRouter.get(
       const result = await listPurchaseOrders({ status, page, limit })
       res.json({ success: true, data: result, error: null })
     } catch (err: any) {
-      res.status(500).json({ success: false, data: null, error: err.message })
+      console.error('[procurement] GET /purchase-orders failed:', err)
+      res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
 )

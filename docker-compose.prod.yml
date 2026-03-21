@@ -29,7 +29,7 @@ services:
   # cannot be reloaded from inside the container. A host cron job handles this.
   # Install it once (and on every deploy) via: bash scripts/install-vps-crons.sh
   certbot:
-    image: certbot/certbot
+    image: certbot/certbot:v2.11.0
     volumes:
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
@@ -47,7 +47,7 @@ services:
         max-file: "5"
 
   netdata:
-    image: netdata/netdata
+    image: netdata/netdata:v1.47.5
     pid: host
     network_mode: host
     cap_add:

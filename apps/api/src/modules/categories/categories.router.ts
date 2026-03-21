@@ -20,6 +20,7 @@ categoriesRouter.get('/', authenticate, async (req, res) => {
     const data = await getCategories()
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[categories] GET / failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -40,6 +41,7 @@ categoriesRouter.post('/', authenticate, requireRole('Admin', 'Owner'), async (r
     if (message === 'GRANDCHILD_NOT_ALLOWED') {
       res.status(400).json({ success: false, data: null, error: message })
     } else {
+      console.error('[categories] POST / failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -61,6 +63,7 @@ categoriesRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner'), asyn
     if (message === 'CATEGORY_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[categories] PATCH /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -76,6 +79,7 @@ categoriesRouter.delete('/:id', authenticate, requireRole('Admin', 'Owner'), asy
     if (message === 'CATEGORY_HAS_PRODUCTS') {
       res.status(409).json({ success: false, data: null, error: message })
     } else {
+      console.error('[categories] DELETE /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }

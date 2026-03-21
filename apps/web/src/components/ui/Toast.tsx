@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useCallback, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { clsx } from 'clsx'
 import { X, CheckCircle2, AlertTriangle, Info } from 'lucide-react'
 
@@ -51,8 +51,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
+  const contextValue = useMemo(() => ({ toast: addToast }), [addToast])
+
   return (
-    <ToastContext.Provider value={{ toast: addToast }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       {/* Toast container — live region for screen reader announcements */}
       <div

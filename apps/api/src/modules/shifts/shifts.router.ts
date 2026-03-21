@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { authenticate } from '../../middleware/authenticate.js'
 import { requireRole } from '../../middleware/require-role.js'
-import { openShift, closeShift, getShiftReconciliation } from './shifts.service.js'
+import { openShift, closeShift, getShiftReconciliation, getActiveShift } from './shifts.service.js'
 
 export const shiftsRouter = Router()
 
@@ -37,6 +37,7 @@ shiftsRouter.get(
       const shift = await getActiveShift(req.user!.sub)
       res.json({ success: true, data: shift, error: null })
     } catch (err) {
+      console.error('[shifts] GET /active failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   },
@@ -68,7 +69,8 @@ shiftsRouter.post(
       if (message === 'SHIFT_ALREADY_OPEN') {
         res.status(409).json({ success: false, data: null, error: 'A shift is already open' })
       } else {
-        res.status(500).json({ success: false, data: null, error: message })
+        console.error('[shifts] POST /open failed:', err)
+        res.status(500).json({ success: false, data: null, error: 'Internal server error' })
       }
     }
   }
@@ -112,7 +114,8 @@ shiftsRouter.post(
       } else if (message === 'SHIFT_NOT_OPEN') {
         res.status(409).json({ success: false, data: null, error: 'Shift is not open' })
       } else {
-        res.status(500).json({ success: false, data: null, error: message })
+        console.error('[shifts] POST /close failed:', err)
+        res.status(500).json({ success: false, data: null, error: 'Internal server error' })
       }
     }
   }
@@ -138,7 +141,8 @@ shiftsRouter.get(
       if (message === 'SHIFT_NOT_FOUND') {
         res.status(404).json({ success: false, data: null, error: 'Shift not found' })
       } else {
-        res.status(500).json({ success: false, data: null, error: message })
+        console.error('[shifts] GET /:id/reconciliation failed:', err)
+        res.status(500).json({ success: false, data: null, error: 'Internal server error' })
       }
     }
   }

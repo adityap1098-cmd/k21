@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto'
+import { randomUUID, randomBytes } from 'crypto'
 import { eq, sql, and, inArray } from 'drizzle-orm'
 import { db } from '../../db/index.js'
 import {
@@ -19,7 +19,7 @@ type DrizzleTx = Parameters<Parameters<typeof db.transaction>[0]>[0]
 function generatePoNumber(): string {
   const now = new Date()
   const date = now.toISOString().slice(0, 10).replace(/-/g, '')
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase()
+  const rand = randomBytes(3).toString('hex').slice(0, 4).toUpperCase()
   return `PO-${date}-${rand}`
 }
 
@@ -235,6 +235,8 @@ export async function receiveGoods(params: ReceiveGoodsParams) {
     .from(purchaseOrderItems)
     .where(eq(purchaseOrderItems.purchaseOrderId, params.purchaseOrderId))
 
+  const poItemMap = new Map(poItems.map(i => [i.id, i]))
+
   // Fetch existing receipts for this PO
   const existingReceipts = await db
     .select()
@@ -249,7 +251,7 @@ export async function receiveGoods(params: ReceiveGoodsParams) {
 
   // Validate quantities
   for (const receiveItem of params.items) {
-    const poItem = poItems.find((i) => i.id === receiveItem.itemId)
+    const poItem = poItemMap.get(receiveItem.itemId)
     if (!poItem) throw new Error('PO_ITEM_NOT_FOUND')
 
     const alreadyReceived = receivedMap.get(receiveItem.itemId) ?? 0
@@ -264,7 +266,7 @@ export async function receiveGoods(params: ReceiveGoodsParams) {
     const executor = tx as unknown as typeof db
 
     for (const receiveItem of params.items) {
-      const poItem = poItems.find((i) => i.id === receiveItem.itemId)!
+      const poItem = poItemMap.get(receiveItem.itemId)!
       const receiptId = randomUUID()
       receiptIds.push(receiptId)
 
@@ -298,7 +300,7 @@ export async function receiveGoods(params: ReceiveGoodsParams) {
 
     // Journal entry stub for the receipt
     const receiptTotal = params.items.reduce((sum, item) => {
-      const poItem = poItems.find((i) => i.id === item.itemId)!
+      const poItem = poItemMap.get(item.itemId)!
       return sum + item.qtyReceived * parseFloat(poItem.unitCost)
     }, 0)
 
@@ -333,10 +335,8 @@ export async function receiveGoods(params: ReceiveGoodsParams) {
   })
 
   // Invalidate stock cache after commit
-  for (const receiveItem of params.items) {
-    const poItem = poItems.find((i) => i.id === receiveItem.itemId)!
-    await invalidateStockCache(poItem.variantId)
-  }
+  const variantIdsToInvalidate = params.items.map(ri => poItemMap.get(ri.itemId)!.variantId)
+  await Promise.all([...new Set(variantIdsToInvalidate)].map(id => invalidateStockCache(id)))
 
   // Audit log
   await logAudit({

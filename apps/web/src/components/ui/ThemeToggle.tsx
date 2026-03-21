@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 
 type Theme = 'light' | 'dark'
@@ -28,11 +28,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const toggle = useCallback(() => {
-    const next = theme === 'light' ? 'dark' : 'light'
-    setTheme(next)
-    localStorage.setItem('k21-theme', next)
-    document.documentElement.setAttribute('data-theme', next)
-  }, [theme])
+    setTheme(prev => {
+      const next = prev === 'light' ? 'dark' : 'light'
+      localStorage.setItem('k21-theme', next)
+      document.documentElement.setAttribute('data-theme', next)
+      return next
+    })
+  }, [])
+
+  const contextValue = useMemo(() => ({ theme, toggle }), [theme, toggle])
 
   // During SSR / static generation, render children without theme context
   // This prevents the webpack runtime error during prerendering
@@ -41,7 +45,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggle }}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   )

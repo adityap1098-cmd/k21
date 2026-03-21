@@ -1,5 +1,7 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
+import compression from 'compression'
+import helmet from 'helmet'
 import { authRouter } from './modules/auth/index.js'
 import { usersRouter } from './modules/users/index.js'
 import { categoriesRouter } from './modules/categories/index.js'
@@ -20,8 +22,10 @@ const PORT = process.env.PORT ?? 3001
 // Trust Nginx X-Forwarded-For header for correct req.ip in audit_logs
 app.set('trust proxy', 1)
 
-app.use(express.json())
+app.use(express.json({ limit: '1mb' }))
 app.use(cookieParser()) // Must be before routes
+app.use(helmet({ contentSecurityPolicy: false })) // CSP handled by Next.js
+app.use(compression())
 
 // Fail-fast: JWT_SECRET required in production
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
@@ -61,9 +65,19 @@ v1Router.use('/service-orders', serviceOrdersRouter)
 
 // Only start listening when run directly (not during tests)
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`K21 API listening on port ${PORT}`)
   })
-  createLowStockWorker()
+  const worker = createLowStockWorker()
   console.log('[startup] low-stock worker started')
+
+  // Graceful shutdown
+  const shutdown = async () => {
+    console.log('[shutdown] Closing server...')
+    server.close()
+    await worker.close()
+    process.exit(0)
+  }
+  process.on('SIGTERM', shutdown)
+  process.on('SIGINT', shutdown)
 }

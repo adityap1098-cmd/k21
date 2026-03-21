@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto'
+import { randomUUID, randomBytes } from 'crypto'
 import { eq, and, not, sql, inArray } from 'drizzle-orm'
 import { db } from '../../db/index.js'
 import { serviceOrders, serviceOrderItems, servicePayments, vehicles, customers } from '../../db/schema/index.js'
@@ -16,7 +16,7 @@ type DrizzleTx = Parameters<Parameters<typeof db.transaction>[0]>[0]
 function generateSoNumber(): string {
   const now = new Date()
   const date = now.toISOString().slice(0, 10).replace(/-/g, '')
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase()
+  const rand = randomBytes(3).toString('hex').slice(0, 4).toUpperCase()
   return `SO-${date}-${rand}`
 }
 
@@ -435,9 +435,7 @@ export async function completeServiceOrder(
   })
 
   // 9. Invalidate stock cache AFTER transaction commits (not inside)
-  for (const variantId of partVariantIds) {
-    await invalidateStockCache(variantId)
-  }
+  await Promise.all(partVariantIds.map(id => invalidateStockCache(id)))
 
   // 10. Audit log for completion
   await logAudit({

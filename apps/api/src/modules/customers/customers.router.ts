@@ -26,6 +26,7 @@ customersRouter.get('/', authenticate, async (req, res) => {
     const data = await getCustomers({ isActive })
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[customers] GET / failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -37,6 +38,7 @@ customersRouter.get('/search', authenticate, async (req, res) => {
     const data = await searchCustomers(q)
     res.json({ success: true, data, error: null })
   } catch (err) {
+    console.error('[customers] GET /search failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -51,6 +53,7 @@ customersRouter.get('/:id', authenticate, async (req, res) => {
     if (message === 'CUSTOMER_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
     } else {
+      console.error('[customers] GET /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -73,6 +76,7 @@ customersRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Cashier')
     if (message === 'DUPLICATE_PHONE') {
       res.status(409).json({ success: false, data: null, error: message })
     } else {
+      console.error('[customers] POST / failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
@@ -97,6 +101,7 @@ customersRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner', 'Cashi
     } else if (message === 'DUPLICATE_PHONE') {
       res.status(409).json({ success: false, data: null, error: message })
     } else {
+      console.error('[customers] PATCH /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }
