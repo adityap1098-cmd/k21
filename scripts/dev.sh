@@ -7,7 +7,7 @@ eval "$(fnm env --shell bash)" 2>/dev/null
 fnm use 22 2>/dev/null
 
 export DATABASE_URL="postgres://appuser:k21devpass@localhost:5433/k21"
-export REDIS_URL="redis://localhost:6379"
+export REDIS_URL="redis://:k21redisdev@localhost:6379"
 export JWT_SECRET="dev-secret-k21-not-for-production-use-only"
 export NODE_ENV=development
 export PORT=3001

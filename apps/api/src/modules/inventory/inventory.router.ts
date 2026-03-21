@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { authenticate } from '../../middleware/authenticate.js'
 import { requireRole } from '../../middleware/require-role.js'
-import { getStockCached } from './stock.service.js'
+import { getStockCached, invalidateStockCache } from './stock.service.js'
 import { runStockOpname } from './opname.service.js'
 import { recordMovement } from './movement.service.js'
 import { getActiveReservedQty } from './reservation.service.js'
@@ -134,6 +134,9 @@ inventoryRouter.post(
           )
         }
       })
+
+      // Invalidate cache AFTER transaction commits so reads get fresh data
+      await invalidateStockCache(variantId)
 
       res.status(201).json({ success: true, data: null, error: null })
     } catch (err) {
