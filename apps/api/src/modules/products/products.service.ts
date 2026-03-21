@@ -112,7 +112,8 @@ export async function getProduct(id: string): Promise<ProductWithVariants> {
 export async function listProducts(filters?: {
   categoryId?: string
   isActive?: boolean
-}): Promise<Array<Product & { variantCount: number }>> {
+  includeVariants?: boolean
+}): Promise<Array<Product & { variantCount: number; variants?: ProductVariant[] }>> {
   // Build query with optional filters
   const allProducts = await db
     .select()
@@ -127,7 +128,30 @@ export async function listProducts(filters?: {
     filtered = filtered.filter((p) => p.isActive === filters.isActive)
   }
 
-  // Return with variant count placeholder
+  if (filters?.includeVariants) {
+    // Fetch all variants for matched products
+    const productIds = filtered.map(p => p.id)
+    if (productIds.length === 0) return []
+
+    const allVariants = await db
+      .select()
+      .from(productVariants)
+
+    const variantsByProduct = new Map<string, ProductVariant[]>()
+    for (const v of allVariants) {
+      if (!productIds.includes(v.productId)) continue
+      const list = variantsByProduct.get(v.productId) || []
+      list.push(v)
+      variantsByProduct.set(v.productId, list)
+    }
+
+    return filtered.map((p) => {
+      const variants = variantsByProduct.get(p.id) || []
+      return { ...p, variantCount: variants.length, variants }
+    })
+  }
+
+  // Return with variant count placeholder (no variants loaded)
   return filtered.map((p) => ({ ...p, variantCount: 0 }))
 }
 

@@ -45,8 +45,9 @@ productsRouter.get('/', authenticate, async (req, res) => {
     const categoryId = req.query.categoryId as string | undefined
     const isActiveStr = req.query.isActive as string | undefined
     const isActive = isActiveStr === 'true' ? true : isActiveStr === 'false' ? false : undefined
+    const includeVariants = req.query.variants === 'true'
 
-    const data = await listProducts({ categoryId, isActive })
+    const data = await listProducts({ categoryId, isActive, includeVariants })
     res.json({ success: true, data, error: null })
   } catch (err) {
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
