@@ -14,6 +14,8 @@ import { AppShell } from '@/components/layout/AppShell'
 import { useAutoSyncCatalog } from '@/lib/catalog'
 import { computeCartTotals, useCartStore } from '@/lib/store/cart.store'
 import type { ReceiptData } from '@/lib/receipt/encoder'
+import { TransactionTypeSelector } from '@/components/pos/service/TransactionTypeSelector'
+import { ServiceFlow } from '@/components/pos/service/ServiceFlow'
 
 export default function PosPage() {
   const { activeShift, setActiveShift } = useShiftStore()
@@ -25,6 +27,7 @@ export default function PosPage() {
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
   const [isSyncing, setIsSyncing] = useState(false)
   const [checkingShift, setCheckingShift] = useState(true)
+  const [transactionType, setTransactionType] = useState<'RETAIL' | 'SERVICE'>('RETAIL')
 
   // Auto-sync product catalog from API to IndexedDB
   useAutoSyncCatalog()
@@ -99,18 +102,27 @@ export default function PosPage() {
         <SyncStatusBar isSyncing={isSyncing} />
         <SyncIssuesPanel />
 
-        {/* Split screen */}
-        <div className="flex flex-1 overflow-hidden relative">
-          {/* Product panel — left */}
-          <div className="flex-1 overflow-hidden p-3 lg:p-4">
-            <ProductPanel />
-          </div>
-
-          {/* Cart panel — right */}
-          <div className="w-80 lg:w-96 border-l border-border bg-surface-raised flex flex-col flex-shrink-0">
-            <CartPanel onPay={() => setShowPayment(true)} />
-          </div>
+        {/* Transaction type selector */}
+        <div className="px-3 lg:px-4 pt-2 pb-1 shrink-0">
+          <TransactionTypeSelector activeType={transactionType} onTypeChange={setTransactionType} />
         </div>
+
+        {/* Conditional: Retail split-screen or Service flow */}
+        {transactionType === 'RETAIL' ? (
+          <div className="flex flex-1 overflow-hidden relative">
+            {/* Product panel — left */}
+            <div className="flex-1 overflow-hidden p-3 lg:p-4">
+              <ProductPanel />
+            </div>
+
+            {/* Cart panel — right */}
+            <div className="w-80 lg:w-96 border-l border-border bg-surface-raised flex flex-col flex-shrink-0">
+              <CartPanel onPay={() => setShowPayment(true)} />
+            </div>
+          </div>
+        ) : (
+          <ServiceFlow />
+        )}
 
         {/* Shift info — top-right overlay */}
         <div className="absolute top-2 right-2 z-20">

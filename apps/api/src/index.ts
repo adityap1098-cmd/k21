@@ -8,6 +8,10 @@ import { inventoryRouter } from './modules/inventory/index.js'
 import { posRouter } from './modules/pos/index.js'
 import { shiftsRouter } from './modules/shifts/index.js'
 import { procurementRouter } from './modules/procurement/index.js'
+import { customersRouter } from './modules/customers/index.js'
+import { vehiclesRouter } from './modules/vehicles/index.js'
+import { serviceCatalogRouter } from './modules/service-catalog/index.js'
+import { serviceOrdersRouter } from './modules/service-orders/index.js'
 import { createLowStockWorker } from './queues/lowstock.queue.js'
 
 export const app = express()
@@ -48,6 +52,12 @@ v1Router.use('/shifts', shiftsRouter)
 
 // Phase 4: Procurement
 v1Router.use('/procurement', procurementRouter)
+
+// Phase 5: Bengkel
+v1Router.use('/customers', customersRouter)
+v1Router.use('/vehicles', vehiclesRouter)
+v1Router.use('/service-catalog', serviceCatalogRouter)
+v1Router.use('/service-orders', serviceOrdersRouter)
 
 // Only start listening when run directly (not during tests)
 if (process.env.NODE_ENV !== 'test') {

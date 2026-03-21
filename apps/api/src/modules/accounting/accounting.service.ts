@@ -41,3 +41,74 @@ export async function createJournalEntryReversal(
     createdAt: new Date(),
   })
 }
+
+/**
+ * Inserts an accrual journal entry pair (DR Piutang / CR Pendapatan)
+ * when a service order is completed.
+ * Creates exactly 2 rows: one DR and one CR for double-entry accounting.
+ */
+export async function createAccrualJournalEntry(
+  params: { serviceOrderId: string; total: number; sourceType?: string },
+  tx: DrizzleTx
+): Promise<void> {
+  const now = new Date()
+  const sourceType = params.sourceType ?? 'SERVICE_COMPLETION'
+
+  await (tx as unknown as typeof db).insert(journalEntries).values([
+    {
+      id: randomUUID(),
+      transactionId: params.serviceOrderId,
+      sourceType,
+      amount: params.total,
+      debitCredit: 'DR',
+      referenceId: params.serviceOrderId,
+      status: 'POSTED',
+      createdAt: now,
+    },
+    {
+      id: randomUUID(),
+      transactionId: params.serviceOrderId,
+      sourceType,
+      amount: params.total,
+      debitCredit: 'CR',
+      referenceId: params.serviceOrderId,
+      status: 'POSTED',
+      createdAt: now,
+    },
+  ])
+}
+
+/**
+ * Inserts a cash receipt journal entry pair (DR Kas / CR Piutang)
+ * when a payment is recorded against a service order.
+ * Creates exactly 2 rows: one DR and one CR for double-entry accounting.
+ */
+export async function createCashReceiptJournalEntry(
+  params: { serviceOrderId: string; amount: number; paymentId: string },
+  tx: DrizzleTx
+): Promise<void> {
+  const now = new Date()
+
+  await (tx as unknown as typeof db).insert(journalEntries).values([
+    {
+      id: randomUUID(),
+      transactionId: params.serviceOrderId,
+      sourceType: 'CASH_RECEIPT',
+      amount: params.amount,
+      debitCredit: 'DR',
+      referenceId: params.paymentId,
+      status: 'POSTED',
+      createdAt: now,
+    },
+    {
+      id: randomUUID(),
+      transactionId: params.serviceOrderId,
+      sourceType: 'CASH_RECEIPT',
+      amount: params.amount,
+      debitCredit: 'CR',
+      referenceId: params.paymentId,
+      status: 'POSTED',
+      createdAt: now,
+    },
+  ])
+}

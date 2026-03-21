@@ -7,6 +7,8 @@ export const journalEntries = pgTable('journal_entries', {
   sourceType:    varchar('source_type', { length: 50 }).notNull(),
   amount:        integer('amount').notNull(),
   status:        varchar('status', { length: 20 }).notNull().default('PENDING'),
+  debitCredit:   varchar('debit_credit', { length: 2 }),
+  referenceId:   uuid('reference_id'),
   createdAt:     timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
