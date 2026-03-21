@@ -24,6 +24,12 @@ function formatRp(n: number): string {
   return `Rp ${n.toLocaleString('id-ID')}`
 }
 
+const METHODS: { id: PaymentMethod; label: string }[] = [
+  { id: 'CASH', label: 'Tunai' },
+  { id: 'TRANSFER', label: 'Transfer' },
+  { id: 'QRIS', label: 'QRIS' },
+]
+
 export function ServicePaymentModal({ isOpen, orderId, orderTotal, existingPaymentsTotal, onSuccess, onClose }: Props) {
   const remaining = orderTotal - existingPaymentsTotal
 
@@ -85,112 +91,119 @@ export function ServicePaymentModal({ isOpen, orderId, orderTotal, existingPayme
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" data-testid="service-payment-modal">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-surface-raised rounded-2xl shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Pembayaran Service</h2>
+        <div className="flex items-center justify-between p-5 border-b border-border">
+          <h2 className="text-[17px] font-semibold text-ink tracking-[-0.02em]">Pembayaran Service</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-xl leading-none"
+            className="flex items-center justify-center size-8 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-subtle transition-colors"
             aria-label="Tutup"
           >
             ×
           </button>
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="p-5 space-y-4">
           {/* Summary */}
-          <div className="bg-gray-50 rounded-lg p-3 space-y-1">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Total Tagihan</span>
-              <span className="font-medium text-gray-800">{formatRp(orderTotal)}</span>
+          <div className="bg-surface-subtle rounded-xl p-4 space-y-2">
+            <div className="flex justify-between text-[13px]">
+              <span className="text-ink-muted">Total Tagihan</span>
+              <span className="font-medium text-ink font-mono">{formatRp(orderTotal)}</span>
             </div>
             {existingPaymentsTotal > 0 ? (
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Sudah Dibayar</span>
-                <span className="font-medium text-green-700">{formatRp(existingPaymentsTotal)}</span>
+              <div className="flex justify-between text-[13px]">
+                <span className="text-ink-muted">Sudah Dibayar</span>
+                <span className="font-medium text-success font-mono">{formatRp(existingPaymentsTotal)}</span>
               </div>
             ) : null}
-            <div className="flex justify-between text-sm pt-1 border-t border-gray-200">
-              <span className="font-medium text-gray-700">Sisa Tagihan</span>
-              <span className="text-lg font-bold text-gray-900">{formatRp(remaining)}</span>
+            <div className="w-full h-px bg-border shrink-0" />
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-ink text-[13px]">Sisa Tagihan</span>
+              <span className="text-xl font-bold text-ink font-mono tracking-[-0.02em]">{formatRp(remaining)}</span>
             </div>
           </div>
 
           {/* Amount input */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Jumlah Pembayaran</label>
+            <label className="block text-[13px] font-medium text-ink mb-1.5">Jumlah Pembayaran</label>
             <input
               type="number"
               value={amount}
               onChange={e => setAmount(Number(e.target.value))}
-              className={`w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                overpayment ? 'border-red-400 bg-red-50' : 'border-gray-300'
+              className={`w-full bg-surface-raised border rounded-xl py-3 px-4 text-[15px] font-mono font-semibold text-ink text-center outline-none focus:ring-2 focus:ring-brand-subtle transition-colors ${
+                overpayment ? 'border-danger bg-danger-muted' : 'border-border focus:border-brand'
               }`}
               min={0}
               max={remaining}
             />
             {overpayment ? (
-              <p className="text-xs text-red-600 mt-1">Jumlah melebihi sisa tagihan ({formatRp(remaining)})</p>
+              <p className="text-[12px] text-danger mt-1">Jumlah melebihi sisa tagihan ({formatRp(remaining)})</p>
             ) : null}
           </div>
 
-          {/* Method selector */}
+          {/* Method selector — pill buttons */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Metode Pembayaran</label>
-            <select
-              value={method}
-              onChange={e => setMethod(e.target.value as PaymentMethod)}
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="CASH">TUNAI</option>
-              <option value="TRANSFER">TRANSFER</option>
-              <option value="QRIS">QRIS</option>
-            </select>
+            <label className="block text-[13px] font-medium text-ink mb-1.5">Metode Pembayaran</label>
+            <div className="flex items-center gap-1.5">
+              {METHODS.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => setMethod(m.id)}
+                  className={`flex-1 flex items-center justify-center rounded-[20px] py-[7px] px-4 transition-colors ${
+                    method === m.id
+                      ? 'bg-ink text-white'
+                      : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
+                  }`}
+                >
+                  <span className="font-medium text-[13px] leading-4">{m.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Reference — for TRANSFER */}
           {method === 'TRANSFER' ? (
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Referensi / No. Rekening</label>
+              <label className="block text-[13px] font-medium text-ink mb-1.5">Referensi / No. Rekening</label>
               <input
                 type="text"
                 value={reference}
                 onChange={e => setReference(e.target.value)}
                 placeholder="BCA / 12345"
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle transition-colors"
               />
             </div>
           ) : null}
 
           {/* QRIS note */}
           {method === 'QRIS' ? (
-            <p className="text-xs text-blue-600">
+            <p className="text-[13px] text-info">
               Minta pelanggan scan QR merchant, lalu klik Konfirmasi Pembayaran
             </p>
           ) : null}
 
           {/* Error */}
           {error ? (
-            <div className="bg-red-50 border border-red-200 rounded p-2 text-sm text-red-700 text-center">
+            <div className="bg-danger-muted rounded-xl p-3 text-[13px] text-danger text-center">
               {error}
             </div>
           ) : null}
 
           {/* Success */}
           {successMsg ? (
-            <div className="bg-green-50 border border-green-200 rounded p-2 text-sm text-green-700 text-center">
+            <div className="bg-success-muted rounded-xl p-3 text-[13px] text-success text-center">
               {successMsg}
             </div>
           ) : null}
 
-          {/* Confirm button */}
+          {/* Confirm button — full-width brand, matching CartPanel pay button */}
           <button
             onClick={handleConfirm}
             disabled={isSubmitting || overpayment || amount <= 0}
-            className="w-full bg-blue-600 text-white rounded-lg py-3 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+            className="flex items-center justify-center w-full rounded-xl py-3.5 bg-brand text-white font-semibold text-[15px] leading-[18px] hover:bg-brand-hover active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed transition-all press-scale"
           >
-            {isSubmitting ? 'Memproses...' : 'Konfirmasi Pembayaran'}
+            {isSubmitting ? 'Memproses...' : `Konfirmasi Pembayaran ${formatRp(amount)}`}
           </button>
         </div>
       </div>

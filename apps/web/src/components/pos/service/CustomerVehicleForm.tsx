@@ -45,6 +45,9 @@ function formatPlate(v: Vehicle): string {
   return parts.join(' — ')
 }
 
+/* ── Shared input class ── */
+const inputClass = 'w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle transition-colors'
+
 export function CustomerVehicleForm({ onOrderCreated }: Props) {
   // --- Search state ---
   const [plateQuery, setPlateQuery] = useState('')
@@ -265,41 +268,41 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
   const canCreateOrder = selectedVehicle !== null
 
   return (
-    <div data-testid="customer-vehicle-form" className="flex flex-col gap-4 p-4 max-w-2xl">
-      <h2 className="text-lg font-semibold text-gray-900">Order Service Baru</h2>
+    <div data-testid="customer-vehicle-form" className="flex flex-col gap-5 p-5 max-w-2xl">
+      <h2 className="text-[15px] font-semibold text-ink">Order Service Baru</h2>
 
       {/* Error banner */}
       {error !== null ? (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm">
-          {error}
-          <button onClick={() => setError(null)} className="ml-2 underline text-red-600 hover:text-red-800">Tutup</button>
+        <div className="bg-danger-muted text-danger px-3 py-2 rounded-xl text-[13px] flex items-center justify-between">
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="text-danger hover:text-danger font-medium underline ml-2 text-[13px]">Tutup</button>
         </div>
       ) : null}
 
       {/* ===== SECTION: Plate Number Search ===== */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Cari Plat Nomor</label>
+        <label className="block text-[13px] font-medium text-ink">Cari Plat Nomor</label>
         <input
           data-testid="plate-search-input"
           type="text"
           value={plateQuery}
           onChange={(e) => searchByPlate(e.target.value)}
           placeholder="Contoh: B 1234 XYZ"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputClass}
         />
         {plateSearching ? (
-          <div className="text-xs text-gray-400">Mencari...</div>
+          <div className="text-[12px] text-ink-faint">Mencari...</div>
         ) : null}
         {plateResults.length > 0 ? (
-          <div className="border border-gray-200 rounded-lg bg-white shadow-sm max-h-40 overflow-y-auto">
+          <div className="border border-border rounded-xl bg-surface-raised shadow-sm max-h-40 overflow-y-auto">
             {plateResults.map((v) => (
               <button
                 key={v.id}
                 onClick={() => selectVehicleFromPlate(v)}
-                className="w-full text-left px-3 py-2 hover:bg-blue-50 text-sm border-b border-gray-100 last:border-b-0"
+                className="w-full text-left px-4 py-3 hover:bg-surface-subtle text-[13px] border-b border-border-light last:border-b-0 transition-colors"
               >
-                <span className="font-medium">{v.plateNumber}</span>
-                <span className="text-gray-500 ml-2">
+                <span className="font-medium text-ink">{v.plateNumber}</span>
+                <span className="text-ink-muted ml-2">
                   {v.brand} {v.model} ({v.vehicleType})
                 </span>
               </button>
@@ -311,28 +314,28 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
       {/* ===== SECTION: Customer Search ===== */}
       {selectedCustomer === null ? (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Cari Customer</label>
+          <label className="block text-[13px] font-medium text-ink">Cari Customer</label>
           <input
             data-testid="customer-search-input"
             type="text"
             value={customerQuery}
             onChange={(e) => searchCustomers(e.target.value)}
             placeholder="Nama atau nomor telepon"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputClass}
           />
           {customerSearching ? (
-            <div className="text-xs text-gray-400">Mencari...</div>
+            <div className="text-[12px] text-ink-faint">Mencari...</div>
           ) : null}
           {customerResults.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg bg-white shadow-sm max-h-40 overflow-y-auto">
+            <div className="border border-border rounded-xl bg-surface-raised shadow-sm max-h-40 overflow-y-auto">
               {customerResults.map((c) => (
                 <button
                   key={c.id}
                   onClick={() => selectCustomer(c)}
-                  className="w-full text-left px-3 py-2 hover:bg-blue-50 text-sm border-b border-gray-100 last:border-b-0"
+                  className="w-full text-left px-4 py-3 hover:bg-surface-subtle text-[13px] border-b border-border-light last:border-b-0 transition-colors"
                 >
-                  <span className="font-medium">{c.name}</span>
-                  {c.phone ? <span className="text-gray-500 ml-2">{c.phone}</span> : null}
+                  <span className="font-medium text-ink">{c.name}</span>
+                  {c.phone ? <span className="text-ink-muted ml-2">{c.phone}</span> : null}
                 </button>
               ))}
             </div>
@@ -341,32 +344,32 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
           {/* New Customer toggle */}
           <button
             onClick={() => setShowNewCustomer(!showNewCustomer)}
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
+            className="text-[13px] text-brand hover:text-brand-hover font-medium"
           >
             {showNewCustomer ? 'Batal' : '+ Customer Baru'}
           </button>
 
           {/* Inline new customer form */}
           {showNewCustomer ? (
-            <div className="bg-gray-50 p-3 rounded-lg space-y-2 border border-gray-200">
+            <div className="bg-surface-subtle p-4 rounded-xl space-y-3 border border-border">
               <input
                 type="text"
                 value={newCustomerName}
                 onChange={(e) => setNewCustomerName(e.target.value)}
                 placeholder="Nama customer *"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
               />
               <input
                 type="text"
                 value={newCustomerPhone}
                 onChange={(e) => setNewCustomerPhone(e.target.value)}
                 placeholder="Nomor telepon"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
               />
               <button
                 onClick={createCustomer}
                 disabled={!newCustomerName.trim() || isCreatingCustomer}
-                className="px-4 py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-3 bg-brand text-white rounded-xl text-[13px] font-semibold hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors press-scale"
               >
                 {isCreatingCustomer ? 'Menyimpan...' : 'Simpan Customer'}
               </button>
@@ -374,12 +377,12 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
           ) : null}
         </div>
       ) : (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <div className="bg-brand-subtle border border-brand/20 rounded-xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm font-medium text-blue-900">{selectedCustomer.name}</div>
+              <div className="text-[13px] font-medium text-ink">{selectedCustomer.name}</div>
               {selectedCustomer.phone ? (
-                <div className="text-xs text-blue-700">{selectedCustomer.phone}</div>
+                <div className="text-[12px] text-ink-secondary">{selectedCustomer.phone}</div>
               ) : null}
             </div>
             <button
@@ -390,7 +393,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
                 setCustomerQuery('')
                 setPlateQuery('')
               }}
-              className="text-xs text-blue-600 hover:text-blue-800 underline"
+              className="text-[12px] text-brand hover:text-brand-hover font-medium"
             >
               Ganti
             </button>
@@ -401,58 +404,58 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
       {/* ===== SECTION: Vehicle Selection ===== */}
       {selectedCustomer !== null && selectedVehicle === null ? (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Pilih Kendaraan</label>
+          <label className="block text-[13px] font-medium text-ink">Pilih Kendaraan</label>
           {customerVehicles.length > 0 ? (
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {customerVehicles.map((v) => (
                 <button
                   key={v.id}
                   onClick={() => setSelectedVehicle(v)}
-                  className="w-full text-left px-3 py-2 bg-white border border-gray-200 rounded-lg hover:bg-blue-50 text-sm"
+                  className="w-full text-left px-4 py-3 bg-surface-raised border border-border rounded-xl hover:bg-surface-subtle hover:border-brand/40 text-[13px] text-ink transition-all"
                 >
                   {formatPlate(v)}
                 </button>
               ))}
             </div>
           ) : (
-            <div className="text-sm text-gray-500">Belum ada kendaraan terdaftar.</div>
+            <div className="text-[13px] text-ink-muted">Belum ada kendaraan terdaftar.</div>
           )}
 
           {/* New Vehicle toggle */}
           <button
             onClick={() => setShowNewVehicle(!showNewVehicle)}
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
+            className="text-[13px] text-brand hover:text-brand-hover font-medium"
           >
             {showNewVehicle ? 'Batal' : '+ Kendaraan Baru'}
           </button>
 
           {/* Inline new vehicle form */}
           {showNewVehicle ? (
-            <div className="bg-gray-50 p-3 rounded-lg space-y-2 border border-gray-200">
+            <div className="bg-surface-subtle p-4 rounded-xl space-y-3 border border-border">
               <input
                 type="text"
                 value={newVehiclePlate}
                 onChange={(e) => setNewVehiclePlate(e.target.value)}
                 placeholder="Plat nomor *"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => setNewVehicleType('MOTOR')}
-                  className={`flex-1 px-3 py-2 rounded text-sm font-medium border ${
+                  className={`flex-1 py-[7px] px-4 rounded-[20px] text-[13px] font-medium transition-colors ${
                     newVehicleType === 'MOTOR'
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                      ? 'bg-ink text-white'
+                      : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
                   }`}
                 >
                   Motor
                 </button>
                 <button
                   onClick={() => setNewVehicleType('MOBIL')}
-                  className={`flex-1 px-3 py-2 rounded text-sm font-medium border ${
+                  className={`flex-1 py-[7px] px-4 rounded-[20px] text-[13px] font-medium transition-colors ${
                     newVehicleType === 'MOBIL'
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                      ? 'bg-ink text-white'
+                      : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
                   }`}
                 >
                   Mobil
@@ -463,19 +466,19 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
                 value={newVehicleBrand}
                 onChange={(e) => setNewVehicleBrand(e.target.value)}
                 placeholder="Merek (Honda, Yamaha, ...)"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
               />
               <input
                 type="text"
                 value={newVehicleModel}
                 onChange={(e) => setNewVehicleModel(e.target.value)}
                 placeholder="Model (Vario 150, Avanza, ...)"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
               />
               <button
                 onClick={createVehicle}
                 disabled={!newVehiclePlate.trim() || isCreatingVehicle}
-                className="px-4 py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-3 bg-brand text-white rounded-xl text-[13px] font-semibold hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors press-scale"
               >
                 {isCreatingVehicle ? 'Menyimpan...' : 'Simpan Kendaraan'}
               </button>
@@ -486,11 +489,11 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
 
       {/* Selected vehicle info */}
       {selectedVehicle !== null ? (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+        <div className="bg-success-muted border border-success/20 rounded-xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm font-medium text-green-900">{selectedVehicle.plateNumber}</div>
-              <div className="text-xs text-green-700">
+              <div className="text-[13px] font-medium text-ink">{selectedVehicle.plateNumber}</div>
+              <div className="text-[12px] text-ink-secondary">
                 {selectedVehicle.vehicleType} {selectedVehicle.brand ? `— ${selectedVehicle.brand}` : ''} {selectedVehicle.model || ''}
               </div>
             </div>
@@ -499,7 +502,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
                 setSelectedVehicle(null)
                 setPlateQuery('')
               }}
-              className="text-xs text-green-600 hover:text-green-800 underline"
+              className="text-[12px] text-success hover:text-success font-medium"
             >
               Ganti
             </button>
@@ -509,22 +512,22 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
 
       {/* ===== SECTION: Complaint + Create Order ===== */}
       {canCreateOrder ? (
-        <div className="space-y-3 border-t border-gray-200 pt-4">
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Keluhan / Catatan</label>
+        <div className="space-y-4 border-t border-border pt-5">
+          <div className="space-y-2">
+            <label className="block text-[13px] font-medium text-ink">Keluhan / Catatan</label>
             <textarea
               value={complaint}
               onChange={(e) => setComplaint(e.target.value)}
               placeholder="Deskripsi keluhan kendaraan..."
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle resize-none transition-colors"
             />
           </div>
           <button
             data-testid="create-order-btn"
             onClick={createServiceOrder}
             disabled={isCreatingOrder}
-            className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-3.5 bg-brand text-white rounded-xl text-[15px] font-semibold hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all press-scale"
           >
             {isCreatingOrder ? 'Membuat Order...' : 'Buat Service Order'}
           </button>

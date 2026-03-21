@@ -169,34 +169,34 @@ export function ServiceProductSelector({ serviceOrderId, onItemAdded }: Props) {
   const isLoading = activeTab === 'jasa' ? loadingServices : loadingProducts
 
   return (
-    <div data-testid="service-product-selector" className="border border-gray-200 rounded-lg overflow-hidden">
-      {/* Tab bar */}
-      <div className="flex border-b border-gray-200 bg-gray-50">
+    <div data-testid="service-product-selector" className="border border-border rounded-xl overflow-hidden">
+      {/* Tab bar — pill style */}
+      <div className="flex items-center gap-1.5 p-2 bg-surface-subtle">
         <button
           onClick={() => setActiveTab('jasa')}
-          className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
+          className={`flex-1 flex items-center justify-center rounded-[20px] py-[7px] px-4 transition-colors ${
             activeTab === 'jasa'
-              ? 'text-blue-600 bg-white border-b-2 border-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'bg-ink text-white'
+              : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
           }`}
         >
-          Jasa
+          <span className="font-medium text-[13px] leading-4">Jasa</span>
         </button>
         <button
           onClick={() => setActiveTab('parts')}
-          className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
+          className={`flex-1 flex items-center justify-center rounded-[20px] py-[7px] px-4 transition-colors ${
             activeTab === 'parts'
-              ? 'text-blue-600 bg-white border-b-2 border-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'bg-ink text-white'
+              : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
           }`}
         >
-          Spare Parts
+          <span className="font-medium text-[13px] leading-4">Spare Parts</span>
         </button>
       </div>
 
       {/* Error banner */}
       {error ? (
-        <div className="mx-3 mt-3 bg-red-50 border border-red-200 rounded p-2 text-xs text-red-700">
+        <div className="mx-3 mt-3 bg-danger-muted rounded-xl p-2 text-[12px] text-danger">
           {error}
         </div>
       ) : null}
@@ -206,32 +206,32 @@ export function ServiceProductSelector({ serviceOrderId, onItemAdded }: Props) {
         {isLoading ? (
           <div className="p-4 space-y-2">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+              <div key={i} className="h-12 bg-surface-subtle rounded-xl animate-pulse" />
             ))}
           </div>
         ) : activeTab === 'jasa' ? (
           services.length === 0 ? (
-            <div className="p-4 text-center text-sm text-gray-400">Tidak ada jasa tersedia</div>
+            <div className="p-4 text-center text-[13px] text-ink-faint">Tidak ada jasa tersedia</div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-border-light">
               {services.map(service => (
-                <div key={service.id} className="flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50">
+                <div key={service.id} className="flex items-center gap-3 px-4 py-3 hover:bg-surface-subtle transition-colors">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{service.name}</p>
-                    <p className="text-xs text-gray-500">{formatRp(service.defaultPrice)}</p>
+                    <p className="text-[13px] font-medium text-ink truncate">{service.name}</p>
+                    <p className="text-[12px] text-brand font-mono">{formatRp(service.defaultPrice)}</p>
                   </div>
                   <input
                     type="number"
                     min={1}
                     value={getQty(service.id)}
                     onChange={e => setQty(service.id, parseInt(e.target.value, 10) || 1)}
-                    className="w-14 px-2 py-1 border border-gray-300 rounded text-sm text-center"
+                    className="w-14 bg-surface-raised border border-border rounded-lg px-2 py-1.5 text-[13px] text-ink text-center outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle"
                     aria-label={`Quantity for ${service.name}`}
                   />
                   <button
                     onClick={() => addServiceItem(service)}
                     disabled={addingId === service.id}
-                    className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-[12px] font-medium bg-brand text-white rounded-lg hover:bg-brand-hover disabled:opacity-50 transition-colors press-scale"
                   >
                     {addingId === service.id ? '...' : '+ Add'}
                   </button>
@@ -241,15 +241,15 @@ export function ServiceProductSelector({ serviceOrderId, onItemAdded }: Props) {
           )
         ) : (
           products.length === 0 ? (
-            <div className="p-4 text-center text-sm text-gray-400">Tidak ada produk tersedia</div>
+            <div className="p-4 text-center text-[13px] text-ink-faint">Tidak ada produk tersedia</div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-border-light">
               {products.flatMap(product =>
                 (product.variants ?? []).map(variant => (
-                  <div key={variant.variantId} className="flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50">
+                  <div key={variant.variantId} className="flex items-center gap-3 px-4 py-3 hover:bg-surface-subtle transition-colors">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{variant.name || product.name}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-[13px] font-medium text-ink truncate">{variant.name || product.name}</p>
+                      <p className="text-[12px] text-ink-muted font-mono">
                         {variant.sku} · {formatRp(variant.price)} · Stok: {variant.stockQty}
                       </p>
                     </div>
@@ -258,13 +258,13 @@ export function ServiceProductSelector({ serviceOrderId, onItemAdded }: Props) {
                       min={1}
                       value={getQty(variant.variantId)}
                       onChange={e => setQty(variant.variantId, parseInt(e.target.value, 10) || 1)}
-                      className="w-14 px-2 py-1 border border-gray-300 rounded text-sm text-center"
+                      className="w-14 bg-surface-raised border border-border rounded-lg px-2 py-1.5 text-[13px] text-ink text-center outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle"
                       aria-label={`Quantity for ${variant.name || product.name}`}
                     />
                     <button
                       onClick={() => addPartItem(variant)}
                       disabled={addingId === variant.variantId}
-                      className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                      className="px-3 py-1.5 text-[12px] font-medium bg-brand text-white rounded-lg hover:bg-brand-hover disabled:opacity-50 transition-colors press-scale"
                     >
                       {addingId === variant.variantId ? '...' : '+ Add'}
                     </button>

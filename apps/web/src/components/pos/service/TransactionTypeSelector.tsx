@@ -11,14 +11,14 @@ export function TransactionTypeSelector({ activeType, onTypeChange }: Props) {
   return (
     <div
       data-testid="transaction-type-selector"
-      className="flex items-center gap-1 bg-gray-100 rounded-lg p-1"
+      className="flex items-center gap-1.5 bg-surface-subtle rounded-xl p-1"
     >
       <button
         onClick={() => onTypeChange('RETAIL')}
-        className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+        className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-medium transition-all ${
           activeType === 'RETAIL'
-            ? 'bg-blue-600 text-white shadow-sm'
-            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+            ? 'bg-brand text-white shadow-sm'
+            : 'text-ink-secondary hover:text-ink hover:bg-surface-raised'
         }`}
       >
         <span>🛒</span>
@@ -26,10 +26,10 @@ export function TransactionTypeSelector({ activeType, onTypeChange }: Props) {
       </button>
       <button
         onClick={() => onTypeChange('SERVICE')}
-        className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+        className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-medium transition-all ${
           activeType === 'SERVICE'
-            ? 'bg-blue-600 text-white shadow-sm'
-            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+            ? 'bg-brand text-white shadow-sm'
+            : 'text-ink-secondary hover:text-ink hover:bg-surface-raised'
         }`}
       >
         <span>🔧</span>

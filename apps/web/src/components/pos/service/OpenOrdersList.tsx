@@ -30,16 +30,16 @@ interface Props {
 }
 
 const WORK_STATUS_COLORS: Record<string, string> = {
-  BOOKING: 'bg-gray-100 text-gray-700',
-  CHECKED_IN: 'bg-blue-100 text-blue-700',
-  IN_PROGRESS: 'bg-amber-100 text-amber-700',
-  COMPLETED: 'bg-green-100 text-green-700',
+  BOOKING: 'bg-[rgba(122,132,144,0.1)] text-ink-muted',
+  CHECKED_IN: 'bg-info-muted text-info',
+  IN_PROGRESS: 'bg-warning-muted text-warning',
+  COMPLETED: 'bg-success-muted text-success',
 }
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  UNPAID: 'bg-red-100 text-red-700',
-  PARTIAL: 'bg-amber-100 text-amber-700',
-  PAID: 'bg-green-100 text-green-700',
+  UNPAID: 'bg-danger-muted text-danger',
+  PARTIAL: 'bg-warning-muted text-warning',
+  PAID: 'bg-success-muted text-success',
 }
 
 const WORK_STATUS_LABELS: Record<string, string> = {
@@ -91,7 +91,7 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
       <div data-testid="open-orders-list" className="p-4">
         <div className="animate-pulse space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-gray-100 rounded-lg" />
+            <div key={i} className="h-20 bg-surface-subtle rounded-xl" />
           ))}
         </div>
       </div>
@@ -102,10 +102,10 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
     <div data-testid="open-orders-list" className="p-4 space-y-3">
       {/* Header with refresh */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700">Order Aktif</h3>
+        <h3 className="text-[15px] font-semibold text-ink">Order Aktif</h3>
         <button
           onClick={fetchOrders}
-          className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+          className="px-3 py-1.5 text-[13px] font-medium text-brand hover:text-brand-hover hover:bg-brand-subtle rounded-lg transition-colors"
         >
           ↻ Refresh
         </button>
@@ -113,15 +113,15 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
 
       {/* Error banner */}
       {error ? (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+        <div className="bg-danger-muted border border-danger/20 rounded-xl p-3 text-[13px] text-danger">
           Gagal memuat order: {error}
         </div>
       ) : null}
 
       {/* Empty state */}
       {!error && orders.length === 0 ? (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-          <p className="text-gray-400 text-sm">Tidak ada order aktif</p>
+        <div className="bg-surface-raised border border-border rounded-xl p-8 text-center">
+          <p className="text-ink-faint text-[13px]">Tidak ada order aktif</p>
         </div>
       ) : null}
 
@@ -130,22 +130,22 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
         <button
           key={order.id}
           onClick={() => onSelectOrder(order.id)}
-          className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:bg-blue-50/50 transition-colors"
+          className="w-full text-left bg-surface-raised border border-border rounded-xl p-4 hover:border-brand/40 hover:bg-surface-subtle transition-all"
         >
           <div className="flex items-start justify-between gap-2 mb-2">
-            <span className="text-sm font-semibold text-gray-800">{order.orderNumber}</span>
+            <span className="text-[13px] font-semibold text-ink">{order.orderNumber}</span>
             <div className="flex gap-1.5 shrink-0">
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${WORK_STATUS_COLORS[order.workStatus] ?? 'bg-gray-100 text-gray-600'}`}>
+              <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${WORK_STATUS_COLORS[order.workStatus] ?? 'bg-[rgba(122,132,144,0.1)] text-ink-muted'}`}>
                 {WORK_STATUS_LABELS[order.workStatus] ?? order.workStatus}
               </span>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PAYMENT_STATUS_COLORS[order.paymentStatus] ?? 'bg-gray-100 text-gray-600'}`}>
+              <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${PAYMENT_STATUS_COLORS[order.paymentStatus] ?? 'bg-[rgba(122,132,144,0.1)] text-ink-muted'}`}>
                 {PAYMENT_STATUS_LABELS[order.paymentStatus] ?? order.paymentStatus}
               </span>
             </div>
           </div>
 
           {order.vehicle ? (
-            <p className="text-xs text-gray-500 mb-1">
+            <p className="text-[12px] text-ink-muted mb-1">
               🚗 {order.vehicle.plateNumber}
               {order.vehicle.brand ? ` — ${order.vehicle.brand}` : ''}
               {order.vehicle.model ? ` ${order.vehicle.model}` : ''}
@@ -153,7 +153,7 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
           ) : null}
 
           {order.complaint ? (
-            <p className="text-xs text-gray-400 truncate">{order.complaint}</p>
+            <p className="text-[12px] text-ink-faint truncate">{order.complaint}</p>
           ) : null}
         </button>
       ))}

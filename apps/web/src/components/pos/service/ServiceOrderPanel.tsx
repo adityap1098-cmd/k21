@@ -58,16 +58,16 @@ function formatRp(n: number): string {
 }
 
 const WORK_STATUS_COLORS: Record<string, string> = {
-  BOOKING: 'bg-gray-100 text-gray-700',
-  CHECKED_IN: 'bg-blue-100 text-blue-700',
-  IN_PROGRESS: 'bg-amber-100 text-amber-700',
-  COMPLETED: 'bg-green-100 text-green-700',
+  BOOKING: 'bg-[rgba(122,132,144,0.1)] text-ink-muted',
+  CHECKED_IN: 'bg-info-muted text-info',
+  IN_PROGRESS: 'bg-warning-muted text-warning',
+  COMPLETED: 'bg-success-muted text-success',
 }
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  UNPAID: 'bg-red-100 text-red-700',
-  PARTIAL: 'bg-amber-100 text-amber-700',
-  PAID: 'bg-green-100 text-green-700',
+  UNPAID: 'bg-danger-muted text-danger',
+  PARTIAL: 'bg-warning-muted text-warning',
+  PAID: 'bg-success-muted text-success',
 }
 
 const WORK_STATUS_LABELS: Record<string, string> = {
@@ -82,6 +82,10 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
   PARTIAL: 'Sebagian',
   PAID: 'Lunas',
 }
+
+/* ── Shared input class ── */
+const inputClass = 'w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle transition-colors'
+const inputCompactClass = 'w-full bg-surface-raised border border-border rounded-xl py-2.5 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle transition-colors'
 
 export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPayment }: Props) {
   const [order, setOrder] = useState<ServiceOrderDetail | null>(null)
@@ -291,11 +295,11 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
 
   if (loading) {
     return (
-      <div data-testid="service-order-panel" className="p-4">
+      <div data-testid="service-order-panel" className="p-5">
         <div className="animate-pulse space-y-3">
-          <div className="h-8 bg-gray-100 rounded w-1/3" />
-          <div className="h-24 bg-gray-100 rounded" />
-          <div className="h-40 bg-gray-100 rounded" />
+          <div className="h-8 bg-surface-subtle rounded-xl w-1/3" />
+          <div className="h-24 bg-surface-subtle rounded-xl" />
+          <div className="h-40 bg-surface-subtle rounded-xl" />
         </div>
       </div>
     )
@@ -303,33 +307,33 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
 
   if (!order) {
     return (
-      <div data-testid="service-order-panel" className="p-4">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
+      <div data-testid="service-order-panel" className="p-5">
+        <div className="bg-danger-muted rounded-xl p-4 text-[13px] text-danger">
           Order tidak ditemukan
         </div>
-        <button onClick={onBack} className="mt-3 text-sm text-blue-600 hover:text-blue-800">← Kembali</button>
+        <button onClick={onBack} className="mt-3 text-[13px] text-brand hover:text-brand-hover font-medium">← Kembali</button>
       </div>
     )
   }
 
   return (
-    <div data-testid="service-order-panel" className="p-4 space-y-4 max-h-full overflow-y-auto">
+    <div data-testid="service-order-panel" className="p-5 space-y-4 max-h-full overflow-y-auto">
       {/* Back button + Header */}
       <div>
-        <button onClick={onBack} className="text-sm text-blue-600 hover:text-blue-800 mb-2">← Kembali</button>
+        <button onClick={onBack} className="text-[13px] text-brand hover:text-brand-hover font-medium mb-2">← Kembali</button>
         <div className="flex items-center gap-2 flex-wrap">
-          <h3 className="text-lg font-semibold text-gray-800">{order.orderNumber}</h3>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${WORK_STATUS_COLORS[order.workStatus] ?? 'bg-gray-100 text-gray-600'}`}>
+          <h3 className="text-[17px] font-semibold text-ink tracking-[-0.02em]">{order.orderNumber}</h3>
+          <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${WORK_STATUS_COLORS[order.workStatus] ?? 'bg-[rgba(122,132,144,0.1)] text-ink-muted'}`}>
             {WORK_STATUS_LABELS[order.workStatus] ?? order.workStatus}
           </span>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PAYMENT_STATUS_COLORS[order.paymentStatus] ?? 'bg-gray-100 text-gray-600'}`}>
+          <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${PAYMENT_STATUS_COLORS[order.paymentStatus] ?? 'bg-[rgba(122,132,144,0.1)] text-ink-muted'}`}>
             {PAYMENT_STATUS_LABELS[order.paymentStatus] ?? order.paymentStatus}
           </span>
         </div>
 
         {/* Vehicle info */}
         {order.vehicle ? (
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-[13px] text-ink-muted mt-1">
             🚗 {order.vehicle.plateNumber}
             {order.vehicle.brand ? ` — ${order.vehicle.brand}` : ''}
             {order.vehicle.model ? ` ${order.vehicle.model}` : ''}
@@ -338,32 +342,32 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
 
         {/* Complaint */}
         {order.complaint ? (
-          <p className="text-sm text-gray-600 mt-1 bg-gray-50 rounded p-2">Keluhan: {order.complaint}</p>
+          <p className="text-[13px] text-ink-secondary mt-2 bg-surface-subtle rounded-xl p-3">Keluhan: {order.complaint}</p>
         ) : null}
       </div>
 
       {/* Error banner */}
       {error ? (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+        <div className="bg-danger-muted rounded-xl p-3 text-[13px] text-danger">
           {error}
         </div>
       ) : null}
 
       {/* Mechanic assignment */}
-      <div className="border border-gray-200 rounded-lg p-3 space-y-2">
-        <label className="text-xs font-medium text-gray-600">Mekanik</label>
+      <div className="bg-surface-raised border border-border rounded-xl p-4 space-y-2">
+        <label className="text-[13px] font-medium text-ink">Mekanik</label>
         <div className="flex gap-2">
           <input
             type="text"
             value={mechanicInput}
             onChange={e => setMechanicInput(e.target.value)}
             placeholder="ID Mekanik"
-            className="flex-1 px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputCompactClass + ' flex-1'}
           />
           <button
             onClick={saveMechanic}
             disabled={mechanicSaving || !mechanicInput.trim()}
-            className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 transition-colors"
+            className="px-4 py-2.5 text-[13px] font-medium bg-surface-raised border border-border rounded-xl text-ink-secondary hover:bg-surface-subtle disabled:opacity-50 transition-colors"
           >
             {mechanicSaving ? '...' : 'Simpan'}
           </button>
@@ -371,27 +375,27 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
       </div>
 
       {/* Estimate fields */}
-      <div className="border border-gray-200 rounded-lg p-3 space-y-2">
-        <label className="text-xs font-medium text-gray-600">Estimasi</label>
-        <div className="grid grid-cols-2 gap-2">
+      <div className="bg-surface-raised border border-border rounded-xl p-4 space-y-3">
+        <label className="text-[13px] font-medium text-ink">Estimasi</label>
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-500">Biaya (Rp)</label>
+            <label className="text-[12px] text-ink-muted mb-1 block">Biaya (Rp)</label>
             <input
               type="number"
               value={estCost}
               onChange={e => setEstCost(e.target.value)}
               placeholder="Estimasi biaya"
-              className="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputCompactClass}
               min={0}
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500">Selesai</label>
+            <label className="text-[12px] text-ink-muted mb-1 block">Selesai</label>
             <input
               type="datetime-local"
               value={estDate}
               onChange={e => setEstDate(e.target.value)}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputCompactClass}
             />
           </div>
         </div>
@@ -399,7 +403,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
           <button
             onClick={saveEstimate}
             disabled={estimateSaving}
-            className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 transition-colors"
+            className="px-4 py-2.5 text-[13px] font-medium bg-surface-raised border border-border rounded-xl text-ink-secondary hover:bg-surface-subtle disabled:opacity-50 transition-colors"
           >
             {estimateSaving ? '...' : 'Simpan Estimasi'}
           </button>
@@ -407,30 +411,30 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
       </div>
 
       {/* Line items */}
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
-        <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
-          <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Item Pekerjaan</h4>
+      <div className="bg-surface-raised border border-border rounded-xl overflow-hidden">
+        <div className="px-4 py-3 bg-surface-subtle border-b border-border">
+          <h4 className="text-[12px] font-semibold text-ink-muted uppercase tracking-wide">Item Pekerjaan</h4>
         </div>
         {items.length === 0 ? (
-          <div className="p-4 text-center text-sm text-gray-400">Belum ada item</div>
+          <div className="p-4 text-center text-[13px] text-ink-faint">Belum ada item</div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-border-light">
             {items.map(item => (
-              <div key={item.id} className="flex items-center gap-2 px-3 py-2.5">
+              <div key={item.id} className="flex items-center gap-3 px-4 py-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">
+                  <p className="text-[13px] font-medium text-ink truncate">
                     {item.description || (item.itemType === 'SERVICE' ? 'Jasa' : 'Part')}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-[12px] text-ink-muted font-mono">
                     {item.qty} × {formatRp(item.unitPrice)} = {formatRp(item.lineTotal)}
                   </p>
                 </div>
-                <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 shrink-0">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-[rgba(122,132,144,0.1)] text-ink-muted font-medium shrink-0">
                   {item.itemType}
                 </span>
                 <button
                   onClick={() => removeItem(item.id)}
-                  className="text-red-400 hover:text-red-600 text-lg leading-none shrink-0 px-1"
+                  className="text-danger hover:text-danger text-lg leading-none shrink-0 px-1"
                   aria-label={`Remove ${item.description || 'item'}`}
                 >
                   ×
@@ -440,25 +444,25 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
           </div>
         )}
         {/* Total */}
-        <div className="px-3 py-2.5 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
-          <span className="text-sm font-semibold text-gray-700">Total</span>
-          <span className="text-sm font-bold text-gray-900">{formatRp(lineItemsTotal)}</span>
+        <div className="px-4 py-3 bg-surface-subtle border-t border-border flex justify-between items-center">
+          <span className="text-[13px] font-semibold text-ink">Total</span>
+          <span className="text-[15px] font-bold text-ink font-mono">{formatRp(lineItemsTotal)}</span>
         </div>
       </div>
 
       {/* Product selector — only show if order is not completed/paid */}
       {order.workStatus !== 'COMPLETED' || order.paymentStatus === 'UNPAID' ? (
         <div>
-          <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Tambah Item</h4>
+          <h4 className="text-[12px] font-semibold text-ink-muted uppercase tracking-wide mb-2">Tambah Item</h4>
           <ServiceProductSelector serviceOrderId={orderId} onItemAdded={refreshAll} />
         </div>
       ) : null}
 
       {/* Status action bar */}
-      <div className="border-t border-gray-200 pt-4">
+      <div className="border-t border-border pt-4">
         {order.paymentStatus === 'PAID' ? (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-            <span className="text-green-700 font-semibold">Lunas ✓</span>
+          <div className="bg-success-muted rounded-xl p-4 text-center">
+            <span className="text-success font-semibold text-[15px]">Lunas ✓</span>
           </div>
         ) : (
           <div className="flex gap-2 flex-wrap">
@@ -466,7 +470,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
               <button
                 onClick={() => updateStatus('CHECKED_IN')}
                 disabled={actionLoading}
-                className="flex-1 py-2.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                className="flex-1 py-3 bg-brand text-white rounded-xl font-semibold text-[13px] hover:bg-brand-hover disabled:opacity-50 transition-all press-scale"
               >
                 {actionLoading ? 'Memproses...' : 'Check In'}
               </button>
@@ -476,7 +480,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
               <button
                 onClick={() => updateStatus('IN_PROGRESS')}
                 disabled={actionLoading}
-                className="flex-1 py-2.5 bg-amber-500 text-white rounded-lg font-medium text-sm hover:bg-amber-600 disabled:opacity-50 transition-colors"
+                className="flex-1 py-3 bg-brand text-white rounded-xl font-semibold text-[13px] hover:bg-brand-hover disabled:opacity-50 transition-all press-scale"
               >
                 {actionLoading ? 'Memproses...' : 'Mulai Kerja'}
               </button>
@@ -486,7 +490,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
               <button
                 onClick={completeOrder}
                 disabled={actionLoading}
-                className="flex-1 py-2.5 bg-green-600 text-white rounded-lg font-medium text-sm hover:bg-green-700 disabled:opacity-50 transition-colors"
+                className="flex-1 py-3 bg-brand text-white rounded-xl font-semibold text-[13px] hover:bg-brand-hover disabled:opacity-50 transition-all press-scale"
               >
                 {actionLoading ? 'Memproses...' : 'Selesai'}
               </button>
@@ -496,7 +500,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
               <button
                 onClick={() => onRequestPayment(orderId, orderTotal, paidAmount)}
                 disabled={actionLoading}
-                className="flex-1 py-2.5 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                className="flex-1 py-3 bg-brand text-white rounded-xl font-semibold text-[13px] hover:bg-brand-hover disabled:opacity-50 transition-all press-scale"
               >
                 Bayar
               </button>

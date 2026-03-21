@@ -122,9 +122,9 @@ export function ServiceFlow() {
   }
 
   return (
-    <div data-testid="service-flow" className="flex flex-col h-full bg-white">
+    <div data-testid="service-flow" className="flex flex-col h-full bg-surface">
       {/* Tab bar */}
-      <div className="flex border-b border-gray-200 bg-gray-50 shrink-0">
+      <div className="flex items-center gap-1.5 px-4 py-3 shrink-0 overflow-x-auto no-scrollbar">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -135,13 +135,13 @@ export function ServiceFlow() {
                 setOpenOrdersSelectedId(null)
               }
             }}
-            className={`px-4 py-3 text-sm font-medium transition-colors relative ${
+            className={`flex items-center rounded-[20px] py-[7px] px-4 shrink-0 transition-colors ${
               activeTab === tab.id
-                ? 'text-blue-600 bg-white border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                ? 'bg-ink text-white'
+                : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
             }`}
           >
-            {tab.label}
+            <span className="font-medium text-[13px] leading-4">{tab.label}</span>
           </button>
         ))}
 
@@ -149,7 +149,7 @@ export function ServiceFlow() {
         {activeTab !== 'new-order' || step !== 'select-customer' ? (
           <button
             onClick={handleNewOrder}
-            className="ml-auto px-3 py-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
+            className="ml-auto px-3 py-1.5 text-[13px] text-brand hover:text-brand-hover font-medium transition-colors shrink-0"
           >
             + Order Baru
           </button>

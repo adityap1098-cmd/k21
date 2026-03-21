@@ -23,6 +23,16 @@ function formatRupiah(amount: number): string {
   return 'Rp ' + amount.toLocaleString('id-ID')
 }
 
+/* ── Search Icon (matching ProductPanel) ── */
+function SearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="shrink-0">
+      <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M12.5 12.5L16 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export function ReceivablesView() {
   const [receivables, setReceivables] = useState<ReceivableOrder[]>([])
   const [loading, setLoading] = useState(true)
@@ -74,21 +84,26 @@ export function ReceivablesView() {
   const totalOutstanding = filtered.reduce((sum, r) => sum + r.outstanding, 0)
 
   return (
-    <div data-testid="receivables-view" className="p-4 space-y-4">
-      {/* Header with refresh and filter */}
+    <div data-testid="receivables-view" className="p-5 space-y-4">
+      {/* Header with search + refresh */}
       <div className="flex items-center gap-3">
-        <h3 className="text-sm font-semibold text-gray-700 shrink-0">Piutang Outstanding</h3>
-        <input
-          type="text"
-          value={customerFilter}
-          onChange={(e) => setCustomerFilter(e.target.value)}
-          placeholder="Filter nama customer, plat, atau order..."
-          className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          data-testid="receivables-filter"
-        />
+        <h3 className="text-[15px] font-semibold text-ink shrink-0">Piutang</h3>
+        <div className="flex items-center flex-1 rounded-xl py-2.5 px-4 gap-2.5 bg-surface-raised border border-border">
+          <span className="text-ink-muted">
+            <SearchIcon />
+          </span>
+          <input
+            type="text"
+            value={customerFilter}
+            onChange={(e) => setCustomerFilter(e.target.value)}
+            placeholder="Filter nama customer, plat, atau order..."
+            className="flex-1 bg-transparent text-[13px] text-ink placeholder:text-ink-faint focus:outline-none"
+            data-testid="receivables-filter"
+          />
+        </div>
         <button
           onClick={() => fetchReceivables()}
-          className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors shrink-0"
+          className="px-3 py-1.5 text-[13px] font-medium text-brand hover:text-brand-hover hover:bg-brand-subtle rounded-lg transition-colors shrink-0"
         >
           ↻ Refresh
         </button>
@@ -96,7 +111,7 @@ export function ReceivablesView() {
 
       {/* Error banner */}
       {error ? (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+        <div className="bg-danger-muted rounded-xl p-3 text-[13px] text-danger">
           Gagal memuat piutang: {error}
         </div>
       ) : null}
@@ -105,60 +120,53 @@ export function ReceivablesView() {
       {loading ? (
         <div className="animate-pulse space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-14 bg-gray-100 rounded-lg" />
+            <div key={i} className="h-14 bg-surface-subtle rounded-xl" />
           ))}
         </div>
       ) : null}
 
-      {/* Results table */}
+      {/* Results — card list */}
       {!loading && !error && filtered.length > 0 ? (
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-2.5 font-medium text-gray-600">Order No.</th>
-                <th className="text-left px-4 py-2.5 font-medium text-gray-600">Customer</th>
-                <th className="text-left px-4 py-2.5 font-medium text-gray-600">Kendaraan</th>
-                <th className="text-right px-4 py-2.5 font-medium text-gray-600">Total</th>
-                <th className="text-right px-4 py-2.5 font-medium text-gray-600">Dibayar</th>
-                <th className="text-right px-4 py-2.5 font-medium text-gray-600">Sisa</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {filtered.map(item => (
-                <tr key={item.orderNumber} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-800">{item.orderNumber}</td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {item.customerName ?? '—'}
-                  </td>
-                  <td className="px-4 py-3 text-gray-500">{item.vehiclePlate ?? '—'}</td>
-                  <td className="px-4 py-3 text-right text-gray-700">{formatRupiah(item.total)}</td>
-                  <td className="px-4 py-3 text-right text-gray-500">{formatRupiah(item.totalPaid)}</td>
-                  <td className={`px-4 py-3 text-right font-semibold ${item.outstanding > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                    {formatRupiah(item.outstanding)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            {/* Summary row */}
-            <tfoot>
-              <tr className="bg-gray-50 border-t-2 border-gray-300">
-                <td colSpan={5} className="px-4 py-3 text-right font-semibold text-gray-700">
-                  Total Piutang:
-                </td>
-                <td className="px-4 py-3 text-right font-bold text-red-600">
-                  {formatRupiah(totalOutstanding)}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+        <div className="space-y-2">
+          {filtered.map(item => (
+            <div key={item.orderNumber} className="bg-surface-raised border border-border rounded-xl p-4">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div>
+                  <span className="text-[13px] font-semibold text-ink">{item.orderNumber}</span>
+                  {item.vehiclePlate ? (
+                    <span className="text-[12px] text-ink-muted ml-2">🚗 {item.vehiclePlate}</span>
+                  ) : null}
+                </div>
+                <span className="text-danger font-semibold font-mono tabular-nums text-[13px]">
+                  {formatRupiah(item.outstanding)}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-[12px]">
+                <span className="text-ink-secondary">{item.customerName ?? '—'}</span>
+                <span className="text-ink-faint">
+                  Total: <span className="font-mono">{formatRupiah(item.total)}</span>
+                </span>
+                <span className="text-ink-faint">
+                  Dibayar: <span className="font-mono">{formatRupiah(item.totalPaid)}</span>
+                </span>
+              </div>
+            </div>
+          ))}
+
+          {/* Summary bar */}
+          <div className="bg-surface-subtle border border-border rounded-xl p-4 flex items-center justify-between">
+            <span className="text-[13px] font-semibold text-ink">Total Piutang</span>
+            <span className="text-danger font-bold font-mono tabular-nums text-[15px]">
+              {formatRupiah(totalOutstanding)}
+            </span>
+          </div>
         </div>
       ) : null}
 
       {/* Empty state */}
       {!loading && !error && filtered.length === 0 ? (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-          <p className="text-gray-400 text-sm">
+        <div className="bg-surface-raised border border-border rounded-xl p-8 text-center">
+          <p className="text-ink-faint text-[13px]">
             {customerFilter.trim()
               ? 'Tidak ada piutang yang cocok dengan filter'
               : 'Tidak ada piutang outstanding'}
