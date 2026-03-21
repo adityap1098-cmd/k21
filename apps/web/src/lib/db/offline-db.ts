@@ -39,6 +39,8 @@ export interface CatalogProduct {
   barcode?: string
   price: number
   stockQty: number         // "last known" — stale when offline
+  categoryId?: string      // product category UUID
+  categoryName?: string    // denormalized for POS display
   lastSyncedAt: number
 }
 
@@ -51,6 +53,11 @@ export class OfflineDB extends Dexie {
     this.version(1).stores({
       offlineQueue: 'clientUuid, status, createdAt',
       catalog: 'variantId, barcode, name',
+    })
+    // v2: add categoryId index for POS category filter tabs
+    this.version(2).stores({
+      offlineQueue: 'clientUuid, status, createdAt',
+      catalog: 'variantId, barcode, name, categoryId',
     })
   }
 }

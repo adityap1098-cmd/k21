@@ -7,6 +7,7 @@ import { authFetch } from './auth-fetch'
 
 export type { CatalogProduct }
 
+/** Search catalog by name, sku, or barcode */
 export function useCatalogSearch(query: string): CatalogProduct[] {
   return useLiveQuery(async () => {
     if (!query || query.length < 1) return []
@@ -18,9 +19,40 @@ export function useCatalogSearch(query: string): CatalogProduct[] {
   }, [query], []) ?? []
 }
 
+/** Get all products, optionally filtered by categoryId */
+export function useAllProducts(categoryId: string | null): CatalogProduct[] {
+  return useLiveQuery(async () => {
+    if (categoryId) {
+      return offlineDB.catalog.where('categoryId').equals(categoryId).toArray()
+    }
+    return offlineDB.catalog.toArray()
+  }, [categoryId], []) ?? []
+}
+
+/** Get unique categories from cached catalog products */
+export function useCatalogCategories(): Array<{ id: string; name: string }> {
+  return useLiveQuery(async () => {
+    const all = await offlineDB.catalog.toArray()
+    const map = new Map<string, string>()
+    for (const p of all) {
+      if (p.categoryId && p.categoryName && !map.has(p.categoryId)) {
+        map.set(p.categoryId, p.categoryName)
+      }
+    }
+    return Array.from(map, ([id, name]) => ({ id, name }))
+  }, [], []) ?? []
+}
+
+interface ApiCategory {
+  id: string
+  name: string
+  parentId: string | null
+}
+
 interface ApiProduct {
   id: string
   name: string
+  categoryId: string
   variants?: Array<{
     id: string
     sku: string
@@ -43,6 +75,22 @@ export function useCatalogSync(): {
   async function syncCatalog(): Promise<void> {
     setIsSyncing(true)
     try {
+      // Fetch categories first so we can denormalize names
+      let categoryMap = new Map<string, string>()
+      try {
+        const catRes = await authFetch('/api/v1/categories')
+        if (catRes.ok) {
+          const catJson = await catRes.json() as { success: boolean; data: ApiCategory[] }
+          if (catJson.success && Array.isArray(catJson.data)) {
+            for (const c of catJson.data) {
+              categoryMap.set(c.id, c.name)
+            }
+          }
+        }
+      } catch {
+        // Category fetch is best-effort — continue without category data
+      }
+
       const res = await authFetch('/api/v1/products?variants=true&active=true')
       if (!res.ok) throw new Error(`Sync failed: ${res.status}`)
 
@@ -63,6 +111,8 @@ export function useCatalogSync(): {
             barcode: variant.barcode || undefined,
             price: variant.price,
             stockQty: variant.stockQty,
+            categoryId: product.categoryId,
+            categoryName: categoryMap.get(product.categoryId),
             lastSyncedAt: now,
           })
         }

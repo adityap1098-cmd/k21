@@ -1,72 +1,76 @@
 'use client'
 
-import { useState, useEffect, useRef, memo, useCallback } from 'react'
-import { useCatalogSearch, getQuickAddProducts, type CatalogProduct } from '@/lib/catalog'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useCatalogSearch, useAllProducts, useCatalogCategories, type CatalogProduct } from '@/lib/catalog'
 import { useCartStore } from '@/lib/store/cart.store'
 
 function formatRupiah(amount: number): string {
   return 'Rp ' + amount.toLocaleString('id-ID')
 }
 
-interface ProductTileProps {
-  product: CatalogProduct
-  onAdd: (product: CatalogProduct) => void
+/* ── SVG Icons ── */
+
+function SearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="shrink-0">
+      <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M12.5 12.5L16 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
 }
 
-const ProductTile = memo(function ProductTile({ product, onAdd }: ProductTileProps) {
+function ProductPlaceholderIcon() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <rect x="8" y="10" width="20" height="18" rx="2" stroke="#B0B5BC" strokeWidth="1.5" />
+      <path d="M12 10V8C12 5.79 13.79 4 16 4H20C22.21 4 24 5.79 24 8V10" stroke="#B0B5BC" strokeWidth="1.5" />
+    </svg>
+  )
+}
+
+/* ── Product Card ── */
+
+function ProductCard({ product, onAdd }: { product: CatalogProduct; onAdd: (p: CatalogProduct) => void }) {
   return (
     <button
       onClick={() => onAdd(product)}
-      className="flex flex-col items-start bg-surface-raised border border-border rounded-lg p-3 hover:bg-brand-subtle hover:border-brand active:bg-brand-muted transition-colors text-left w-full"
+      className="flex flex-col w-[164px] rounded-xl overflow-hidden bg-surface-raised border border-border shrink-0 text-left hover:border-brand/40 active:scale-[0.98] transition-all cursor-pointer"
     >
-      <span className="text-sm font-medium text-ink line-clamp-2 leading-tight mb-1">{product.name}</span>
-      <span className="text-xs text-ink-muted mb-1">{product.sku}</span>
-      <span className="text-sm font-semibold text-brand">{formatRupiah(product.price)}</span>
+      {/* Image placeholder */}
+      <div className="flex items-center justify-center h-[100px] bg-[#EDE9E3] shrink-0">
+        <ProductPlaceholderIcon />
+      </div>
+      {/* Content */}
+      <div className="flex flex-col py-2.5 px-3 gap-1">
+        <span className="tracking-[-0.01em] text-ink font-medium text-[13px] leading-4 line-clamp-2">
+          {product.name}
+        </span>
+        <span className="text-brand font-mono font-medium text-[13px] leading-4">
+          {formatRupiah(product.price)}
+        </span>
+        <span className="text-ink-muted text-[11px] leading-[14px]">
+          Stok: {product.stockQty}
+        </span>
+      </div>
     </button>
   )
-})
-
-interface SearchResultRowProps {
-  product: CatalogProduct
-  onAdd: (product: CatalogProduct) => void
 }
 
-const SearchResultRow = memo(function SearchResultRow({ product, onAdd }: SearchResultRowProps) {
-  return (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-border-light hover:bg-surface">
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-ink truncate">{product.name}</div>
-        <div className="text-xs text-ink-muted">{product.sku}</div>
-      </div>
-      <div className="flex items-center gap-3 ml-4 shrink-0">
-        <span className="text-sm font-semibold text-ink-secondary">{formatRupiah(product.price)}</span>
-        <button
-          onClick={() => onAdd(product)}
-          className="w-8 h-8 flex items-center justify-center bg-brand text-white rounded-full hover:bg-brand-hover active:bg-brand-hover text-lg font-bold leading-none"
-          aria-label={`Add ${product.name} to cart`}
-        >
-          +
-        </button>
-      </div>
-    </div>
-  )
-})
+/* ── Main ProductPanel ── */
 
 export function ProductPanel() {
   const [query, setQuery] = useState('')
-  const [quickAddProducts, setQuickAddProducts] = useState<CatalogProduct[]>([])
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const { addItem } = useCartStore()
 
   const searchResults = useCatalogSearch(query)
+  const allProducts = useAllProducts(activeCategoryId)
+  const categories = useCatalogCategories()
 
   const handleAdd = useCallback((product: CatalogProduct) => {
     addItem({ variantId: product.variantId, name: product.name, unitPrice: product.price })
   }, [addItem])
-
-  useEffect(() => {
-    getQuickAddProducts().then(setQuickAddProducts).catch(() => setQuickAddProducts([]))
-  }, [])
 
   // Barcode detection: if 1 result and its barcode exactly matches query, auto-add and clear
   useEffect(() => {
@@ -79,54 +83,90 @@ export function ProductPanel() {
     }
   }, [searchResults, query, addItem])
 
-  const showSearch = query.trim().length > 0
+  // F2 keyboard shortcut to focus search
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'F2') {
+        e.preventDefault()
+        inputRef.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  const isSearching = query.trim().length > 0
+  const displayProducts = isSearching ? searchResults : allProducts
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Search / Scan bar */}
-      <div className="p-4 bg-surface-raised border-b border-border shrink-0">
+    <div className="flex flex-col gap-5 h-full overflow-hidden">
+      {/* Search bar */}
+      <div className="flex items-center rounded-xl py-3 px-4 gap-2.5 bg-surface-raised border border-border shrink-0">
+        <span className="text-ink-muted">
+          <SearchIcon />
+        </span>
         <input
           ref={inputRef}
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
-          placeholder="Scan barcode or search product..."
+          placeholder="Cari produk atau scan barcode..."
           aria-label="Cari produk atau scan barcode"
-          className="w-full px-4 py-3 border border-border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-brand"
+          className="flex-1 bg-transparent text-sm leading-[18px] text-ink placeholder:text-[#B0B5BC] focus:outline-none"
           autoFocus
         />
+        <div className="ml-auto flex items-center rounded-md py-1 px-2.5 bg-surface border border-border">
+          <span className="text-ink-muted font-mono text-[11px] leading-[14px]">F2</span>
+        </div>
       </div>
 
-      {/* Content area */}
+      {/* Category pills */}
+      {!isSearching && (
+        <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto no-scrollbar">
+          <button
+            onClick={() => setActiveCategoryId(null)}
+            className={`flex items-center rounded-[20px] py-[7px] px-4 shrink-0 transition-colors ${
+              activeCategoryId === null
+                ? 'bg-ink text-white'
+                : 'bg-surface-raised border border-border text-ink hover:bg-surface'
+            }`}
+          >
+            <span className="font-medium text-[13px] leading-4">Semua</span>
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategoryId(cat.id)}
+              className={`flex items-center rounded-[20px] py-[7px] px-4 shrink-0 transition-colors ${
+                activeCategoryId === cat.id
+                  ? 'bg-ink text-white'
+                  : 'bg-surface-raised border border-border text-ink hover:bg-surface'
+              }`}
+            >
+              <span className="font-medium text-[13px] leading-4">{cat.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Product grid */}
       <div className="flex-1 overflow-y-auto">
-        {showSearch ? (
-          /* Search results list */
-          <div>
-            {searchResults.length === 0 ? (
-              <div className="flex items-center justify-center py-12 text-ink-faint">
-                <span>No products found for &ldquo;{query}&rdquo;</span>
-              </div>
+        {displayProducts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-ink-faint gap-2">
+            {isSearching ? (
+              <span className="text-sm">Tidak ada produk untuk &ldquo;{query}&rdquo;</span>
             ) : (
-              searchResults.map(product => (
-                <SearchResultRow key={product.variantId} product={product} onAdd={handleAdd} />
-              ))
+              <>
+                <ProductPlaceholderIcon />
+                <span className="text-sm mt-2">Belum ada produk. Sinkronisasi untuk memuat katalog.</span>
+              </>
             )}
           </div>
         ) : (
-          /* Quick-add grid */
-          <div className="p-4">
-            <div className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3">Quick Add</div>
-            {quickAddProducts.length === 0 ? (
-              <div className="flex items-center justify-center py-12 text-ink-faint">
-                <span>No products in catalog. Sync to load products.</span>
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-2">
-                {quickAddProducts.map(product => (
-                  <ProductTile key={product.variantId} product={product} onAdd={handleAdd} />
-                ))}
-              </div>
-            )}
+          <div className="flex flex-wrap gap-3">
+            {displayProducts.map(product => (
+              <ProductCard key={product.variantId} product={product} onAdd={handleAdd} />
+            ))}
           </div>
         )}
       </div>

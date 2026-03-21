@@ -123,6 +123,15 @@ p {
   border-radius: var(--radius-md);
 }
 
+/* ─── Hide scrollbar utility ─── */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* ─── Scrollbar styling ─── */
 ::-webkit-scrollbar {
   width: 6px;

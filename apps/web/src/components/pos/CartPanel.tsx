@@ -1,22 +1,42 @@
 'use client'
 
-import { useState } from 'react'
 import { useCartStore, computeCartTotals, type CartItem } from '@/lib/store/cart.store'
 
 function formatRupiah(amount: number): string {
   return 'Rp ' + amount.toLocaleString('id-ID')
 }
 
-interface CartLineProps {
-  item: CartItem
-  isExpanded: boolean
-  onToggle: () => void
-  onUpdateQty: (variantId: string, qty: number) => void
-  onSetDiscount: (variantId: string, type: 'percent' | 'flat', value: number) => void
-  onRemove: (variantId: string) => void
+/* ── SVG Icons ── */
+
+function CartProductIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect x="4" y="5" width="12" height="11" rx="1.5" stroke="#7A8490" strokeWidth="1.2" />
+      <path d="M7 5V4C7 2.9 7.9 2 9 2H11C12.1 2 13 2.9 13 4V5" stroke="#7A8490" strokeWidth="1.2" />
+    </svg>
+  )
 }
 
-function CartLine({ item, isExpanded, onToggle, onUpdateQty, onSetDiscount, onRemove }: CartLineProps) {
+function CreditCardIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <rect x="2" y="4" width="14" height="10" rx="2" stroke="#FFFFFF" strokeWidth="1.5" />
+      <path d="M2 8H16" stroke="#FFFFFF" strokeWidth="1.5" />
+    </svg>
+  )
+}
+
+/* ── Cart Item Row ── */
+
+function CartItemRow({
+  item,
+  onUpdateQty,
+  onRemove,
+}: {
+  item: CartItem
+  onUpdateQty: (variantId: string, qty: number) => void
+  onRemove: (variantId: string) => void
+}) {
   const lineBase = item.unitPrice * item.qty
   const itemDisc = item.discountType === 'percent'
     ? lineBase * (item.discountValue / 100)
@@ -24,97 +44,66 @@ function CartLine({ item, isExpanded, onToggle, onUpdateQty, onSetDiscount, onRe
   const lineTotal = lineBase - itemDisc
 
   return (
-    <div className="border-b border-border-light">
-      {/* Normal row */}
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-surface text-left"
-        aria-expanded={isExpanded}
-      >
-        <span className="flex-1 text-sm font-medium text-ink truncate">{item.name}</span>
-        <span className="text-sm text-ink-muted shrink-0">x{item.qty}</span>
-        <span className="text-sm text-ink-muted shrink-0">{formatRupiah(item.unitPrice)}</span>
-        <span className="text-sm font-semibold text-ink shrink-0 w-24 text-right">{formatRupiah(lineTotal)}</span>
-      </button>
+    <div className="flex items-center py-3.5 gap-3 border-b border-border-light">
+      {/* Product icon */}
+      <div className="flex items-center justify-center shrink-0 rounded-[10px] bg-surface size-11">
+        <CartProductIcon />
+      </div>
 
-      {/* Inline editor */}
-      {isExpanded && (
-        <div className="bg-surface px-4 pb-4 pt-2 space-y-3">
-          {/* Quantity */}
-          <div className="flex items-center gap-3">
-            <label className="text-xs text-ink-muted w-20 shrink-0">Quantity</label>
-            <input
-              type="number"
-              min={1}
-              value={item.qty}
-              onChange={e => onUpdateQty(item.variantId, parseInt(e.target.value, 10) || 1)}
-              className="w-24 px-3 py-1.5 border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-            />
-          </div>
+      {/* Name + unit price */}
+      <div className="flex flex-col grow shrink basis-0 gap-0.5 min-w-0">
+        <span className="text-ink font-medium text-[13px] leading-4 truncate">{item.name}</span>
+        <span className="text-ink-muted font-mono text-xs leading-4">{formatRupiah(item.unitPrice)}</span>
+      </div>
 
-          {/* Discount type + value */}
-          <div className="flex items-center gap-3">
-            <label className="text-xs text-ink-muted w-20 shrink-0">Discount</label>
-            <div className="flex rounded border border-border overflow-hidden">
-              <button
-                onClick={() => onSetDiscount(item.variantId, 'percent', item.discountValue)}
-                className={`px-3 py-1.5 text-sm font-medium ${
-                  item.discountType === 'percent'
-                    ? 'bg-brand text-white'
-                    : 'bg-surface-raised text-ink-secondary hover:bg-surface'
-                }`}
-              >
-                %
-              </button>
-              <button
-                onClick={() => onSetDiscount(item.variantId, 'flat', item.discountValue)}
-                className={`px-3 py-1.5 text-sm font-medium border-l border-border ${
-                  item.discountType === 'flat'
-                    ? 'bg-brand text-white'
-                    : 'bg-surface-raised text-ink-secondary hover:bg-surface'
-                }`}
-              >
-                Rp
-              </button>
-            </div>
-            <input
-              type="number"
-              min={0}
-              value={item.discountValue}
-              onChange={e => onSetDiscount(item.variantId, item.discountType, parseFloat(e.target.value) || 0)}
-              className="w-24 px-3 py-1.5 border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-            />
-          </div>
+      {/* Qty controls */}
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          onClick={() => {
+            if (item.qty <= 1) {
+              onRemove(item.variantId)
+            } else {
+              onUpdateQty(item.variantId, item.qty - 1)
+            }
+          }}
+          className="flex items-center justify-center size-7 rounded-[7px] bg-surface border border-border text-ink font-medium text-sm leading-[18px] hover:bg-border-light active:scale-95 transition-all"
+          aria-label={`Kurangi ${item.name}`}
+        >
+          −
+        </button>
+        <span className="w-[18px] text-center text-ink font-mono font-medium text-[13px] leading-4">
+          {item.qty}
+        </span>
+        <button
+          onClick={() => onUpdateQty(item.variantId, item.qty + 1)}
+          className="flex items-center justify-center size-7 rounded-[7px] bg-surface border border-border text-ink font-medium text-sm leading-[18px] hover:bg-border-light active:scale-95 transition-all"
+          aria-label={`Tambah ${item.name}`}
+        >
+          +
+        </button>
+      </div>
 
-          {/* Remove button */}
-          <div className="flex justify-end">
-            <button
-              onClick={() => onRemove(item.variantId)}
-              className="text-sm text-danger hover:text-red-700 font-medium px-3 py-1.5 rounded hover:bg-danger-muted"
-            >
-              Hapus
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Line total */}
+      <span className="w-16 text-right text-ink font-mono font-semibold shrink-0 text-[13px] leading-4">
+        {formatRupiah(lineTotal)}
+      </span>
     </div>
   )
 }
+
+/* ── Main CartPanel ── */
 
 interface CartPanelProps {
   onPay: () => void
 }
 
 export function CartPanel({ onPay }: CartPanelProps) {
-  const [expandedVariantId, setExpandedVariantId] = useState<string | null>(null)
-
   const {
     items,
     transactionDiscount,
     updateQty,
-    setItemDiscount,
-    setTransactionDiscount,
     removeItem,
+    clearCart,
   } = useCartStore()
 
   const { subtotal, total } = computeCartTotals(items, transactionDiscount)
@@ -128,90 +117,86 @@ export function CartPanel({ onPay }: CartPanelProps) {
     return sum + d
   }, 0)
 
-  function toggleExpand(variantId: string) {
-    setExpandedVariantId(prev => prev === variantId ? null : variantId)
-  }
-
+  const discountDisplay = transactionDiscount + itemDiscountTotal
   const isEmpty = items.length === 0
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-surface-raised border-l border-border">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border bg-surface-raised shrink-0 flex items-center gap-2">
-        <span className="text-lg font-semibold text-ink">Cart</span>
+      <div className="flex items-center justify-between pt-5 pb-4 px-6 shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="tracking-[-0.02em] text-ink font-bold text-[17px] leading-[22px]">Keranjang</span>
+          {!isEmpty && (
+            <span className="flex items-center justify-center min-w-[22px] h-[22px] rounded-full px-1.5 bg-brand">
+              <span className="text-white font-semibold text-[11px] leading-[14px]">{items.length}</span>
+            </span>
+          )}
+        </div>
         {!isEmpty && (
-          <span className="inline-flex items-center justify-center w-6 h-6 bg-brand text-white text-xs font-bold rounded-full">
-            {items.length}
-          </span>
+          <button
+            onClick={clearCart}
+            className="text-brand font-medium text-[13px] leading-4 hover:text-brand-hover transition-colors"
+          >
+            Hapus
+          </button>
         )}
       </div>
 
-      {/* Cart lines */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Cart items */}
+      <div className="flex-1 overflow-y-auto px-6">
         {isEmpty ? (
-          <div className="flex flex-col items-center justify-center h-full text-ink-faint gap-2">
-            <span className="text-4xl">&#128722;</span>
-            <span className="text-sm">Cart is empty</span>
+          <div className="flex flex-col items-center justify-center h-full text-ink-faint gap-3">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <rect x="10" y="14" width="28" height="24" rx="3" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M16 14V11C16 7.13 19.13 4 23 4H25C28.87 4 32 7.13 32 11V14" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+            <span className="text-sm">Keranjang kosong</span>
           </div>
         ) : (
           items.map((item: CartItem) => (
-            <CartLine
+            <CartItemRow
               key={item.variantId}
               item={item}
-              isExpanded={expandedVariantId === item.variantId}
-              onToggle={() => toggleExpand(item.variantId)}
               onUpdateQty={updateQty}
-              onSetDiscount={setItemDiscount}
               onRemove={removeItem}
             />
           ))
         )}
       </div>
 
-      {/* Totals area */}
-      <div className="border-t border-border bg-surface p-4 space-y-2 shrink-0">
-        {/* Subtotal before item discounts */}
-        <div className="flex justify-between text-sm text-ink-secondary">
-          <span>Subtotal</span>
-          <span>{formatRupiah(subtotal + itemDiscountTotal)}</span>
+      {/* Footer totals */}
+      <div className="flex flex-col pt-4 pb-3 gap-3 border-t border-border px-6 shrink-0">
+        <div className="flex items-center justify-between">
+          <span className="text-ink-muted text-[13px] leading-4">Subtotal</span>
+          <span className="text-ink font-mono font-medium text-[13px] leading-4">
+            {formatRupiah(subtotal + itemDiscountTotal)}
+          </span>
         </div>
-
-        {/* Item discounts */}
-        {itemDiscountTotal > 0 && (
-          <div className="flex justify-between text-sm text-success">
-            <span>Item discounts</span>
-            <span>-{formatRupiah(itemDiscountTotal)}</span>
-          </div>
-        )}
-
-        {/* Transaction discount */}
-        <div className="flex items-center justify-between text-sm text-ink-secondary">
-          <span>Transaction discount</span>
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-ink-muted">Rp</span>
-            <input
-              type="number"
-              min={0}
-              value={transactionDiscount}
-              onChange={e => setTransactionDiscount(parseFloat(e.target.value) || 0)}
-              className="w-28 px-2 py-1 border border-border rounded text-sm text-right focus:outline-none focus:ring-2 focus:ring-brand"
-            />
-          </div>
+        <div className="flex items-center justify-between">
+          <span className="text-ink-muted text-[13px] leading-4">Diskon</span>
+          <span className="text-[#2D8F5E] font-mono font-medium text-[13px] leading-4">
+            - {formatRupiah(discountDisplay)}
+          </span>
         </div>
-
-        {/* Grand total */}
-        <div className="flex justify-between items-center pt-2 border-t border-border">
-          <span className="text-base font-bold text-ink">TOTAL</span>
-          <span className="text-xl font-bold text-ink">{formatRupiah(total)}</span>
+        {/* Divider */}
+        <div className="w-full h-px bg-border shrink-0" />
+        <div className="flex items-center justify-between">
+          <span className="text-ink font-semibold text-[15px] leading-[18px]">Total</span>
+          <span className="tracking-[-0.02em] text-ink font-mono font-bold text-xl leading-6">
+            {formatRupiah(total)}
+          </span>
         </div>
+      </div>
 
-        {/* BAYAR button */}
+      {/* Pay button */}
+      <div className="px-6 pb-6 shrink-0">
         <button
           disabled={isEmpty}
           onClick={onPay}
-          className="w-full mt-2 py-4 bg-brand text-white text-lg font-bold rounded-lg hover:bg-brand-hover active:bg-brand-hover disabled:bg-border disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center w-full rounded-xl py-3.5 gap-2 bg-brand text-white font-semibold text-[15px] leading-[18px] hover:bg-brand-hover active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed transition-all press-scale"
         >
-          BAYAR
+          <CreditCardIcon />
+          <span className="tracking-[-0.01em]">Bayar {formatRupiah(total)}</span>
         </button>
       </div>
     </div>

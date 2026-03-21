@@ -101,46 +101,72 @@ export default function PosPage() {
     )
   }
 
+  const shortShiftId = activeShift.id.slice(0, 8)
+
   return (
     <AppShell>
-      <div className="flex flex-col h-screen bg-surface">
-        <SyncStatusBar isSyncing={isSyncing} />
+      <div className="flex flex-col h-screen bg-surface overflow-hidden">
+        {/* Hidden sync bar — kept for functionality, rendered off-screen */}
+        <div className="sr-only">
+          <SyncStatusBar isSyncing={isSyncing} />
+        </div>
         <SyncIssuesPanel />
 
         <h1 className="sr-only">Point of Sale</h1>
 
-        {/* Transaction type selector */}
-        <div className="px-3 lg:px-4 pt-2 pb-1 shrink-0">
-          <TransactionTypeSelector activeType={transactionType} onTypeChange={setTransactionType} />
+        {/* POS Header — Paper design */}
+        <div className="flex items-center justify-between px-7 pt-6 pb-1 shrink-0">
+          <div className="flex flex-col gap-0.5">
+            <span className="tracking-[-0.03em] text-ink font-bold text-[22px] leading-7">
+              Point of Sale
+            </span>
+            <span className="text-ink-muted text-[13px] leading-4">
+              Shift #{shortShiftId} · Kasir: {activeShift.cashierId.slice(0, 8)}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            {/* Transaction type selector */}
+            <TransactionTypeSelector activeType={transactionType} onTypeChange={setTransactionType} />
+
+            {/* Online badge */}
+            <div className="flex items-center rounded-lg py-1.5 px-3 gap-1.5 bg-[#2D8F5E1A]">
+              <span className="w-[7px] h-[7px] rounded-sm bg-[#2D8F5E] shrink-0" />
+              <span className="text-[#2D8F5E] font-medium text-xs leading-4">Online</span>
+            </div>
+
+            {/* Shift button */}
+            <button
+              onClick={() => setShowShiftDrawer(true)}
+              className="flex items-center gap-2 text-xs font-medium text-ink-secondary bg-surface-raised border border-border px-3 py-1.5 rounded-lg hover:bg-surface-subtle transition-colors"
+              aria-label="Shift settings"
+            >
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M10 7V10L12.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              Shift
+            </button>
+          </div>
         </div>
 
         {/* Conditional: Retail split-screen or Service flow */}
         {transactionType === 'RETAIL' ? (
-          <div className="flex flex-1 overflow-hidden relative">
+          <div className="flex flex-1 overflow-hidden px-7 pt-4 pb-0 gap-0">
             {/* Product panel — left */}
-            <div className="flex-1 overflow-hidden p-3 lg:p-4">
+            <div className="flex-1 overflow-hidden">
               <ProductPanel />
             </div>
 
             {/* Cart panel — right */}
-            <div className="w-80 lg:w-96 border-l border-border bg-surface-raised flex flex-col flex-shrink-0">
+            <div className="w-[380px] shrink-0 flex flex-col -mr-7">
               <CartPanel onPay={() => setShowPayment(true)} />
             </div>
           </div>
         ) : (
-          <ServiceFlow />
+          <div className="flex-1 overflow-hidden px-7 pt-4">
+            <ServiceFlow />
+          </div>
         )}
-
-        {/* Shift info — top-right overlay */}
-        <div className="absolute top-2 right-2 z-20">
-          <button
-            onClick={() => setShowShiftDrawer(true)}
-            className="flex items-center gap-2 text-xs font-medium text-ink-secondary bg-surface-raised/90 backdrop-blur-sm border border-border px-3 py-1.5 rounded-lg hover:bg-surface-subtle transition-colors shadow-sm"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-success" />
-            Shift: {activeShift.id.slice(0, 8)}
-          </button>
-        </div>
 
         <ShiftDrawer isOpen={showShiftDrawer} onClose={() => setShowShiftDrawer(false)} />
 
