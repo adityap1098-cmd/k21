@@ -25,7 +25,7 @@ const opnameBodySchema = z.object({
 const movementBodySchema = z.object({
   variantId: z.string().uuid(),
   movementType: z.enum(['PURCHASE', 'RETURN', 'ADJUSTMENT']),
-  qty: z.number().int().positive(),
+  qty: z.number().int().refine(v => v !== 0, { message: 'qty must not be zero' }),
   reference: z.string().optional(),
   reason: z.string().optional(),
   approvedBy: z.string().uuid().optional(),
@@ -125,11 +125,10 @@ inventoryRouter.post(
         // Update stock_qty in the same transaction
         if (movementType === 'PURCHASE' || movementType === 'RETURN') {
           await tx.execute(
-            sql`UPDATE product_variants SET stock_qty = stock_qty + ${qty}, updated_at = now() WHERE id = ${variantId}`
+            sql`UPDATE product_variants SET stock_qty = stock_qty + ${Math.abs(qty)}, updated_at = now() WHERE id = ${variantId}`
           )
         } else if (movementType === 'ADJUSTMENT') {
-          // ADJUSTMENT qty is an absolute magnitude — set requires explicit direction from caller
-          // For manual adjustments via API, we treat positive qty as increment
+          // ADJUSTMENT qty is signed: positive = add stock, negative = remove stock
           await tx.execute(
             sql`UPDATE product_variants SET stock_qty = stock_qty + ${qty}, updated_at = now() WHERE id = ${variantId}`
           )

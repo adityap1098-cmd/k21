@@ -34,9 +34,15 @@ export async function recordMovement(
   }
 
   // Sign convention: SALE and TRANSFER reduce stock (negative), others add stock (positive)
-  const signedQty = ['SALE', 'TRANSFER'].includes(params.movementType)
-    ? -Math.abs(params.qty)
-    : Math.abs(params.qty)
+  // ADJUSTMENT preserves caller sign (positive = add, negative = remove)
+  let signedQty: number
+  if (['SALE', 'TRANSFER'].includes(params.movementType)) {
+    signedQty = -Math.abs(params.qty)
+  } else if (params.movementType === 'ADJUSTMENT') {
+    signedQty = params.qty // preserve caller's sign
+  } else {
+    signedQty = Math.abs(params.qty)
+  }
 
   const executor = tx ?? db
   await (executor as typeof db).insert(inventoryMovements).values({

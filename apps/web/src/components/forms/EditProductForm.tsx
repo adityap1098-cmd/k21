@@ -94,7 +94,7 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
   }
 
   async function handleAdjustStock(variantId: string, qty: number, reason: string) {
-    const absQty = Math.abs(qty)
+    // qty is signed: positive = add stock, negative = remove stock
     // Get user ID from JWT token
     const token = (await import('@/lib/api')).getAccessToken()
     let userId: string | undefined
@@ -108,10 +108,10 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
     const res = await apiPost('/api/v1/inventory/movements', {
       variantId,
       movementType: 'ADJUSTMENT',
-      qty: absQty,
+      qty,
       reason,
       approvedBy: userId,
-      reference: qty > 0 ? `ADJUST +${absQty}` : `ADJUST -${absQty}`,
+      reference: qty > 0 ? `ADJUST +${Math.abs(qty)}` : `ADJUST -${Math.abs(qty)}`,
     })
     if (res.success) {
       toast(`Stok di-adjust ${qty > 0 ? '+' : ''}${qty}`)
@@ -120,6 +120,7 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
         const reload = await apiGet<Product>(`/api/v1/products/${productId}`)
         if (reload.success && reload.data) setProduct(reload.data)
       }
+      onUpdated() // Refresh products list
     } else {
       toast(res.error || 'Gagal adjust stok', 'error')
     }
