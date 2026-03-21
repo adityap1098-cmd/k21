@@ -42,9 +42,9 @@
   --radius-lg: 10px;
   --radius-xl: 14px;
 
-  /* Font — provided by next/font CSS variables */
-  --font-sans: var(--font-sans, 'Inter', system-ui, -apple-system, sans-serif);
-  --font-mono: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+  /* Font */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 /* ─── Base Resets ─── */
