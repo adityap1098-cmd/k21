@@ -49,7 +49,7 @@ describe('authenticate middleware', () => {
   let next: NextFunction
 
   beforeEach(() => {
-    next = vi.fn()
+    next = vi.fn() as unknown as NextFunction
     process.env.JWT_SECRET = JWT_SECRET_RAW
   })
 

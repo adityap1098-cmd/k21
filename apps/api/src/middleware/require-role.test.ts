@@ -21,14 +21,14 @@ describe('requireRole middleware', () => {
   let next: NextFunction
 
   beforeEach(() => {
-    next = vi.fn()
+    next = vi.fn() as unknown as NextFunction
   })
 
   // AUTH-05: correct role → next() called
   it('calls next() when the authenticated user has the required role', async () => {
     const { requireRole } = await import('./require-role.js')
 
-    const req = makeReq({ user: { id: 'user-uuid', role: 'Owner', mustChangePassword: false } })
+    const req = makeReq({ user: { sub: 'user-uuid', role: 'Owner', mustChangePassword: false } })
     const res = makeRes()
     const middleware = requireRole('Owner')
 
@@ -42,7 +42,7 @@ describe('requireRole middleware', () => {
   it('responds 403 when the authenticated user does not have the required role', async () => {
     const { requireRole } = await import('./require-role.js')
 
-    const req = makeReq({ user: { id: 'user-uuid', role: 'Cashier', mustChangePassword: false } })
+    const req = makeReq({ user: { sub: 'user-uuid', role: 'Cashier', mustChangePassword: false } })
     const res = makeRes()
     const middleware = requireRole('Owner')
 
@@ -70,7 +70,7 @@ describe('requireRole middleware', () => {
   it('calls next() when the user role matches one of multiple allowed roles', async () => {
     const { requireRole } = await import('./require-role.js')
 
-    const req = makeReq({ user: { id: 'user-uuid', role: 'Finance', mustChangePassword: false } })
+    const req = makeReq({ user: { sub: 'user-uuid', role: 'Finance', mustChangePassword: false } })
     const res = makeRes()
     const middleware = requireRole('Owner', 'Finance')
 

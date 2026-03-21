@@ -26,10 +26,26 @@ const closeShiftBodySchema = z.object({
  * Returns 201 { success: true, data: shift }
  * On SHIFT_ALREADY_OPEN → 409
  */
+
+// GET /active — get current user's active shift
+shiftsRouter.get(
+  '/active',
+  authenticate,
+  requireRole('Cashier', 'Owner', 'Admin'),
+  async (req, res) => {
+    try {
+      const shift = await getActiveShift(req.user!.sub)
+      res.json({ success: true, data: shift, error: null })
+    } catch (err) {
+      res.status(500).json({ success: false, data: null, error: 'Internal server error' })
+    }
+  },
+)
+
 shiftsRouter.post(
   '/open',
   authenticate,
-  requireRole('Cashier'),
+  requireRole('Cashier', 'Owner', 'Admin'),
   async (req, res) => {
     const result = openShiftBodySchema.safeParse(req.body)
     if (!result.success) {
@@ -70,7 +86,7 @@ shiftsRouter.post(
 shiftsRouter.post(
   '/close',
   authenticate,
-  requireRole('Cashier'),
+  requireRole('Cashier', 'Owner', 'Admin'),
   async (req, res) => {
     const result = closeShiftBodySchema.safeParse(req.body)
     if (!result.success) {

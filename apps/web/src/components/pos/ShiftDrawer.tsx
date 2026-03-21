@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useShiftStore, type ActiveShift } from '@/lib/store/shift.store'
+import { authFetch } from '@/lib/auth-fetch'
 
 interface Props {
   isOpen: boolean
@@ -45,7 +46,7 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
     setIsOpeningShift(true)
     setOpenError(null)
     try {
-      const res = await fetch('/api/v1/shifts/open', {
+      const res = await authFetch('/api/v1/shifts/open', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ openingFloat }),
@@ -85,7 +86,7 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
     setIsClosingShift(true)
     setCloseError(null)
     try {
-      const res = await fetch('/api/v1/shifts/close', {
+      const res = await authFetch('/api/v1/shifts/close', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ shiftId: activeShift.id, closingCash }),
@@ -124,15 +125,15 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50">
-      <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-md mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-surface-raised rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-md mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-ink">
             {activeShift ? 'Tutup Shift' : 'Buka Shift'}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+            className="text-ink-faint hover:text-ink-secondary text-2xl leading-none"
             aria-label="Tutup"
           >
             ×
@@ -144,7 +145,7 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
           {!activeShift && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-secondary mb-1">
                   Kas Awal (Rp)
                 </label>
                 <input
@@ -152,19 +153,19 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
                   min={0}
                   value={openingFloat}
                   onChange={e => setOpeningFloat(parseInt(e.target.value, 10) || 0)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
                   placeholder="mis: 500000"
                 />
               </div>
 
               {openError && (
-                <p className="text-red-600 text-sm">{openError}</p>
+                <p className="text-danger text-sm">{openError}</p>
               )}
 
               <button
                 onClick={handleOpenShift}
                 disabled={isOpeningShift}
-                className="w-full bg-blue-600 text-white rounded-lg py-3 font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-brand text-white rounded-lg py-3 font-semibold hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isOpeningShift ? 'Membuka...' : 'Buka Shift'}
               </button>
@@ -175,23 +176,23 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
           {activeShift && !reconciliation && (
             <>
               {/* Current shift info */}
-              <div className="bg-gray-50 rounded-lg p-3 space-y-1 text-sm">
+              <div className="bg-surface rounded-lg p-3 space-y-1 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Shift ID</span>
+                  <span className="text-ink-muted">Shift ID</span>
                   <span className="font-mono text-xs">{activeShift.id.slice(0, 8)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Dibuka pukul</span>
+                  <span className="text-ink-muted">Dibuka pukul</span>
                   <span>{formatTime(activeShift.openedAt)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Kas awal</span>
+                  <span className="text-ink-muted">Kas awal</span>
                   <span>{formatRp(activeShift.openingFloat)}</span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-secondary mb-1">
                   Kas Aktual (Rp)
                 </label>
                 <input
@@ -199,19 +200,19 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
                   min={0}
                   value={closingCash}
                   onChange={e => setClosingCash(parseInt(e.target.value, 10) || 0)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
                   placeholder="Jumlah kas di laci"
                 />
               </div>
 
               {closeError && (
-                <p className="text-red-600 text-sm">{closeError}</p>
+                <p className="text-danger text-sm">{closeError}</p>
               )}
 
               <button
                 onClick={handleCloseShift}
                 disabled={isClosingShift}
-                className="w-full bg-red-600 text-white rounded-lg py-3 font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-danger text-white rounded-lg py-3 font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isClosingShift ? 'Menutup...' : 'Tutup Shift'}
               </button>
@@ -222,41 +223,41 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
           {activeShift && reconciliation && (
             <>
               <div className="space-y-2 text-sm">
-                <h3 className="font-semibold text-gray-900">Rekonsiliasi Shift</h3>
+                <h3 className="font-semibold text-ink">Rekonsiliasi Shift</h3>
 
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Kas Awal</span>
+                  <span className="text-ink-muted">Kas Awal</span>
                   <span>{formatRp(reconciliation.openingFloat)}</span>
                 </div>
 
                 <div className="border-t pt-2 space-y-1">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Penjualan</p>
+                  <p className="text-xs font-medium text-ink-muted uppercase tracking-wide">Penjualan</p>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">TUNAI</span>
-                    <span>{formatRp(reconciliation.salesByMethod.CASH)}</span>
+                    <span className="text-ink-muted">TUNAI</span>
+                    <span>{formatRp(reconciliation.salesByMethod?.CASH ?? 0)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">TRANSFER</span>
-                    <span>{formatRp(reconciliation.salesByMethod.TRANSFER)}</span>
+                    <span className="text-ink-muted">TRANSFER</span>
+                    <span>{formatRp(reconciliation.salesByMethod?.TRANSFER ?? 0)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">QRIS</span>
-                    <span>{formatRp(reconciliation.salesByMethod.QRIS)}</span>
+                    <span className="text-ink-muted">QRIS</span>
+                    <span>{formatRp(reconciliation.salesByMethod?.QRIS ?? 0)}</span>
                   </div>
                 </div>
 
                 <div className="border-t pt-2 space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Kas yang Diharapkan</span>
+                    <span className="text-ink-muted">Kas yang Diharapkan</span>
                     <span>{formatRp(reconciliation.expectedCash)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Kas Aktual</span>
+                    <span className="text-ink-muted">Kas Aktual</span>
                     <span>{formatRp(reconciliation.actualCash)}</span>
                   </div>
                   <div className="flex justify-between font-semibold">
-                    <span className="text-gray-700">Selisih</span>
-                    <span className={reconciliation.discrepancy === 0 ? 'text-green-600' : 'text-red-600'}>
+                    <span className="text-ink-secondary">Selisih</span>
+                    <span className={reconciliation.discrepancy === 0 ? 'text-success' : 'text-danger'}>
                       {reconciliation.discrepancy >= 0 ? '+' : ''}{formatRp(reconciliation.discrepancy)}
                     </span>
                   </div>
@@ -265,7 +266,7 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
 
               <button
                 onClick={handleDone}
-                className="w-full bg-blue-600 text-white rounded-lg py-3 font-semibold hover:bg-blue-700"
+                className="w-full bg-brand text-white rounded-lg py-3 font-semibold hover:bg-brand-hover"
               >
                 Selesai
               </button>

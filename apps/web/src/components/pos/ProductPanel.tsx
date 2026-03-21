@@ -17,11 +17,11 @@ function ProductTile({ product, onAdd }: ProductTileProps) {
   return (
     <button
       onClick={() => onAdd(product)}
-      className="flex flex-col items-start bg-white border border-gray-200 rounded-lg p-3 hover:bg-blue-50 hover:border-blue-300 active:bg-blue-100 transition-colors text-left w-full"
+      className="flex flex-col items-start bg-surface-raised border border-border rounded-lg p-3 hover:bg-brand-subtle hover:border-brand active:bg-brand-muted transition-colors text-left w-full"
     >
-      <span className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight mb-1">{product.name}</span>
-      <span className="text-xs text-gray-500 mb-1">{product.sku}</span>
-      <span className="text-sm font-semibold text-blue-600">{formatRupiah(product.price)}</span>
+      <span className="text-sm font-medium text-ink line-clamp-2 leading-tight mb-1">{product.name}</span>
+      <span className="text-xs text-ink-muted mb-1">{product.sku}</span>
+      <span className="text-sm font-semibold text-brand">{formatRupiah(product.price)}</span>
     </button>
   )
 }
@@ -33,16 +33,16 @@ interface SearchResultRowProps {
 
 function SearchResultRow({ product, onAdd }: SearchResultRowProps) {
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 hover:bg-gray-50">
+    <div className="flex items-center justify-between px-4 py-3 border-b border-border-light hover:bg-surface">
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-gray-800 truncate">{product.name}</div>
-        <div className="text-xs text-gray-500">{product.sku}</div>
+        <div className="text-sm font-medium text-ink truncate">{product.name}</div>
+        <div className="text-xs text-ink-muted">{product.sku}</div>
       </div>
       <div className="flex items-center gap-3 ml-4 shrink-0">
-        <span className="text-sm font-semibold text-gray-700">{formatRupiah(product.price)}</span>
+        <span className="text-sm font-semibold text-ink-secondary">{formatRupiah(product.price)}</span>
         <button
           onClick={() => onAdd(product)}
-          className="w-8 h-8 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 active:bg-blue-800 text-lg font-bold leading-none"
+          className="w-8 h-8 flex items-center justify-center bg-brand text-white rounded-full hover:bg-brand-hover active:bg-brand-hover text-lg font-bold leading-none"
           aria-label={`Add ${product.name} to cart`}
         >
           +
@@ -84,14 +84,14 @@ export function ProductPanel() {
   return (
     <div className="flex flex-col h-full">
       {/* Search / Scan bar */}
-      <div className="p-4 bg-white border-b border-gray-200 shrink-0">
+      <div className="p-4 bg-surface-raised border-b border-border shrink-0">
         <input
           ref={inputRef}
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Scan barcode or search product..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-brand"
           autoFocus
         />
       </div>
@@ -102,7 +102,7 @@ export function ProductPanel() {
           /* Search results list */
           <div>
             {searchResults.length === 0 ? (
-              <div className="flex items-center justify-center py-12 text-gray-400">
+              <div className="flex items-center justify-center py-12 text-ink-faint">
                 <span>No products found for &ldquo;{query}&rdquo;</span>
               </div>
             ) : (
@@ -114,9 +114,9 @@ export function ProductPanel() {
         ) : (
           /* Quick-add grid */
           <div className="p-4">
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Quick Add</div>
+            <div className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3">Quick Add</div>
             {quickAddProducts.length === 0 ? (
-              <div className="flex items-center justify-center py-12 text-gray-400">
+              <div className="flex items-center justify-center py-12 text-ink-faint">
                 <span>No products in catalog. Sync to load products.</span>
               </div>
             ) : (

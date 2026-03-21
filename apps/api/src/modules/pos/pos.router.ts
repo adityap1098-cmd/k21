@@ -52,7 +52,7 @@ const voidBodySchema = z.object({
 posRouter.post(
   '/transactions',
   authenticate,
-  requireRole('Cashier'),
+  requireRole('Cashier', 'Owner', 'Admin'),
   async (req, res) => {
     const result = transactionBodySchema.safeParse(req.body)
     if (!result.success) {
@@ -93,7 +93,7 @@ posRouter.post(
 posRouter.post(
   '/transactions/sync',
   authenticate,
-  requireRole('Cashier'),
+  requireRole('Cashier', 'Owner', 'Admin'),
   async (req, res) => {
     const result = syncBodySchema.safeParse(req.body)
     if (!result.success) {

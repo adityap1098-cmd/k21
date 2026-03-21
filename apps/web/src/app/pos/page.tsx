@@ -10,11 +10,13 @@ import { ReceiptModal } from '@/components/pos/ReceiptModal'
 import { ShiftDrawer } from '@/components/pos/ShiftDrawer'
 import { SyncStatusBar } from '@/components/pos/SyncStatusBar'
 import { SyncIssuesPanel } from '@/components/pos/SyncIssuesPanel'
+import { AppShell } from '@/components/layout/AppShell'
+import { useAutoSyncCatalog } from '@/lib/catalog'
 import { computeCartTotals, useCartStore } from '@/lib/store/cart.store'
 import type { ReceiptData } from '@/lib/receipt/encoder'
 
 export default function PosPage() {
-  const { activeShift } = useShiftStore()
+  const { activeShift, setActiveShift } = useShiftStore()
   const { items, transactionDiscount } = useCartStore()
   const { total } = computeCartTotals(items, transactionDiscount)
 
@@ -22,8 +24,30 @@ export default function PosPage() {
   const [showPayment, setShowPayment] = useState(false)
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
   const [isSyncing, setIsSyncing] = useState(false)
+  const [checkingShift, setCheckingShift] = useState(true)
 
-  // Register sync listener
+  // Auto-sync product catalog from API to IndexedDB
+  useAutoSyncCatalog()
+
+  // Check for active shift on mount
+  useEffect(() => {
+    async function checkShift() {
+      try {
+        const { authFetch } = await import('@/lib/auth-fetch')
+        const res = await authFetch('/api/v1/shifts/active')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.success && data.data) {
+            setActiveShift(data.data)
+          }
+        }
+      } catch { /* no active shift */ }
+      setCheckingShift(false)
+    }
+    if (!activeShift) checkShift()
+    else setCheckingShift(false)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const cleanup = startSyncListener((_results) => {
       setIsSyncing(false)
@@ -31,69 +55,92 @@ export default function PosPage() {
     return cleanup
   }, [])
 
+  // Gate: loading shift check
+  if (checkingShift) {
+    return (
+      <AppShell>
+        <div className="flex h-screen items-center justify-center bg-surface">
+          <div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+        </div>
+      </AppShell>
+    )
+  }
+
   // Gate: show shift drawer if no active shift
   if (!activeShift) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4 text-gray-900">Buka Shift untuk Mulai</h1>
-          <p className="text-gray-500 mb-6 text-sm">Kasir harus membuka shift sebelum melakukan transaksi</p>
-          <button
-            onClick={() => setShowShiftDrawer(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            Buka Shift
-          </button>
-          <ShiftDrawer isOpen={showShiftDrawer} onClose={() => setShowShiftDrawer(false)} />
+      <AppShell>
+        <div className="flex h-screen items-center justify-center bg-surface">
+          <div className="text-center animate-in">
+            {/* Logo */}
+            <div className="w-16 h-16 rounded-2xl bg-brand flex items-center justify-center mx-auto mb-6 shadow-[0_4px_20px_rgba(232,93,58,0.3)]">
+              <span className="text-white font-bold text-2xl">K</span>
+            </div>
+            <h1 className="text-2xl font-bold mb-2 text-ink">Buka Shift untuk Mulai</h1>
+            <p className="text-ink-muted mb-8 text-sm max-w-xs mx-auto">
+              Kasir harus membuka shift sebelum melakukan transaksi POS
+            </p>
+            <button
+              onClick={() => setShowShiftDrawer(true)}
+              className="px-8 py-3.5 bg-brand text-white rounded-xl text-base font-semibold hover:bg-brand-hover transition-colors press-scale shadow-[0_2px_12px_rgba(232,93,58,0.3)]"
+            >
+              Buka Shift
+            </button>
+            <ShiftDrawer isOpen={showShiftDrawer} onClose={() => setShowShiftDrawer(false)} />
+          </div>
         </div>
-      </div>
+      </AppShell>
     )
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <SyncStatusBar isSyncing={isSyncing} />
+    <AppShell>
+      <div className="flex flex-col h-screen bg-surface">
+        <SyncStatusBar isSyncing={isSyncing} />
+        <SyncIssuesPanel />
 
-      {/* Conflicts panel — fixed right overlay */}
-      <SyncIssuesPanel />
+        {/* Split screen */}
+        <div className="flex flex-1 overflow-hidden relative">
+          {/* Product panel — left */}
+          <div className="flex-1 overflow-hidden p-3 lg:p-4">
+            <ProductPanel />
+          </div>
 
-      {/* Split screen */}
-      <div className="flex flex-1 overflow-hidden relative">
-        <div className="flex-1 overflow-hidden p-4">
-          <ProductPanel />
+          {/* Cart panel — right */}
+          <div className="w-80 lg:w-96 border-l border-border bg-surface-raised flex flex-col flex-shrink-0">
+            <CartPanel onPay={() => setShowPayment(true)} />
+          </div>
         </div>
-        <div className="w-96 border-l border-gray-200 bg-white flex flex-col">
-          <CartPanel onPay={() => setShowPayment(true)} />
+
+        {/* Shift info — top-right overlay */}
+        <div className="absolute top-2 right-2 z-20">
+          <button
+            onClick={() => setShowShiftDrawer(true)}
+            className="flex items-center gap-2 text-xs font-medium text-ink-secondary bg-surface-raised/90 backdrop-blur-sm border border-border px-3 py-1.5 rounded-lg hover:bg-surface-subtle transition-colors shadow-sm"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-success" />
+            Shift: {activeShift.id.slice(0, 8)}
+          </button>
         </div>
+
+        <ShiftDrawer isOpen={showShiftDrawer} onClose={() => setShowShiftDrawer(false)} />
+
+        <PaymentModal
+          isOpen={showPayment}
+          total={total}
+          onSuccess={(txId, receipt) => {
+            setShowPayment(false)
+            setReceiptData(receipt)
+          }}
+          onClose={() => setShowPayment(false)}
+        />
+
+        <ReceiptModal
+          isOpen={receiptData !== null}
+          receiptData={receiptData}
+          onClose={() => setReceiptData(null)}
+        />
       </div>
-
-      {/* Shift info header — top-right overlay */}
-      <div className="absolute top-0 right-0 p-2 z-20">
-        <button
-          onClick={() => setShowShiftDrawer(true)}
-          className="text-sm text-gray-600 hover:text-gray-900 underline bg-white/80 px-2 py-1 rounded"
-        >
-          Shift: {activeShift.id.slice(0, 8)} — Tutup
-        </button>
-      </div>
-
-      <ShiftDrawer isOpen={showShiftDrawer} onClose={() => setShowShiftDrawer(false)} />
-
-      <PaymentModal
-        isOpen={showPayment}
-        total={total}
-        onSuccess={(txId, receipt) => {
-          setShowPayment(false)
-          setReceiptData(receipt)
-        }}
-        onClose={() => setShowPayment(false)}
-      />
-
-      <ReceiptModal
-        isOpen={receiptData !== null}
-        receiptData={receiptData}
-        onClose={() => setReceiptData(null)}
-      />
-    </div>
+    </AppShell>
   )
 }

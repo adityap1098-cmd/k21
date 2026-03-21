@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(node:*)",
+      "WebSearch",
+      "Skill(gsd:execute-phase)",
+      "Bash(bash -n scripts/install-vps-crons.sh)",
+      "Bash(grep -h ^requirements: /h/AI/k21/.planning/phases/00-infrastructure/*.md)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//h/AI/k21/**)",
+      "Bash(done)",
+      "Bash(pnpm --filter @k21/api add jose@^6.0.0 argon2@^0.44.0 cookie-parser@^1.4.7 zod@^3.23.0)",
+      "Bash(pnpm --filter @k21/api test -- src/db/schema/users.test.ts)",
+      "Bash(pnpm --filter @k21/api test)",
+      "Bash(pnpm drizzle-kit:*)",
+      "Bash(pnpm --filter @k21/api test -- src/middleware/)",
+      "Bash(pnpm --filter @k21/api test -- src/modules/auth/auth.test.ts)",
+      "Bash(pnpm --filter @k21/api test -- src/middleware/authenticate.test.ts)",
+      "Bash(pnpm --filter @k21/api typecheck)",
+      "Bash(pnpm --filter @k21/api test -- src/modules/users/users.test.ts)",
+      "Bash(pnpm --filter @k21/api test -- src/index.test.ts)",
+      "Skill(update-config)",
+      "Bash(ls /h/AI/k21/apps/api/drizzle/*.sql)",
+      "Bash(cat /h/AI/k21/.planning/phases/02-product-inventory/*-VERIFICATION.md)",
+      "Bash(git -C /h/AI/k21 log --oneline)",
+      "Bash(git -C /h/AI/k21 show 7bca020 --name-only)",
+      "Bash(git -C /h/AI/k21 stash list)",
+      "Bash(git -C /h/AI/k21 diff 7bca020 HEAD -- apps/api/src/modules/categories/categories.router.ts apps/api/src/modules/products/products.router.ts)",
+      "Bash(pnpm --filter @k21/api exec tsc --noEmit)"
+    ]
+  }
+}

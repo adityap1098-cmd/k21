@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { offlineDB, type OfflineTransaction } from '@/lib/db/offline-db'
+import { authFetch } from '@/lib/auth-fetch'
 
 function formatTime(ts: number): string {
   return new Date(ts).toLocaleTimeString('id-ID', {
@@ -26,7 +27,7 @@ function ConflictRow({ tx }: ConflictRowProps) {
     setIsLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/v1/pos/transactions/sync', {
+      const res = await authFetch('/api/v1/pos/transactions/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...tx.payload, forceComplete: true }),
@@ -87,17 +88,17 @@ function ConflictRow({ tx }: ConflictRowProps) {
   }
 
   return (
-    <div className="border border-red-200 rounded-lg p-3 bg-red-50 space-y-2">
+    <div className="border border-red-200 rounded-lg p-3 bg-danger-muted space-y-2">
       <div className="flex items-start justify-between gap-2">
         <div className="space-y-1 min-w-0">
-          <p className="text-xs font-mono text-gray-600">#{tx.clientUuid.slice(-8)}</p>
+          <p className="text-xs font-mono text-ink-secondary">#{tx.clientUuid.slice(-8)}</p>
           <p className="text-sm text-red-800 font-medium">{tx.conflictDetail ?? 'Konflik stok'}</p>
-          <p className="text-xs text-gray-400">{formatTime(tx.createdAt)}</p>
+          <p className="text-xs text-ink-faint">{formatTime(tx.createdAt)}</p>
         </div>
       </div>
 
       {error && (
-        <p className="text-xs text-red-700 bg-red-100 rounded px-2 py-1">{error}</p>
+        <p className="text-xs text-red-700 bg-danger-muted rounded px-2 py-1">{error}</p>
       )}
 
       {!showVoidReason ? (
@@ -112,7 +113,7 @@ function ConflictRow({ tx }: ConflictRowProps) {
           <button
             onClick={() => setShowVoidReason(true)}
             disabled={isLoading}
-            className="flex-1 bg-red-600 text-white rounded px-3 py-1.5 text-xs font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-danger text-white rounded px-3 py-1.5 text-xs font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Batalkan
           </button>
@@ -124,20 +125,20 @@ function ConflictRow({ tx }: ConflictRowProps) {
             value={voidReason}
             onChange={e => setVoidReason(e.target.value)}
             placeholder="Alasan pembatalan..."
-            className="w-full border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-red-400"
+            className="w-full border border-border rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-red-400"
           />
           <div className="flex gap-2">
             <button
               onClick={handleVoid}
               disabled={isLoading}
-              className="flex-1 bg-red-600 text-white rounded px-3 py-1.5 text-xs font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-danger text-white rounded px-3 py-1.5 text-xs font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Memproses...' : 'Konfirmasi Batal'}
             </button>
             <button
               onClick={() => { setShowVoidReason(false); setVoidReason(''); setError(null) }}
               disabled={isLoading}
-              className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+              className="flex-1 border border-border rounded px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface disabled:opacity-50"
             >
               Kembali
             </button>
@@ -158,8 +159,8 @@ export function SyncIssuesPanel() {
   if (!conflicts || conflicts.length === 0) return null
 
   return (
-    <div className="fixed right-0 top-0 z-30 h-full w-80 bg-white border-l border-red-200 shadow-lg overflow-y-auto">
-      <div className="p-4 border-b border-red-200 bg-red-50">
+    <div className="fixed right-0 top-0 z-30 h-full w-80 bg-surface-raised border-l border-red-200 shadow-lg overflow-y-auto">
+      <div className="p-4 border-b border-red-200 bg-danger-muted">
         <h2 className="text-sm font-semibold text-red-900">
           Transaksi Bermasalah ({conflicts.length})
         </h2>

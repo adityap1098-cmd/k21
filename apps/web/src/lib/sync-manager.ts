@@ -1,6 +1,7 @@
 'use client'
 
 import { offlineDB } from './db/offline-db'
+import { authFetch } from './auth-fetch'
 
 export interface SyncResult {
   clientUuid: string
@@ -16,7 +17,7 @@ export async function syncPendingTransactions(): Promise<SyncResult[]> {
   const results: SyncResult[] = []
   for (const tx of pending) {
     try {
-      const res = await fetch('/api/v1/pos/transactions/sync', {
+      const res = await authFetch('/api/v1/pos/transactions/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tx.payload),

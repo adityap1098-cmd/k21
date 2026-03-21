@@ -7,7 +7,18 @@ const withSerwist = withSerwistInit({
   reloadOnOnline: true,
 })
 
-export default withSerwist({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   output: 'standalone',
   transpilePackages: ['@k21/shared'],
-})
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:3005/api/:path*',
+      },
+    ]
+  },
+}
+
+export default withSerwist(nextConfig)

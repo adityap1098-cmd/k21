@@ -1,0 +1,165 @@
+@import 'tailwindcss';
+
+/* ─── K21 Design Tokens (from Paper artboards) ─── */
+@theme {
+  /* Brand */
+  --color-brand: #E85D3A;
+  --color-brand-hover: #D4502F;
+  --color-brand-muted: rgba(232, 93, 58, 0.15);
+  --color-brand-subtle: rgba(232, 93, 58, 0.08);
+
+  /* Neutrals — warm palette */
+  --color-ink: #1B2B3A;
+  --color-ink-secondary: #5A6270;
+  --color-ink-muted: #7A8490;
+  --color-ink-faint: #9CA3AF;
+  --color-surface: #F7F5F2;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-subtle: #FAFAF8;
+  --color-border: #E8E5E1;
+  --color-border-light: #F0EDE9;
+
+  /* Sidebar */
+  --color-sidebar: #1B2B3A;
+  --color-sidebar-hover: rgba(255, 255, 255, 0.06);
+  --color-sidebar-active: rgba(232, 93, 58, 0.15);
+
+  /* Semantic */
+  --color-success: #16A34A;
+  --color-success-muted: rgba(22, 163, 74, 0.1);
+  --color-warning: #F59E0B;
+  --color-warning-muted: rgba(245, 158, 11, 0.1);
+  --color-danger: #DC2626;
+  --color-danger-muted: rgba(220, 38, 38, 0.1);
+  --color-info: #3B82F6;
+  --color-info-muted: rgba(59, 130, 246, 0.1);
+  --color-purple: #A855F7;
+  --color-purple-muted: rgba(168, 85, 247, 0.1);
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
+  /* Font */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ─── Base Resets ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: var(--color-surface);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ─── Typography polish ─── */
+h1, h2, h3, h4 {
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Tabular numbers for data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Focus ring ─── */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* ─── Scrollbar styling ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-muted);
+}
+
+/* ─── Button press effect ─── */
+.press-scale {
+  transition-property: transform, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+.press-scale:active {
+  transform: scale(0.96);
+}
+
+/* ─── Stagger animations ─── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeInUp 0.35s cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+.stagger-1 { animation-delay: 0ms; }
+.stagger-2 { animation-delay: 60ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 180ms; }
+.stagger-5 { animation-delay: 240ms; }
+
+/* ─── Dark Mode ─── */
+html[data-theme="dark"] {
+  --color-ink: #E8E5E1;
+  --color-ink-secondary: #B0B6BE;
+  --color-ink-muted: #7A8490;
+  --color-ink-faint: #5A6270;
+  --color-surface: #0F1419;
+  --color-surface-raised: #1A2028;
+  --color-surface-subtle: #151B22;
+  --color-border: #2A3340;
+  --color-border-light: #1E2730;
+  --color-sidebar: #0A0F14;
+}
+
+html[data-theme="dark"] body {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #2A3340;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #3A4A5A;
+}

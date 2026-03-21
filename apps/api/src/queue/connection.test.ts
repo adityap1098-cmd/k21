@@ -7,7 +7,8 @@ vi.mock('./connection.js', () => ({
 describe('redisConnection', () => {
   it('has host and port fields', async () => {
     const { redisConnection } = await import('./connection.js')
-    expect(redisConnection.host).toBeDefined()
-    expect(typeof redisConnection.port).toBe('number')
+    const conn = redisConnection as { host?: string; port?: number }
+    expect(conn.host).toBeDefined()
+    expect(typeof conn.port).toBe('number')
   })
 })

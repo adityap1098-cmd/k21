@@ -23,13 +23,13 @@ const updateUserSchema = z
   })
 
 // GET /api/v1/users
-usersRouter.get('/', authenticate, requireRole('Admin'), async (_req, res) => {
+usersRouter.get('/', authenticate, requireRole('Admin', 'Owner'), async (_req, res) => {
   const userList = await getAllUsers()
   res.status(200).json({ success: true, data: userList, error: null })
 })
 
 // POST /api/v1/users
-usersRouter.post('/', authenticate, requireRole('Admin'), async (req, res) => {
+usersRouter.post('/', authenticate, requireRole('Admin', 'Owner'), async (req, res) => {
   const result = createUserSchema.safeParse(req.body)
   if (!result.success) {
     res
