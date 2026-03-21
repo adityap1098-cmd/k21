@@ -54,8 +54,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast: addToast }}>
       {children}
-      {/* Toast container */}
-      <div className="fixed bottom-6 right-6 z-[60] flex flex-col gap-2 pointer-events-none">
+      {/* Toast container — live region for screen reader announcements */}
+      <div
+        className="fixed bottom-6 right-6 z-[60] flex flex-col gap-2 pointer-events-none"
+        role="status"
+        aria-live="polite"
+        aria-atomic="false"
+      >
         {toasts.map(t => (
           <div
             key={t.id}
@@ -68,8 +73,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           >
             {ICONS[t.type]}
             <span className="text-[13px] font-medium flex-1">{t.message}</span>
-            <button onClick={() => removeToast(t.id)} className="opacity-70 hover:opacity-100 transition-opacity">
-              <X size={14} />
+            <button onClick={() => removeToast(t.id)} aria-label="Tutup notifikasi" className="opacity-70 hover:opacity-100 transition-opacity">
+              <X size={14} aria-hidden="true" />
             </button>
           </div>
         ))}

@@ -102,6 +102,8 @@ export default function PosPage() {
         <SyncStatusBar isSyncing={isSyncing} />
         <SyncIssuesPanel />
 
+        <h1 className="sr-only">Point of Sale</h1>
+
         {/* Transaction type selector */}
         <div className="px-3 lg:px-4 pt-2 pb-1 shrink-0">
           <TransactionTypeSelector activeType={transactionType} onTypeChange={setTransactionType} />

@@ -142,11 +142,14 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode
 }
 
-export function Input({ label, icon, className, ...props }: InputProps) {
+let inputIdCounter = 0
+
+export function Input({ label, icon, className, id, ...props }: InputProps) {
+  const inputId = id || (label ? `input-${++inputIdCounter}` : undefined)
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label className="text-[13px] font-medium text-ink">{label}</label>
+        <label htmlFor={inputId} className="text-[13px] font-medium text-ink">{label}</label>
       )}
       <div className={clsx(
         'flex items-center gap-2.5 px-3.5 py-2.5',
@@ -155,8 +158,9 @@ export function Input({ label, icon, className, ...props }: InputProps) {
         'focus-within:border-brand focus-within:ring-2 focus-within:ring-brand-subtle',
         className,
       )}>
-        {icon && <span className="text-ink-faint flex-shrink-0">{icon}</span>}
+        {icon && <span className="text-ink-faint flex-shrink-0" aria-hidden="true">{icon}</span>}
         <input
+          id={inputId}
           className="flex-1 bg-transparent text-[13px] text-ink placeholder:text-ink-faint outline-none"
           {...props}
         />
@@ -174,13 +178,18 @@ interface SelectProps {
   onChange?: (value: string) => void
   label?: string
   className?: string
+  id?: string
 }
 
-export function Select({ options, value, onChange, label, className }: SelectProps) {
+let selectIdCounter = 0
+
+export function Select({ options, value, onChange, label, className, id }: SelectProps) {
+  const selectId = id || (label ? `select-${++selectIdCounter}` : undefined)
   return (
     <div className={clsx('flex items-center gap-1.5', className)}>
-      {label && <span className="text-[13px] font-medium text-ink-secondary">{label}</span>}
+      {label && <label htmlFor={selectId} className="text-[13px] font-medium text-ink-secondary">{label}</label>}
       <select
+        id={selectId}
         value={value}
         onChange={e => onChange?.(e.target.value)}
         className={clsx(

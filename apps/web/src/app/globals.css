@@ -83,6 +83,39 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
+/* ─── Screen Reader Only (a11y) ─── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Skip Link ─── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 100;
+  padding: 8px 16px;
+  background: var(--color-ink);
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 150ms ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
 /* ─── Focus ring ─── */
 :focus-visible {
   outline: 2px solid var(--color-brand);
@@ -137,6 +170,18 @@ p {
 .stagger-3 { animation-delay: 120ms; }
 .stagger-4 { animation-delay: 180ms; }
 .stagger-5 { animation-delay: 240ms; }
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* ─── Dark Mode ─── */
 html[data-theme="dark"] {

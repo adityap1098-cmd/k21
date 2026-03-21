@@ -90,13 +90,14 @@ export function Sidebar() {
         // Mobile: slide-in drawer
         'fixed top-0 left-0 transition-transform duration-200 ease-out',
         mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-      )}>
+      )} aria-label="Navigasi utama">
         {/* Mobile close button */}
         <button
           onClick={() => setMobileOpen(false)}
+          aria-label="Tutup menu"
           className="lg:hidden absolute top-4 right-4 p-1 rounded-md text-ink-muted hover:text-white transition-colors"
         >
-          <X size={18} />
+          <X size={18} aria-hidden="true" />
         </button>
 
         {/* Logo */}
@@ -111,20 +112,24 @@ export function Sidebar() {
         </Link>
 
         {/* Main nav */}
-        <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-muted px-3 mt-5 mb-2">
-          Menu Utama
-        </span>
-        {NAV_MAIN.map(item => (
-          <NavItem key={item.href} item={item} active={pathname.startsWith(item.href)} />
-        ))}
+        <nav aria-label="Menu Utama">
+          <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-muted px-3 mt-5 mb-2 block">
+            Menu Utama
+          </span>
+          {NAV_MAIN.map(item => (
+            <NavItem key={item.href} item={item} active={pathname.startsWith(item.href)} />
+          ))}
+        </nav>
 
         {/* Admin nav */}
-        <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-muted px-3 mt-5 mb-2">
-          Administrasi
-        </span>
-        {NAV_ADMIN.map(item => (
-          <NavItem key={item.href} item={item} active={pathname.startsWith(item.href)} />
-        ))}
+        <nav aria-label="Administrasi">
+          <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-muted px-3 mt-5 mb-2 block">
+            Administrasi
+          </span>
+          {NAV_ADMIN.map(item => (
+            <NavItem key={item.href} item={item} active={pathname.startsWith(item.href)} />
+          ))}
+        </nav>
 
         {/* Theme + User profile — pushed to bottom */}
         <div className="mt-auto flex flex-col gap-2">
@@ -142,9 +147,9 @@ export function Sidebar() {
             <button
               onClick={logout}
               className="text-ink-muted hover:text-white transition-colors p-1 rounded"
-              title="Logout"
+              aria-label="Logout"
             >
-              <LogOut size={14} />
+              <LogOut size={14} aria-hidden="true" />
             </button>
           </div>
         </div>

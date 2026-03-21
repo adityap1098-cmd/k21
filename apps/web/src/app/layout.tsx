@@ -19,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#1B2B3A" />
       </head>
       <body className="bg-surface text-ink antialiased">
+        <a href="#main-content" className="skip-link">Langsung ke konten utama</a>
         {children}
       </body>
     </html>
