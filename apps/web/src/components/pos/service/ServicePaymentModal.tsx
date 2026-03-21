@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { authFetch } from '@/lib/auth-fetch'
 
 type PaymentMethod = 'CASH' | 'TRANSFER' | 'QRIS'
 
@@ -42,7 +43,7 @@ export function ServicePaymentModal({ isOpen, orderId, orderTotal, existingPayme
     setSuccessMsg(null)
 
     try {
-      const res = await fetch(`/api/v1/service-orders/${orderId}/payments`, {
+      const res = await authFetch(`/api/v1/service-orders/${orderId}/payments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

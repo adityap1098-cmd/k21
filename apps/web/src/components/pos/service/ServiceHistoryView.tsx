@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, type FormEvent } from 'react'
+import { authFetch } from '@/lib/auth-fetch'
 
 interface VehicleInfo {
   id: string
@@ -87,7 +88,7 @@ export function ServiceHistoryView() {
 
     try {
       const url = `/api/v1/service-orders/history/${encodeURIComponent(trimmed)}`
-      const res = await fetch(url)
+      const res = await authFetch(url)
       const body: ApiResponse<HistoryOrder[]> = await res.json()
 
       if (!res.ok || !body.success) {

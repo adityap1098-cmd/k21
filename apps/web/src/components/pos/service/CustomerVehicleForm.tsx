@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { authFetch } from '@/lib/auth-fetch'
 
 // --- Types ---
 interface Customer {
@@ -86,7 +87,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
     }
     setPlateSearching(true)
     try {
-      const res = await fetch(`/api/v1/vehicles/search?plateNumber=${encodeURIComponent(q)}`)
+      const res = await authFetch(`/api/v1/vehicles/search?plateNumber=${encodeURIComponent(q)}`)
       const body = (await res.json()) as ApiResponse<Vehicle[]>
       if (body.success && body.data) {
         setPlateResults(body.data)
@@ -112,7 +113,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
       setSelectedCustomer(vehicle.customer)
     } else {
       try {
-        const res = await fetch(`/api/v1/customers/${vehicle.customerId}`)
+        const res = await authFetch(`/api/v1/customers/${vehicle.customerId}`)
         const body = (await res.json()) as ApiResponse<Customer>
         if (body.success && body.data) {
           setSelectedCustomer(body.data)
@@ -132,7 +133,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
     }
     setCustomerSearching(true)
     try {
-      const res = await fetch(`/api/v1/customers/search?q=${encodeURIComponent(q)}`)
+      const res = await authFetch(`/api/v1/customers/search?q=${encodeURIComponent(q)}`)
       const body = (await res.json()) as ApiResponse<Customer[]>
       if (body.success && body.data) {
         setCustomerResults(body.data)
@@ -154,7 +155,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
     setCustomerQuery(customer.name)
 
     try {
-      const res = await fetch(`/api/v1/vehicles?customerId=${customer.id}`)
+      const res = await authFetch(`/api/v1/vehicles?customerId=${customer.id}`)
       const body = (await res.json()) as ApiResponse<Vehicle[]>
       if (body.success && body.data) {
         setCustomerVehicles(body.data)
@@ -174,7 +175,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
     setIsCreatingCustomer(true)
     setError(null)
     try {
-      const res = await fetch('/api/v1/customers', {
+      const res = await authFetch('/api/v1/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newCustomerName.trim(), phone: newCustomerPhone.trim() || null }),
@@ -203,7 +204,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
     setIsCreatingVehicle(true)
     setError(null)
     try {
-      const res = await fetch('/api/v1/vehicles', {
+      const res = await authFetch('/api/v1/vehicles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -238,7 +239,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
     setIsCreatingOrder(true)
     setError(null)
     try {
-      const res = await fetch('/api/v1/service-orders', {
+      const res = await authFetch('/api/v1/service-orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

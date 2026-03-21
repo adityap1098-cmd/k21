@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { authFetch } from '@/lib/auth-fetch'
 
 interface ReceivableOrder {
   orderNumber: string
@@ -37,7 +38,7 @@ export function ReceivablesView() {
       if (customerId) params.set('customerId', customerId)
       const queryStr = params.toString()
       const url = `/api/v1/service-orders/receivables${queryStr ? `?${queryStr}` : ''}`
-      const res = await fetch(url)
+      const res = await authFetch(url)
       const body: ApiResponse<ReceivableOrder[]> = await res.json()
 
       if (!res.ok || !body.success) {

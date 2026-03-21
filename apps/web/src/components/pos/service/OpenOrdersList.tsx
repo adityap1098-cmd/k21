@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { authFetch } from '@/lib/auth-fetch'
 
 interface ServiceOrder {
   id: string
@@ -63,7 +64,7 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/v1/service-orders')
+      const res = await authFetch('/api/v1/service-orders')
       const body: ApiResponse<ServiceOrder[]> = await res.json()
       if (!res.ok || !body.success) {
         const msg = body.error || `HTTP ${res.status}`

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { authFetch } from '@/lib/auth-fetch'
 import { ServiceProductSelector } from './ServiceProductSelector'
 
 interface Vehicle {
@@ -100,7 +101,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
 
   const fetchOrder = useCallback(async () => {
     try {
-      const res = await fetch(`/api/v1/service-orders/${orderId}`)
+      const res = await authFetch(`/api/v1/service-orders/${orderId}`)
       const body: ApiResponse<ServiceOrderDetail> = await res.json()
       if (!res.ok || !body.success) {
         const msg = body.error || `HTTP ${res.status}`
@@ -122,7 +123,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
 
   const fetchItems = useCallback(async () => {
     try {
-      const res = await fetch(`/api/v1/service-orders/${orderId}/items`)
+      const res = await authFetch(`/api/v1/service-orders/${orderId}/items`)
       const body: ApiResponse<LineItem[]> = await res.json()
       if (!res.ok || !body.success) {
         const msg = body.error || `HTTP ${res.status}`
@@ -155,7 +156,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
   const removeItem = async (itemId: string) => {
     setError(null)
     try {
-      const res = await fetch(`/api/v1/service-orders/${orderId}/items/${itemId}`, { method: 'DELETE' })
+      const res = await authFetch(`/api/v1/service-orders/${orderId}/items/${itemId}`, { method: 'DELETE' })
       const body: ApiResponse<unknown> = await res.json()
       if (!res.ok || !body.success) {
         const msg = body.error || `HTTP ${res.status}`
@@ -176,7 +177,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
     setActionLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/api/v1/service-orders/${orderId}/status`, {
+      const res = await authFetch(`/api/v1/service-orders/${orderId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
@@ -203,7 +204,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
     setActionLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/api/v1/service-orders/${orderId}/complete`, {
+      const res = await authFetch(`/api/v1/service-orders/${orderId}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -230,7 +231,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
     setMechanicSaving(true)
     setError(null)
     try {
-      const res = await fetch(`/api/v1/service-orders/${orderId}/mechanic`, {
+      const res = await authFetch(`/api/v1/service-orders/${orderId}/mechanic`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mechanicId: mechanicInput.trim() }),
@@ -261,7 +262,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
       if (estCost) payload.estimatedCost = Number(estCost)
       if (estDate) payload.estimatedCompletionAt = new Date(estDate).toISOString()
 
-      const res = await fetch(`/api/v1/service-orders/${orderId}/estimate`, {
+      const res = await authFetch(`/api/v1/service-orders/${orderId}/estimate`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

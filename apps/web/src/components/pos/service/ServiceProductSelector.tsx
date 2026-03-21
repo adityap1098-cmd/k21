@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { authFetch } from '@/lib/auth-fetch'
 
 interface ServiceCatalogItem {
   id: string
@@ -53,7 +54,7 @@ export function ServiceProductSelector({ serviceOrderId, onItemAdded }: Props) {
   const fetchServices = useCallback(async () => {
     setLoadingServices(true)
     try {
-      const res = await fetch('/api/v1/service-catalog')
+      const res = await authFetch('/api/v1/service-catalog')
       const body: ApiResponse<ServiceCatalogItem[]> = await res.json()
       if (!res.ok || !body.success) {
         console.error('[ServiceProductSelector] Failed to fetch service catalog:', { status: res.status, error: body.error })
@@ -73,7 +74,7 @@ export function ServiceProductSelector({ serviceOrderId, onItemAdded }: Props) {
   const fetchProducts = useCallback(async () => {
     setLoadingProducts(true)
     try {
-      const res = await fetch('/api/v1/products?variants=true&active=true')
+      const res = await authFetch('/api/v1/products?variants=true&active=true')
       const body: ApiResponse<Product[]> = await res.json()
       if (!res.ok || !body.success) {
         console.error('[ServiceProductSelector] Failed to fetch products:', { status: res.status, error: body.error })
@@ -105,7 +106,7 @@ export function ServiceProductSelector({ serviceOrderId, onItemAdded }: Props) {
     setAddingId(service.id)
     setError(null)
     try {
-      const res = await fetch(`/api/v1/service-orders/${serviceOrderId}/items`, {
+      const res = await authFetch(`/api/v1/service-orders/${serviceOrderId}/items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -136,7 +137,7 @@ export function ServiceProductSelector({ serviceOrderId, onItemAdded }: Props) {
     setAddingId(variant.variantId)
     setError(null)
     try {
-      const res = await fetch(`/api/v1/service-orders/${serviceOrderId}/items`, {
+      const res = await authFetch(`/api/v1/service-orders/${serviceOrderId}/items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
