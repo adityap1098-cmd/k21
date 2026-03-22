@@ -156,16 +156,16 @@ export function DateRangePicker({ startDate, endDate, onChange, className }: Dat
             </div>
 
             {/* Day headers */}
-            <div className="grid grid-cols-7 gap-0 mb-1">
+            <div className="grid grid-cols-7 mb-1">
               {DAYS.map(d => (
-                <div key={d} className="w-9 h-7 flex items-center justify-center text-[10px] font-semibold text-ink-faint uppercase">
+                <div key={d} className="w-8 h-7 flex items-center justify-center text-[10px] font-semibold text-ink-faint uppercase">
                   {d}
                 </div>
               ))}
             </div>
 
             {/* Days */}
-            <div className="grid grid-cols-7 gap-0">
+            <div className="grid grid-cols-7">
               {days.map((d, i) => {
                 const isCurrentMonth = d.getMonth() === viewMonth
                 const isStart = isSameDay(d, tempStart)
@@ -178,7 +178,7 @@ export function DateRangePicker({ startDate, endDate, onChange, className }: Dat
                     key={i}
                     onClick={() => handleDayClick(d)}
                     className={clsx(
-                      'w-9 h-9 flex items-center justify-center text-xs rounded-md transition-colors',
+                      'w-8 h-8 flex items-center justify-center text-[11px] rounded-md transition-colors',
                       !isCurrentMonth && 'text-ink-faint',
                       isCurrentMonth && !inRange && 'text-ink-secondary hover:bg-surface-subtle',
                       inRange && !isStart && !isEnd && 'bg-brand-subtle text-brand',
