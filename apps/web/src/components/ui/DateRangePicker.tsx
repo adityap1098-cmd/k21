@@ -35,21 +35,21 @@ function getDaysInMonth(year: number, month: number): Date[] {
   const first = new Date(year, month, 1)
   const last = new Date(year, month + 1, 0)
 
-  // Pad start to Monday
+  // Pad start to Monday (0=Mon … 6=Sun)
   const startDay = (first.getDay() + 6) % 7
-  for (let i = startDay - 1; i >= 0; i--) {
-    const d = new Date(year, month, -i)
-    days.push(d)
+  for (let i = startDay; i > 0; i--) {
+    days.push(new Date(year, month, 1 - i))
   }
 
+  // Current month days
   for (let i = 1; i <= last.getDate(); i++) {
     days.push(new Date(year, month, i))
   }
 
-  // Pad end to fill last row
+  // Pad end to complete last row
+  let next = 1
   while (days.length % 7 !== 0) {
-    const nextDay = days.length - startDay - last.getDate() + 1
-    days.push(new Date(year, month + 1, nextDay))
+    days.push(new Date(year, month + 1, next++))
   }
 
   return days
