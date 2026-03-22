@@ -12,13 +12,15 @@ const JWT_SECRET = new TextEncoder().encode(
 async function signAccessToken(
   userId: string,
   role: string,
+  email: string,
+  name: string | null,
   mustChangePassword: boolean
 ): Promise<string> {
-  return new SignJWT({ role, mustChangePassword })
+  return new SignJWT({ role, email, name: name || undefined, mustChangePassword })
     .setProtectedHeader({ alg: 'HS256' })
     .setSubject(userId)
     .setIssuedAt()
-    .setExpirationTime('15m')
+    .setExpirationTime('8h')
     .sign(JWT_SECRET)
 }
 
@@ -48,6 +50,8 @@ export async function login(params: {
   const accessToken = await signAccessToken(
     user.id,
     user.role,
+    user.email,
+    user.name,
     user.mustChangePassword
   )
 
@@ -99,6 +103,8 @@ export async function refresh(params: {
   const accessToken = await signAccessToken(
     user.id,
     user.role,
+    user.email,
+    user.name,
     user.mustChangePassword
   )
 
