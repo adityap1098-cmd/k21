@@ -11,15 +11,17 @@
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "db:generate": "node --require tsx/cjs node_modules/drizzle-kit/bin.cjs generate:pg",
-    "db:push": "node --require tsx/cjs node_modules/drizzle-kit/bin.cjs push:pg"
+    "db:generate": "tsx ../../node_modules/drizzle-kit/bin.cjs generate:pg",
+    "db:push": "tsx ../../node_modules/drizzle-kit/bin.cjs push:pg"
   },
   "dependencies": {
     "@k21/shared": "workspace:*",
+    "@types/cors": "^2.8.19",
     "argon2": "^0.44.0",
     "bullmq": "^5.0.0",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "drizzle-orm": "^0.30.0",
     "express": "^4.18.0",
     "helmet": "^8.1.0",

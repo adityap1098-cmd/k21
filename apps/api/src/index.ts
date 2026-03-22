@@ -2,19 +2,30 @@ import express from 'express'
 import cookieParser from 'cookie-parser'
 import compression from 'compression'
 import helmet from 'helmet'
+import cors from 'cors'
 import { authRouter } from './modules/auth/index.js'
 import { usersRouter } from './modules/users/index.js'
 import { categoriesRouter } from './modules/categories/index.js'
 import { productsRouter } from './modules/products/index.js'
 import { inventoryRouter } from './modules/inventory/index.js'
+import { warehouseRouter } from './modules/warehouse/index.js'
 import { posRouter } from './modules/pos/index.js'
 import { shiftsRouter } from './modules/shifts/index.js'
+import { payrollRouter } from './modules/payroll/index.js'
 import { procurementRouter } from './modules/procurement/index.js'
 import { customersRouter } from './modules/customers/index.js'
 import { vehiclesRouter } from './modules/vehicles/index.js'
 import { serviceCatalogRouter } from './modules/service-catalog/index.js'
 import { serviceOrdersRouter } from './modules/service-orders/index.js'
+import { analyticsRouter } from './modules/analytics/index.js'
+import { accountingRouter } from './modules/accounting/index.js'
+import { marketplaceRouter } from './modules/marketplace/index.js'
+import { mechanicsRouter } from './modules/mechanics/mechanics.router.js'
+import { notificationsRouter } from './modules/notifications/index.js'
+import { auditLogsRouter } from './modules/audit-logs/audit-logs.router.js'
+import { suppliersRouter } from './modules/suppliers/suppliers.router.js'
 import { createLowStockWorker } from './queues/lowstock.queue.js'
+import { globalErrorHandler } from './middleware/error-handler.js'
 
 export const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -26,6 +37,23 @@ app.use(express.json({ limit: '1mb' }))
 app.use(cookieParser()) // Must be before routes
 app.use(helmet({ contentSecurityPolicy: false })) // CSP handled by Next.js
 app.use(compression())
+
+// CORS — allow web frontend origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3003',
+  `http://${process.env.VPS_HOST ?? '151.240.0.236'}:3003`,
+  'http://151.240.0.236:3003',
+]
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile, curl, etc)
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.includes(origin)) return callback(null, true)
+    callback(null, true) // Allow all for now — tighten after domain setup
+  },
+  credentials: true,
+}))
 
 // Fail-fast: JWT_SECRET required in production
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
@@ -49,24 +77,47 @@ v1Router.use('/users', usersRouter)
 v1Router.use('/categories', categoriesRouter)
 v1Router.use('/products', productsRouter)
 v1Router.use('/inventory', inventoryRouter)
+v1Router.use('/warehouse', warehouseRouter)
 
 // Phase 3: POS & Shifts
 v1Router.use('/pos', posRouter)
 v1Router.use('/shifts', shiftsRouter)
 
-// Phase 4: Procurement
-v1Router.use('/procurement', procurementRouter)
+// Phase 3.5: Payroll
+v1Router.use('/payroll', payrollRouter)
 
-// Phase 5: Bengkel
+// Phase 4: Procurement & Suppliers
+v1Router.use('/procurement', procurementRouter)
+v1Router.use('/suppliers', suppliersRouter)
+
+// Phase 5: Analytics & Dashboard
+v1Router.use('/analytics', analyticsRouter)
+
+// Phase 7: Accounting & Reports
+v1Router.use('/accounting', accountingRouter)
+
+// Phase Future: Marketplace
+v1Router.use('/marketplace', marketplaceRouter)
+
+// Phase 6: Bengkel
 v1Router.use('/customers', customersRouter)
 v1Router.use('/vehicles', vehiclesRouter)
 v1Router.use('/service-catalog', serviceCatalogRouter)
 v1Router.use('/service-orders', serviceOrdersRouter)
+v1Router.use('/mechanics', mechanicsRouter)
+
+// Notifications & Audit
+v1Router.use('/notifications', notificationsRouter)
+v1Router.use('/audit-logs', auditLogsRouter)
+
+// Global error handler — catches unhandled errors from all routes
+// Must be mounted AFTER all route registrations
+app.use(globalErrorHandler)
 
 // Only start listening when run directly (not during tests)
 if (process.env.NODE_ENV !== 'test') {
   const server = app.listen(PORT, () => {
-    console.log(`K21 API listening on port ${PORT}`)
+    console.log(`Teladan27 Motor API listening on port ${PORT}`)
   })
   const worker = createLowStockWorker()
   console.log('[startup] low-stock worker started')

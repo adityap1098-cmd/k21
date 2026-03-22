@@ -120,7 +120,7 @@ export function DateRangePicker({ startDate, endDate, onChange, className }: Dat
       </button>
 
       {open && (
-        <div className="absolute top-full mt-2 left-0 z-50 flex bg-surface-raised rounded-xl border border-border shadow-[0_16px_40px_rgba(0,0,0,0.12)] animate-in" style={{ animationDuration: '150ms' }}>
+        <div className="absolute top-full mt-2 left-0 z-[200] flex bg-surface-raised rounded-xl border border-border shadow-[0_16px_40px_rgba(0,0,0,0.12)] animate-in" style={{ animationDuration: '150ms' }}>
           {/* Presets */}
           <div className="flex flex-col gap-0.5 p-2 border-r border-border min-w-[120px]">
             {PRESETS.map(p => (
