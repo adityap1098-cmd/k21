@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
+import { T27Logo, T27LogoCompact } from '@/components/ui/Logo'
 
 // Lazy import to avoid SSR issues with localStorage references
 async function doLogin(email: string, password: string) {
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showForgotMsg, setShowForgotMsg] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -52,12 +54,10 @@ export default function LoginPage() {
       {/* Left brand panel */}
       <div className="hidden lg:flex flex-col justify-center flex-1 bg-sidebar px-[72px] py-20 gap-8">
         {/* Logo */}
-        <div className="flex items-center gap-3.5 mb-2">
-          <div className="w-[52px] h-[52px] rounded-xl bg-brand flex items-center justify-center shadow-[0_4px_20px_rgba(232,93,58,0.35)]">
-            <span className="text-white font-bold text-2xl">K</span>
-          </div>
+        <div className="flex items-center gap-4 mb-2">
+          <T27Logo size={64} variant="dark" />
           <div className="flex flex-col">
-            <span className="text-white font-bold text-2xl tracking-tight">K21</span>
+            <span className="text-white font-bold text-xl tracking-tight">Teladan27 Motor</span>
             <span className="text-[rgba(255,255,255,0.45)] text-sm">Retail ERP System</span>
           </div>
         </div>
@@ -87,10 +87,8 @@ export default function LoginPage() {
           <div className="flex flex-col gap-1.5 mb-2">
             {/* Mobile logo */}
             <div className="lg:hidden flex items-center gap-2.5 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-brand flex items-center justify-center">
-                <span className="text-white font-bold text-lg">K</span>
-              </div>
-              <span className="text-ink font-bold text-xl">K21</span>
+              <T27LogoCompact size={40} />
+              <span className="text-ink font-bold text-lg">Teladan27 Motor</span>
             </div>
             <h2 className="text-[26px] font-bold text-ink tracking-[-0.03em]">Masuk</h2>
             <p className="text-sm text-ink-muted">Masukkan kredensial untuk melanjutkan</p>
@@ -121,7 +119,7 @@ export default function LoginPage() {
               placeholder="nama@perusahaan.com"
               required
               autoComplete="email"
-              className="w-full px-3.5 py-3 rounded-lg border border-border bg-surface-raised text-[13px] text-ink placeholder:text-ink-faint outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand-subtle"
+              className="w-full px-3.5 py-3 rounded-lg border border-border bg-surface-raised text-[13px] text-ink placeholder:text-ink-faint outline-none transition-colors"
             />
           </div>
 
@@ -131,10 +129,13 @@ export default function LoginPage() {
               <label htmlFor="password" className="text-[13px] font-medium text-ink">
                 Password
               </label>
-              <button type="button" className="text-xs text-brand hover:underline font-medium">
+              <button type="button" onClick={() => setShowForgotMsg(true)} className="text-xs text-brand hover:underline font-medium">
                 Lupa password?
               </button>
             </div>
+            {showForgotMsg && (
+              <p className="text-xs text-ink-secondary">Hubungi admin untuk reset password Anda.</p>
+            )}
             <div className="relative">
               <input
                 id="password"
@@ -144,7 +145,7 @@ export default function LoginPage() {
                 placeholder="Masukkan password"
                 required
                 autoComplete="current-password"
-                className="w-full px-3.5 py-3 pr-11 rounded-lg border border-border bg-surface-raised text-[13px] text-ink placeholder:text-ink-faint outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand-subtle"
+                className="w-full px-3.5 py-3 pr-11 rounded-lg border border-border bg-surface-raised text-[13px] text-ink placeholder:text-ink-faint outline-none transition-colors"
               />
               <button
                 type="button"
@@ -177,7 +178,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <p className="text-xs text-ink-faint text-center mt-4">
-            K21 ERP v1.0 · Hak Cipta 2026
+            Teladan27 Motor ERP v1.0 · Hak Cipta 2026
           </p>
         </form>
       </div>

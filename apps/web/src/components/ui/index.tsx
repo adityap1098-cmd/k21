@@ -1,4 +1,5 @@
 import { clsx } from 'clsx'
+import { useState, useRef, useEffect, useCallback } from 'react'
 
 /* ─── Button ─── */
 
@@ -155,7 +156,7 @@ export function Input({ label, icon, className, id, ...props }: InputProps) {
         'flex items-center gap-2.5 px-3.5 py-2.5',
         'bg-surface-raised border border-border rounded-lg',
         'transition-colors duration-150',
-        'focus-within:border-brand focus-within:ring-2 focus-within:ring-brand-subtle',
+        'focus-within:border-border',
         className,
       )}>
         {icon && <span className="text-ink-faint flex-shrink-0" aria-hidden="true">{icon}</span>}
@@ -169,7 +170,7 @@ export function Input({ label, icon, className, id, ...props }: InputProps) {
   )
 }
 
-/* ─── Select ─── */
+/* ─── Select (Custom Dropdown) ─── */
 
 interface SelectOption { label: string; value: string }
 interface SelectProps {
@@ -181,27 +182,65 @@ interface SelectProps {
   id?: string
 }
 
-let selectIdCounter = 0
+export function Select({ options, value, onChange, label, className }: SelectProps) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const selected = options.find(o => o.value === value)
 
-export function Select({ options, value, onChange, label, className, id }: SelectProps) {
-  const selectId = id || (label ? `select-${++selectIdCounter}` : undefined)
+  const close = useCallback(() => setOpen(false), [])
+
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) close()
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open, close])
+
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [open, close])
+
   return (
-    <div className={clsx('flex items-center gap-1.5', className)}>
-      {label && <label htmlFor={selectId} className="text-[13px] font-medium text-ink-secondary">{label}</label>}
-      <select
-        id={selectId}
-        value={value}
-        onChange={e => onChange?.(e.target.value)}
+    <div ref={ref} className={clsx('relative flex items-center gap-1.5', className)}>
+      {label && <span className="text-[13px] font-medium text-ink-secondary">{label}</span>}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
         className={clsx(
-          'px-3.5 py-2.5 rounded-lg border border-border bg-surface-raised',
+          'flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg border border-border bg-surface-raised',
           'text-[13px] font-medium text-ink-secondary',
-          'appearance-none cursor-pointer outline-none',
-          'focus:border-brand focus:ring-2 focus:ring-brand-subtle',
-          'bg-[url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyA1TDYgOEw5IDUiIHN0cm9rZT0iIzVBNjI3MCIgc3Ryb2tlLXdpZHRoPSIxLjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==")] bg-[length:12px] bg-[right_12px_center] bg-no-repeat pr-8',
+          'cursor-pointer outline-none transition-colors hover:bg-surface-subtle',
         )}
       >
-        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
+        <span>{selected?.label ?? ''}</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="ml-1 flex-shrink-0" aria-hidden="true">
+          <path d="M3 5L6 8L9 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 z-50 min-w-[180px] max-h-[280px] overflow-y-auto rounded-lg border border-border bg-surface-raised shadow-[0_4px_16px_rgba(0,0,0,0.15)] py-1">
+          {options.map(o => (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => { onChange?.(o.value); close() }}
+              className={clsx(
+                'w-full text-left px-3.5 py-2 text-[13px] transition-colors outline-none',
+                o.value === value
+                  ? 'bg-brand-muted text-brand font-medium'
+                  : 'text-ink hover:bg-surface-subtle',
+              )}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

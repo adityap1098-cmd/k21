@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { authenticate } from '../../middleware/authenticate.js'
 import { requireRole } from '../../middleware/require-role.js'
+import { resolveError } from '../../middleware/error-handler.js'
 import { getStockCached, invalidateStockCache } from './stock.service.js'
 import { runStockOpname } from './opname.service.js'
 import { recordMovement } from './movement.service.js'
@@ -33,27 +34,20 @@ const movementBodySchema = z.object({
 
 // ─── GET /inventory/stock/:variantId ──────────────────────────────────────
 
-/**
- * Returns cached stock level for a variant.
- * Requires: authenticated user.
- */
 inventoryRouter.get('/stock/:variantId', authenticate, async (req, res) => {
   const { variantId } = req.params
   try {
     const stockQty = await getStockCached(variantId)
     res.status(200).json({ success: true, data: { variantId, stockQty }, error: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Failed to get stock'
-    res.status(500).json({ success: false, data: null, error: message })
+    const { status, message } = resolveError(err)
+    if (status >= 500) console.error('[inventory] GET /stock/:variantId failed:', err)
+    res.status(status).json({ success: false, data: null, error: message })
   }
 })
 
 // ─── POST /inventory/opname ───────────────────────────────────────────────
 
-/**
- * Runs a stock opname batch reconciliation.
- * Requires: Admin, Owner, or Warehouse Staff.
- */
 inventoryRouter.post(
   '/opname',
   authenticate,
@@ -77,19 +71,15 @@ inventoryRouter.post(
       })
       res.status(200).json({ success: true, data: { adjustments, opnameId }, error: null })
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Opname failed'
-      res.status(500).json({ success: false, data: null, error: message })
+      const { status, message } = resolveError(err)
+      if (status >= 500) console.error('[inventory] POST /opname failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )
 
 // ─── POST /inventory/movements ────────────────────────────────────────────
 
-/**
- * Manually records a PURCHASE, RETURN, or ADJUSTMENT movement.
- * Note: SALE and TRANSFER are handled by POS and Procurement phases respectively.
- * Requires: Admin, Owner, or Warehouse Staff.
- */
 inventoryRouter.post(
   '/movements',
   authenticate,
@@ -128,7 +118,6 @@ inventoryRouter.post(
             sql`UPDATE product_variants SET stock_qty = stock_qty + ${Math.abs(qty)}, updated_at = now() WHERE id = ${variantId}`
           )
         } else if (movementType === 'ADJUSTMENT') {
-          // ADJUSTMENT qty is signed: positive = add stock, negative = remove stock
           await tx.execute(
             sql`UPDATE product_variants SET stock_qty = stock_qty + ${qty}, updated_at = now() WHERE id = ${variantId}`
           )
@@ -140,28 +129,15 @@ inventoryRouter.post(
 
       res.status(201).json({ success: true, data: null, error: null })
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Movement failed'
-      if (message === 'REASON_REQUIRED') {
-        res.status(400).json({ success: false, data: null, error: 'Reason is required for adjustments' })
-      } else if (message === 'APPROVER_REQUIRED') {
-        res.status(400).json({ success: false, data: null, error: 'ApprovedBy is required for adjustments' })
-      } else if (message === 'VARIANT_NOT_FOUND') {
-        res.status(404).json({ success: false, data: null, error: 'Variant not found' })
-      } else if (message === 'INSUFFICIENT_STOCK') {
-        res.status(409).json({ success: false, data: null, error: 'Insufficient stock' })
-      } else {
-        res.status(500).json({ success: false, data: null, error: message })
-      }
+      const { status, message } = resolveError(err)
+      if (status >= 500) console.error('[inventory] POST /movements failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )
 
 // ─── GET /inventory/reservations/:variantId ───────────────────────────────
 
-/**
- * Returns active reservations for a variant.
- * Requires: Admin, Owner, or Warehouse Staff.
- */
 inventoryRouter.get(
   '/reservations/:variantId',
   authenticate,
@@ -172,8 +148,9 @@ inventoryRouter.get(
       const reservedQty = await getActiveReservedQty(db, variantId)
       res.status(200).json({ success: true, data: { variantId, reservedQty }, error: null })
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to get reservations'
-      res.status(500).json({ success: false, data: null, error: message })
+      const { status, message } = resolveError(err)
+      if (status >= 500) console.error('[inventory] GET /reservations/:variantId failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )

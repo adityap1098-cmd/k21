@@ -125,7 +125,7 @@ function ConflictRow({ tx }: ConflictRowProps) {
             value={voidReason}
             onChange={e => setVoidReason(e.target.value)}
             placeholder="Alasan pembatalan..."
-            className="w-full border border-border rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-red-400"
+            className="w-full border border-border rounded px-2 py-1 text-xs outline-none"
           />
           <div className="flex gap-2">
             <button
@@ -149,6 +149,75 @@ function ConflictRow({ tx }: ConflictRowProps) {
   )
 }
 
+function ErrorRow({ tx }: ConflictRowProps) {
+  const [isRetrying, setIsRetrying] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleRetry() {
+    setIsRetrying(true)
+    setError(null)
+    try {
+      // Reset to pending so sync-manager picks it up again
+      await offlineDB.offlineQueue.update(tx.clientUuid, {
+        status: 'pending' as const,
+        retryCount: 0,
+        lastError: undefined,
+      })
+    } catch {
+      setError('Gagal mereset transaksi')
+    } finally {
+      setIsRetrying(false)
+    }
+  }
+
+  async function handleDiscard() {
+    setIsRetrying(true)
+    try {
+      await offlineDB.offlineQueue.delete(tx.clientUuid)
+    } catch {
+      setError('Gagal menghapus transaksi')
+    } finally {
+      setIsRetrying(false)
+    }
+  }
+
+  return (
+    <div className="border border-amber-200 rounded-lg p-3 bg-amber-50 dark:bg-amber-950/20 space-y-2">
+      <div className="space-y-1 min-w-0">
+        <p className="text-xs font-mono text-ink-secondary">#{tx.clientUuid.slice(-8)}</p>
+        <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
+          Gagal sync ({tx.retryCount ?? 0}x percobaan)
+        </p>
+        {tx.lastError && (
+          <p className="text-xs text-amber-700 dark:text-amber-300">{tx.lastError}</p>
+        )}
+        <p className="text-xs text-ink-faint">{formatTime(tx.createdAt)}</p>
+      </div>
+
+      {error && (
+        <p className="text-xs text-red-700 bg-danger-muted rounded px-2 py-1">{error}</p>
+      )}
+
+      <div className="flex gap-2">
+        <button
+          onClick={handleRetry}
+          disabled={isRetrying}
+          className="flex-1 bg-brand text-white rounded px-3 py-1.5 text-xs font-semibold hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isRetrying ? 'Memproses...' : 'Coba Lagi'}
+        </button>
+        <button
+          onClick={handleDiscard}
+          disabled={isRetrying}
+          className="flex-1 border border-border rounded px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface-subtle disabled:opacity-50"
+        >
+          Hapus
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export function SyncIssuesPanel() {
   const conflicts = useLiveQuery(
     () => offlineDB.offlineQueue.where('status').equals('conflict').toArray(),
@@ -156,21 +225,31 @@ export function SyncIssuesPanel() {
     []
   )
 
-  if (!conflicts || conflicts.length === 0) return null
+  const errors = useLiveQuery(
+    () => offlineDB.offlineQueue.where('status').equals('error').toArray(),
+    [],
+    []
+  )
+
+  const totalIssues = (conflicts?.length ?? 0) + (errors?.length ?? 0)
+  if (totalIssues === 0) return null
 
   return (
     <div className="fixed right-0 top-0 z-30 h-full w-80 bg-surface-raised border-l border-red-200 shadow-lg overflow-y-auto">
       <div className="p-4 border-b border-red-200 bg-danger-muted">
         <h2 className="text-sm font-semibold text-red-900">
-          Transaksi Bermasalah ({conflicts.length})
+          Transaksi Bermasalah ({totalIssues})
         </h2>
         <p className="text-xs text-red-700 mt-0.5">
           Pilih tindakan untuk setiap transaksi
         </p>
       </div>
       <div className="p-3 space-y-3">
-        {conflicts.map(tx => (
+        {conflicts?.map(tx => (
           <ConflictRow key={tx.clientUuid} tx={tx} />
+        ))}
+        {errors?.map(tx => (
+          <ErrorRow key={tx.clientUuid} tx={tx} />
         ))}
       </div>
     </div>

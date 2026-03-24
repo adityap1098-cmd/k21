@@ -1,7 +1,7 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'K21 — Retail ERP',
+  title: 'Teladan27 Motor — Retail ERP',
   description: 'Sistem ERP terpadu untuk manajemen penjualan, inventori, dan keuangan bisnis retail',
 }
 

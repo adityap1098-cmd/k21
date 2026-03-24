@@ -33,6 +33,7 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [product, setProduct] = useState<Product | null>(null)
+  const [error, setError] = useState('')
 
   // Form state
   const [name, setName] = useState('')
@@ -59,6 +60,7 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
 
   async function handleSave() {
     if (!productId) return
+    setError('')
     setSaving(true)
     try {
       const res = await apiPatch(`/api/v1/products/${productId}`, {
@@ -67,15 +69,15 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
         ppnType,
         isActive,
       })
-      if (res.success) {
-        toast('Produk berhasil diupdate')
-        onUpdated()
-        onClose()
-      } else {
-        toast(res.error || 'Gagal update', 'error')
+      if (!res.success) {
+        setError((res.data as { error?: string } | null)?.error ?? 'Gagal menyimpan perubahan')
+        return
       }
+      toast('Produk berhasil diupdate')
+      onUpdated()
+      onClose()
     } catch {
-      toast('Terjadi kesalahan', 'error')
+      setError('Terjadi kesalahan')
     } finally {
       setSaving(false)
     }
@@ -83,13 +85,23 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
 
   async function handleUpdateVariant(variantId: string, field: string, value: number) {
     if (!productId) return
+    // Validate negative prices/costs
+    if (field === 'price' && value < 0) {
+      setError('Harga jual tidak boleh negatif')
+      return
+    }
+    if (field === 'costPrice' && value < 0) {
+      setError('Harga pokok tidak boleh negatif')
+      return
+    }
+    setError('')
     const res = await apiPatch(`/api/v1/products/${productId}/variants/${variantId}`, { [field]: value })
     if (res.success) {
       toast('Variant diupdate')
       const reload = await apiGet<Product>(`/api/v1/products/${productId}`)
       if (reload.success && reload.data) setProduct(reload.data)
     } else {
-      toast(res.error || 'Gagal update variant', 'error')
+      setError(res.error || 'Gagal update variant')
     }
   }
 
@@ -138,6 +150,13 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
         <p className="text-sm text-ink-muted text-center py-8">Produk tidak ditemukan</p>
       ) : (
         <div className="flex flex-col gap-5">
+          {/* Error banner */}
+          {error && (
+            <div className="px-3 py-2 bg-danger-muted text-danger text-sm rounded border border-danger/20">
+              {error}
+            </div>
+          )}
+
           {/* Basic info */}
           <div className="grid grid-cols-2 gap-3">
             <Input label="Nama Produk" value={name} onChange={e => setName(e.target.value)} />
@@ -240,6 +259,7 @@ function VariantRow({ variant, onUpdate, onAdjustStock }: {
           <input
             autoFocus
             type="number"
+            min="0"
             value={editValue}
             onChange={e => setEditValue(e.target.value)}
             onBlur={saveEdit}
@@ -260,6 +280,7 @@ function VariantRow({ variant, onUpdate, onAdjustStock }: {
           <input
             autoFocus
             type="number"
+            min="0"
             value={editValue}
             onChange={e => setEditValue(e.target.value)}
             onBlur={saveEdit}
@@ -299,7 +320,7 @@ function VariantRow({ variant, onUpdate, onAdjustStock }: {
             placeholder="+10 atau -5"
             value={adjustQty}
             onChange={e => setAdjustQty(e.target.value)}
-            className="w-24 px-2 py-1.5 text-xs border border-border rounded-md bg-surface-raised text-ink outline-none focus:border-brand"
+            className="w-24 px-2 py-1.5 text-xs border border-border rounded-md bg-surface-raised text-ink outline-none"
           />
         </div>
         <div className="flex-1">
@@ -308,7 +329,7 @@ function VariantRow({ variant, onUpdate, onAdjustStock }: {
             placeholder="Stok opname / koreksi / dll"
             value={adjustReason}
             onChange={e => setAdjustReason(e.target.value)}
-            className="w-full px-2 py-1.5 text-xs border border-border rounded-md bg-surface-raised text-ink outline-none focus:border-brand"
+            className="w-full px-2 py-1.5 text-xs border border-border rounded-md bg-surface-raised text-ink outline-none"
           />
         </div>
         <button

@@ -24,6 +24,10 @@
   --color-sidebar-hover: rgba(255, 255, 255, 0.06);
   --color-sidebar-active: rgba(232, 93, 58, 0.15);
 
+  /* Focus — neutral blue for input focus rings (not brand orange) */
+  --color-focus: #3B82F6;
+  --color-focus-ring: rgba(59, 130, 246, 0.25);
+
   /* Semantic */
   --color-success: #16A34A;
   --color-success-muted: rgba(22, 163, 74, 0.1);
@@ -118,9 +122,50 @@ p {
 
 /* ─── Focus ring ─── */
 :focus-visible {
-  outline: 2px solid var(--color-brand);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: var(--radius-md);
+}
+
+/* Style native <select> dropdown options to match app theme */
+select {
+  background-color: var(--color-surface-raised);
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
+}
+select option {
+  background-color: var(--color-surface-raised);
+  color: var(--color-ink);
+  padding: 6px 10px;
+  border: none;
+  outline: none;
+}
+select option:hover,
+select option:focus,
+select option:checked {
+  background-color: var(--color-brand-muted);
+  color: var(--color-ink);
+}
+select:focus-visible,
+select:focus {
+  border-color: var(--color-border);
+}
+
+/* Remove ALL focus outlines/rings from form inputs — clean look */
+input,
+textarea,
+select {
+  outline: none !important;
+}
+input:focus,
+input:focus-visible,
+input:focus-within,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* ─── Hide scrollbar utility ─── */

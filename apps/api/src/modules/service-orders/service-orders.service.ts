@@ -41,6 +41,7 @@ export async function createServiceOrder(
   params: {
     vehicleId: string
     mechanicId?: string
+    kilometer?: number
     complaint?: string
     estimatedCompletionAt?: string
     estimatedCost?: number
@@ -63,6 +64,7 @@ export async function createServiceOrder(
       orderNumber,
       vehicleId: params.vehicleId,
       mechanicId: params.mechanicId ?? null,
+      kilometer: params.kilometer ?? null,
       workStatus: 'BOOKING',
       paymentStatus: 'UNPAID',
       complaint: params.complaint ?? null,
@@ -299,6 +301,52 @@ export async function addLineItem(
   return item
 }
 
+/**
+ * Deletes a service order and all its line items.
+ * Only allowed if order is NOT COMPLETED or has no payments yet.
+ */
+export async function deleteServiceOrder(
+  id: string,
+  userId: string,
+  ipAddress: string,
+) {
+  const order = await getServiceOrderById(id)
+
+  // Don't allow deleting completed orders that have payments
+  if (order.workStatus === 'COMPLETED' && order.paymentStatus !== 'UNPAID') {
+    throw new Error('CANNOT_DELETE_PAID_ORDER')
+  }
+
+  await db.transaction(async (tx) => {
+    // 1. Delete line items first (FK constraint)
+    await (tx as unknown as typeof db)
+      .delete(serviceOrderItems)
+      .where(eq(serviceOrderItems.serviceOrderId, id))
+
+    // 2. Delete any payments (if UNPAID, should be 0)
+    await (tx as unknown as typeof db)
+      .delete(servicePayments)
+      .where(eq(servicePayments.serviceOrderId, id))
+
+    // 3. Delete the order itself
+    await (tx as unknown as typeof db)
+      .delete(serviceOrders)
+      .where(eq(serviceOrders.id, id))
+  })
+
+  await logAudit({
+    userId,
+    action: 'DELETE',
+    tableName: 'service_orders',
+    recordId: id,
+    oldValue: { orderNumber: order.orderNumber, workStatus: order.workStatus, vehicleId: order.vehicleId },
+    newValue: null,
+    ipAddress,
+  })
+
+  return { deleted: true, orderNumber: order.orderNumber }
+}
+
 export async function removeLineItem(
   params: { serviceOrderId: string; itemId: string },
   userId: string,
@@ -455,10 +503,24 @@ export async function completeServiceOrder(
 
 export async function recordServicePayment(
   serviceOrderId: string,
-  params: { amount: number; method: string; reference?: string },
+  params: { amount: number; method: string; reference?: string; idempotencyKey?: string },
   userId: string,
   ipAddress: string,
 ) {
+  // Idempotency check — if client provided a key, check for existing payment
+  if (params.idempotencyKey) {
+    const [existing] = await db
+      .select()
+      .from(servicePayments)
+      .where(eq(servicePayments.id, params.idempotencyKey))
+      .limit(1)
+
+    if (existing) {
+      // Return existing payment without re-processing
+      return { payment: existing, paymentStatus: 'ALREADY_PROCESSED' as const }
+    }
+  }
+
   // Validate order exists and is COMPLETED
   const order = await getServiceOrderById(serviceOrderId)
   if (order.workStatus !== 'COMPLETED') {
@@ -483,7 +545,8 @@ export async function recordServicePayment(
   }
 
   const newStatus = (totalPaid + params.amount) >= total ? 'PAID' : 'PARTIAL'
-  const paymentId = randomUUID()
+  // Use client-provided idempotencyKey as payment ID if available
+  const paymentId = params.idempotencyKey ?? randomUUID()
 
   const payment = await db.transaction(async (tx) => {
     // Insert payment row
@@ -614,4 +677,35 @@ export async function getServiceHistory(plateNumber: string) {
   orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
   return orders
+}
+
+export async function getServiceHistoryByCustomer(customerId: string) {
+  // Get all vehicles for this customer
+  const customerVehicles = await db
+    .select()
+    .from(vehicles)
+    .where(eq(vehicles.customerId, customerId))
+
+  if (customerVehicles.length === 0) {
+    return []
+  }
+
+  const vehicleIds = customerVehicles.map(v => v.id)
+
+  // Get all service orders for all of this customer's vehicles
+  const orders = await db
+    .select()
+    .from(serviceOrders)
+    .where(inArray(serviceOrders.vehicleId, vehicleIds))
+
+  // Sort by createdAt DESC
+  orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+
+  // Attach vehicle info to each order
+  const vehicleMap = new Map(customerVehicles.map(v => [v.id, v]))
+
+  return orders.map(order => ({
+    ...order,
+    vehicle: vehicleMap.get(order.vehicleId) ?? null,
+  }))
 }

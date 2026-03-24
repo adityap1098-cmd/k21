@@ -34,10 +34,10 @@ function ProductCard({ product, onAdd }: { product: CatalogProduct; onAdd: (p: C
   return (
     <button
       onClick={() => onAdd(product)}
-      className="flex flex-col w-[164px] rounded-xl overflow-hidden bg-surface-raised border border-border shrink-0 text-left hover:border-brand/40 active:scale-[0.98] transition-all cursor-pointer"
+      className="flex flex-col rounded-xl overflow-hidden bg-surface border border-border text-left hover:border-brand/40 active:scale-[0.98] transition-all cursor-pointer"
     >
       {/* Image placeholder */}
-      <div className="flex items-center justify-center h-[100px] bg-[#EDE9E3] shrink-0">
+      <div className="flex items-center justify-center h-[100px] bg-surface-subtle shrink-0">
         <ProductPlaceholderIcon />
       </div>
       {/* Content */}
@@ -99,9 +99,9 @@ export function ProductPanel() {
   const displayProducts = isSearching ? searchResults : allProducts
 
   return (
-    <div className="flex flex-col gap-5 h-full overflow-hidden">
+    <div className="flex flex-col gap-4 h-full overflow-hidden">
       {/* Search bar */}
-      <div className="flex items-center rounded-xl py-3 px-4 gap-2.5 bg-surface-raised border border-border shrink-0">
+      <div className="flex items-center rounded-xl py-3 px-4 gap-2.5 bg-surface border border-border shrink-0">
         <span className="text-ink-muted">
           <SearchIcon />
         </span>
@@ -115,7 +115,7 @@ export function ProductPanel() {
           className="flex-1 bg-transparent text-sm leading-[18px] text-ink placeholder:text-[#B0B5BC] focus:outline-none"
           autoFocus
         />
-        <div className="ml-auto flex items-center rounded-md py-1 px-2.5 bg-surface border border-border">
+        <div className="ml-auto flex items-center rounded-md py-1 px-2.5 bg-surface-subtle border border-border">
           <span className="text-ink-muted font-mono text-[11px] leading-[14px]">F2</span>
         </div>
       </div>
@@ -127,8 +127,8 @@ export function ProductPanel() {
             onClick={() => setActiveCategoryId(null)}
             className={`flex items-center rounded-[20px] py-[7px] px-4 shrink-0 transition-colors ${
               activeCategoryId === null
-                ? 'bg-ink text-white'
-                : 'bg-surface-raised border border-border text-ink hover:bg-surface'
+                ? 'bg-brand text-white'
+                : 'bg-surface-subtle border border-border text-ink-secondary hover:bg-surface-raised hover:text-ink'
             }`}
           >
             <span className="font-medium text-[13px] leading-4">Semua</span>
@@ -139,8 +139,8 @@ export function ProductPanel() {
               onClick={() => setActiveCategoryId(cat.id)}
               className={`flex items-center rounded-[20px] py-[7px] px-4 shrink-0 transition-colors ${
                 activeCategoryId === cat.id
-                  ? 'bg-ink text-white'
-                  : 'bg-surface-raised border border-border text-ink hover:bg-surface'
+                  ? 'bg-brand text-white'
+                  : 'bg-surface-subtle border border-border text-ink-secondary hover:bg-surface-raised hover:text-ink'
               }`}
             >
               <span className="font-medium text-[13px] leading-4">{cat.name}</span>
@@ -150,7 +150,7 @@ export function ProductPanel() {
       )}
 
       {/* Product grid */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pr-1">
         {displayProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-ink-faint gap-2">
             {isSearching ? (
@@ -163,7 +163,7 @@ export function ProductPanel() {
             )}
           </div>
         ) : (
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-4 gap-3">
             {displayProducts.map(product => (
               <ProductCard key={product.variantId} product={product} onAdd={handleAdd} />
             ))}

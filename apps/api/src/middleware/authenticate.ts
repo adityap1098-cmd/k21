@@ -20,7 +20,7 @@ export const authenticate: RequestHandler = async (req, res, next) => {
       mustChangePassword: payload['mustChangePassword'] as boolean,
     }
     // Enforce password change — blocks all routes except the change-password endpoint
-    if (req.user.mustChangePassword && !req.path.endsWith('/auth/change-password')) {
+    if (req.user.mustChangePassword && !req.originalUrl.includes('/auth/change-password')) {
       res.status(403).json({ success: false, data: null, error: 'PASSWORD_CHANGE_REQUIRED' })
       return
     }

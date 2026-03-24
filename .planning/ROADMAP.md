@@ -140,7 +140,19 @@ Plans:
   3. Stock levels in K21 are pushed to Shopee and TikTok Shop automatically as inventory changes — overselling is prevented by the reservation system
   4. Duplicate webhook events (same platform + event type + event ID) are discarded before processing via a UNIQUE constraint
   5. OAuth tokens for each marketplace are refreshed automatically before they expire — marketplace sync never stops due to a stale token
-**Plans**: TBD
+**Plans**: 10 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Wave 0: Drizzle schema (marketplace_tokens, webhook_events, marketplace_orders, marketplace_order_items, marketplace_listings) + migration SQL + RED test stubs
+- [ ] 06-02-PLAN.md — Wave 1: Shopee + TikTok HTTP clients (HMAC-SHA256 signing) + token management service + BullMQ token refresh worker
+- [ ] 06-03-PLAN.md — Wave 2: Webhook handlers (POST /webhooks/shopee, /webhooks/tiktok) — HMAC verify, store raw, enqueue, return 200 < 100ms, dedup via UNIQUE constraint
+- [ ] 06-04-PLAN.md — Wave 3: Order import workers — process webhook events, normalize payload, create marketplace_orders, map SKU via marketplace_listings, reserve stock
+- [ ] 06-05-PLAN.md — Wave 3: Order lifecycle workers — cancel releases reservation, ship converts to inventory_movement(SALE) + journal entry, complete finalizes
+- [ ] 06-06-PLAN.md — Wave 4: Outbound stock sync — inventory changes trigger debounced BullMQ job that pushes stock to Shopee + TikTok via marketplace_listings bridge
+- [ ] 06-07-PLAN.md — Wave 4: Polling fallback — BullMQ cron every 5 min polls order list as safety net for missed webhooks
+- [ ] 06-08-PLAN.md — Wave 5: Marketplace API endpoints — OAuth authorize/callback, channel management, listing CRUD, order/webhook list endpoints
+- [ ] 06-09-PLAN.md — Wave 6: Marketplace frontend — channel connection UI, orders tab, SKU mapping page, webhook events log
+- [ ] 06-10-PLAN.md — Wave 7: Full suite verification + human checkpoint (all MKT-01..08 coverage)
 
 ### Phase 7: Finance & Accounting
 **Goal**: Every financial event across all modules automatically produces balanced double-entry journal entries, and the owner can generate P&L, Balance Sheet, and Cash Flow reports at any time
@@ -177,18 +189,19 @@ Plans:
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9
+**Execution Order (revised 2026-03-22):**
+0 → 1 → 2 → 3 → 6 → 7 → 8 → 9 → 4 → 5
+(Procurement/Warehouse deferred — backend complete, UI later; Marketplace prioritized for business value)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 0. Infrastructure | 11/11 | Complete   | 2026-03-17 |
 | 1. Auth & RBAC | 6/6 | Complete   | 2026-03-17 |
 | 2. Product & Inventory | 6/6 | Complete   | 2026-03-17 |
-| 3. POS with Offline Mode | 7/8 | Complete    | 2026-03-18 |
-| 4. Procurement | 0/TBD | Not started | - |
-| 5. Warehouse Management | 0/TBD | Not started | - |
-| 6. Marketplace Integration | 0/TBD | Not started | - |
+| 3. POS with Offline Mode | 8/8 | Complete    | 2026-03-18 |
+| 4. Procurement | backend done | Deferred (UI later) | - |
+| 5. Warehouse Management | 0/TBD | Deferred | - |
+| 6. Marketplace Integration | 0/10 | **Next** | - |
 | 7. Finance & Accounting | 0/TBD | Not started | - |
 | 8. Payroll | 0/TBD | Not started | - |
 | 9. Analytics | 0/TBD | Not started | - |

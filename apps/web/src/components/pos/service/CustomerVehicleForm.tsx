@@ -46,7 +46,7 @@ function formatPlate(v: Vehicle): string {
 }
 
 /* ── Shared input class ── */
-const inputClass = 'w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle transition-colors'
+const inputClass = 'w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none transition-colors'
 
 export function CustomerVehicleForm({ onOrderCreated }: Props) {
   // --- Search state ---
@@ -76,6 +76,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
 
   // --- Order creation ---
   const [complaint, setComplaint] = useState('')
+  const [kilometer, setKilometer] = useState('')
   const [isCreatingOrder, setIsCreatingOrder] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isCreatingCustomer, setIsCreatingCustomer] = useState(false)
@@ -223,6 +224,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
         setSelectedVehicle(body.data)
         setShowNewVehicle(false)
         setNewVehiclePlate('')
+        setNewVehicleType('MOTOR')
         setNewVehicleBrand('')
         setNewVehicleModel('')
       } else {
@@ -248,6 +250,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
         body: JSON.stringify({
           vehicleId: selectedVehicle.id,
           complaint: complaint.trim() || null,
+          ...(kilometer.trim() ? { kilometer: parseInt(kilometer.replace(/\D/g, ''), 10) } : {}),
         }),
       })
       const body = (await res.json()) as ApiResponse<ServiceOrder>
@@ -262,13 +265,13 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
     } finally {
       setIsCreatingOrder(false)
     }
-  }, [selectedVehicle, complaint, onOrderCreated])
+  }, [selectedVehicle, complaint, kilometer, onOrderCreated])
 
   // --- Derived state ---
   const canCreateOrder = selectedVehicle !== null
 
   return (
-    <div data-testid="customer-vehicle-form" className="flex flex-col gap-5 p-5 max-w-2xl">
+    <div data-testid="customer-vehicle-form" className="flex flex-col gap-4 p-4">
       <h2 className="text-[15px] font-semibold text-ink">Order Service Baru</h2>
 
       {/* Error banner */}
@@ -444,8 +447,8 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
                   onClick={() => setNewVehicleType('MOTOR')}
                   className={`flex-1 py-[7px] px-4 rounded-[20px] text-[13px] font-medium transition-colors ${
                     newVehicleType === 'MOTOR'
-                      ? 'bg-ink text-white'
-                      : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
+                      ? 'bg-brand text-white'
+                      : 'bg-surface-subtle border border-border text-ink-secondary hover:bg-surface-raised hover:text-ink'
                   }`}
                 >
                   Motor
@@ -454,8 +457,8 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
                   onClick={() => setNewVehicleType('MOBIL')}
                   className={`flex-1 py-[7px] px-4 rounded-[20px] text-[13px] font-medium transition-colors ${
                     newVehicleType === 'MOBIL'
-                      ? 'bg-ink text-white'
-                      : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
+                      ? 'bg-brand text-white'
+                      : 'bg-surface-subtle border border-border text-ink-secondary hover:bg-surface-raised hover:text-ink'
                   }`}
                 >
                   Mobil
@@ -510,9 +513,23 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
         </div>
       ) : null}
 
-      {/* ===== SECTION: Complaint + Create Order ===== */}
+      {/* ===== SECTION: Kilometer + Complaint + Create Order ===== */}
       {canCreateOrder ? (
         <div className="space-y-4 border-t border-border pt-5">
+          <div className="space-y-2">
+            <label className="block text-[13px] font-medium text-ink">Kilometer (KM)</label>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={kilometer}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/\D/g, '')
+                setKilometer(raw ? Number(raw).toLocaleString('id-ID') : '')
+              }}
+              placeholder="Contoh: 15.000"
+              className="w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none transition-colors font-mono"
+            />
+          </div>
           <div className="space-y-2">
             <label className="block text-[13px] font-medium text-ink">Keluhan / Catatan</label>
             <textarea
@@ -520,7 +537,7 @@ export function CustomerVehicleForm({ onOrderCreated }: Props) {
               onChange={(e) => setComplaint(e.target.value)}
               placeholder="Deskripsi keluhan kendaraan..."
               rows={3}
-              className="w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle resize-none transition-colors"
+              className="w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none resize-none transition-colors"
             />
           </div>
           <button

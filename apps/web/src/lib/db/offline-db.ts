@@ -24,11 +24,13 @@ export interface CompleteSaleParams {
 
 export interface OfflineTransaction {
   clientUuid: string        // primary key
-  status: 'pending' | 'synced' | 'conflict'
+  status: 'pending' | 'synced' | 'conflict' | 'error'
   payload: CompleteSaleParams  // full sale params, sent to /pos/transactions/sync
   createdAt: number            // Date.now()
   syncedAt?: number
   conflictDetail?: string
+  retryCount?: number
+  lastError?: string
 }
 
 export interface CatalogProduct {

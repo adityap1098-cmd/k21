@@ -21,6 +21,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       router.replace('/dashboard')
       return
     }
+
+    // Force password change redirect
+    if (token && pathname !== '/change-password') {
+      try {
+        const base64Url = token.split('.')[1]
+        const json = JSON.parse(atob(base64Url.replace(/-/g, '+').replace(/_/g, '/')))
+        if (json.mustChangePassword) {
+          router.replace('/change-password')
+          return
+        }
+      } catch { /* ignore parse errors */ }
+    }
+
     setReady(true)
   }, [pathname, router])
 

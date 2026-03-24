@@ -1,7 +1,7 @@
 {
-  "name": "K21 POS",
-  "short_name": "K21 POS",
-  "description": "K21 Point of Sale — offline-capable retail POS",
+  "name": "Teladan27 Motor POS",
+  "short_name": "T27 POS",
+  "description": "Teladan27 Motor Point of Sale — offline-capable retail POS",
   "start_url": "/pos",
   "display": "standalone",
   "background_color": "#ffffff",

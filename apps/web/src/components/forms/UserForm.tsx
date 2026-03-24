@@ -23,11 +23,13 @@ const ROLES = [
 export function UserForm({ open, onClose, onCreated }: UserFormProps) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('Cashier')
 
   function reset() {
+    setName('')
     setEmail('')
     setPassword('')
     setRole('Cashier')
@@ -36,17 +38,25 @@ export function UserForm({ open, onClose, onCreated }: UserFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email || !password) return
+    if (password.length < 8) {
+      toast('Password minimal 8 karakter', 'error')
+      return
+    }
 
     setLoading(true)
     try {
-      const res = await apiPost('/api/v1/users', { email, password, role })
+      const res = await apiPost('/api/v1/users', { name: name.trim() || undefined, email, password, role })
       if (res.success) {
         toast('Pengguna berhasil ditambahkan')
         reset()
         onCreated()
         onClose()
       } else {
-        const msg = res.error === 'EMAIL_EXISTS' ? 'Email sudah terdaftar' : res.error || 'Gagal menambahkan'
+        const msg = res.error === 'EMAIL_EXISTS'
+          ? 'Email sudah terdaftar'
+          : res.error?.includes('8 character')
+            ? 'Password minimal 8 karakter'
+            : res.error || 'Gagal menambahkan'
         toast(msg, 'error')
       }
     } catch {
@@ -59,6 +69,13 @@ export function UserForm({ open, onClose, onCreated }: UserFormProps) {
   return (
     <Modal open={open} onClose={onClose} title="Tambah Pengguna" description="Buat akun baru untuk karyawan">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Input
+          label="Nama"
+          type="text"
+          placeholder="Nama lengkap karyawan"
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
         <Input
           label="Email"
           type="email"

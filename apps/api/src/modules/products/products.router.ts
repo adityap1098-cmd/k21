@@ -2,7 +2,8 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { authenticate } from '../../middleware/authenticate.js'
 import { requireRole } from '../../middleware/require-role.js'
-import { createProduct, getProduct, listProducts, updateProduct, addVariant, updateVariant } from './products.service.js'
+import { resolveError } from '../../middleware/error-handler.js'
+import { createProduct, getProduct, listProducts, updateProduct, deleteProduct, addVariant, updateVariant } from './products.service.js'
 
 export const productsRouter = Router()
 
@@ -52,14 +53,16 @@ productsRouter.get('/', authenticate, async (req, res) => {
     const data = await listProducts({ categoryId, isActive, includeVariants })
     res.json({ success: true, data, error: null })
   } catch (err) {
-    res.status(500).json({ success: false, data: null, error: 'Internal server error' })
+    const { status, message } = resolveError(err)
+    if (status >= 500) console.error('[products] GET / failed:', err)
+    res.status(status).json({ success: false, data: null, error: message })
   }
 })
 
 productsRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Warehouse Staff'), async (req, res) => {
   const parsed = createProductSchema.safeParse(req.body)
   if (!parsed.success) {
-    res.status(400).json({ success: false, data: null, error: parsed.error.message })
+    res.status(400).json({ success: false, data: null, error: parsed.error.issues[0]?.message ?? 'Invalid input' })
     return
   }
 
@@ -68,8 +71,9 @@ productsRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Warehouse 
     const data = await createProduct(parsed.data, req.user!.sub, ipAddress)
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    res.status(500).json({ success: false, data: null, error: message })
+    const { status, message } = resolveError(err)
+    if (status >= 500) console.error('[products] POST / failed:', err)
+    res.status(status).json({ success: false, data: null, error: message })
   }
 })
 
@@ -78,19 +82,16 @@ productsRouter.get('/:id', authenticate, async (req, res) => {
     const data = await getProduct(req.params.id)
     res.json({ success: true, data, error: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    if (message === 'PRODUCT_NOT_FOUND') {
-      res.status(404).json({ success: false, data: null, error: message })
-    } else {
-      res.status(500).json({ success: false, data: null, error: 'Internal server error' })
-    }
+    const { status, message } = resolveError(err)
+    if (status >= 500) console.error('[products] GET /:id failed:', err)
+    res.status(status).json({ success: false, data: null, error: message })
   }
 })
 
 productsRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner'), async (req, res) => {
   const parsed = updateProductSchema.safeParse(req.body)
   if (!parsed.success) {
-    res.status(400).json({ success: false, data: null, error: parsed.error.message })
+    res.status(400).json({ success: false, data: null, error: parsed.error.issues[0]?.message ?? 'Invalid input' })
     return
   }
 
@@ -99,19 +100,28 @@ productsRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner'), async 
     const data = await updateProduct({ id: req.params.id, ...parsed.data }, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    if (message === 'PRODUCT_NOT_FOUND') {
-      res.status(404).json({ success: false, data: null, error: message })
-    } else {
-      res.status(500).json({ success: false, data: null, error: 'Internal server error' })
-    }
+    const { status, message } = resolveError(err)
+    if (status >= 500) console.error('[products] PATCH /:id failed:', err)
+    res.status(status).json({ success: false, data: null, error: message })
+  }
+})
+
+productsRouter.delete('/:id', authenticate, requireRole('Admin', 'Owner'), async (req, res) => {
+  try {
+    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const data = await deleteProduct(req.params.id, req.user!.sub, ipAddress)
+    res.json({ success: true, data, error: null })
+  } catch (err) {
+    const { status, message } = resolveError(err)
+    if (status >= 500) console.error('[products] DELETE /:id failed:', err)
+    res.status(status).json({ success: false, data: null, error: message })
   }
 })
 
 productsRouter.post('/:id/variants', authenticate, requireRole('Admin', 'Owner', 'Warehouse Staff'), async (req, res) => {
   const parsed = addVariantSchema.safeParse(req.body)
   if (!parsed.success) {
-    res.status(400).json({ success: false, data: null, error: parsed.error.message })
+    res.status(400).json({ success: false, data: null, error: parsed.error.issues[0]?.message ?? 'Invalid input' })
     return
   }
 
@@ -124,19 +134,16 @@ productsRouter.post('/:id/variants', authenticate, requireRole('Admin', 'Owner',
     )
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    if (message === 'DUPLICATE_SKU') {
-      res.status(409).json({ success: false, data: null, error: message })
-    } else {
-      res.status(500).json({ success: false, data: null, error: 'Internal server error' })
-    }
+    const { status, message } = resolveError(err)
+    if (status >= 500) console.error('[products] POST /:id/variants failed:', err)
+    res.status(status).json({ success: false, data: null, error: message })
   }
 })
 
 productsRouter.patch('/:id/variants/:variantId', authenticate, requireRole('Admin', 'Owner'), async (req, res) => {
   const parsed = updateVariantSchema.safeParse(req.body)
   if (!parsed.success) {
-    res.status(400).json({ success: false, data: null, error: parsed.error.message })
+    res.status(400).json({ success: false, data: null, error: parsed.error.issues[0]?.message ?? 'Invalid input' })
     return
   }
 
@@ -149,11 +156,8 @@ productsRouter.patch('/:id/variants/:variantId', authenticate, requireRole('Admi
     )
     res.json({ success: true, data, error: null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    if (message === 'VARIANT_NOT_FOUND') {
-      res.status(404).json({ success: false, data: null, error: message })
-    } else {
-      res.status(500).json({ success: false, data: null, error: 'Internal server error' })
-    }
+    const { status, message } = resolveError(err)
+    if (status >= 500) console.error('[products] PATCH /:id/variants/:variantId failed:', err)
+    res.status(status).json({ success: false, data: null, error: message })
   }
 })

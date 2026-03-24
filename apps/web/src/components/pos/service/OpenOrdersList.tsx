@@ -59,6 +59,7 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
   const [orders, setOrders] = useState<ServiceOrder[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const fetchOrders = useCallback(async () => {
     setLoading(true)
@@ -79,6 +80,28 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
       setError(msg)
     } finally {
       setLoading(false)
+    }
+  }, [])
+
+  const handleDelete = useCallback(async (orderId: string, orderNumber: string) => {
+    if (!confirm(`Hapus order ${orderNumber}? Data order dan item-nya akan dihapus permanen.`)) return
+    setDeletingId(orderId)
+    setError(null)
+    try {
+      const res = await authFetch(`/api/v1/service-orders/${orderId}`, { method: 'DELETE' })
+      const body: ApiResponse<unknown> = await res.json()
+      if (!res.ok || !body.success) {
+        const msg = body.error || `HTTP ${res.status}`
+        setError(msg)
+        return
+      }
+      // Remove from local state immediately
+      setOrders(prev => prev.filter(o => o.id !== orderId))
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Network error'
+      setError(msg)
+    } finally {
+      setDeletingId(null)
     }
   }, [])
 
@@ -127,14 +150,18 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
 
       {/* Order cards */}
       {orders.map(order => (
-        <button
+        <div
           key={order.id}
-          onClick={() => onSelectOrder(order.id)}
-          className="w-full text-left bg-surface-raised border border-border rounded-xl p-4 hover:border-brand/40 hover:bg-surface-subtle transition-all"
+          className="bg-surface-raised border border-border rounded-xl p-4 hover:border-brand/40 hover:bg-surface-subtle transition-all"
         >
           <div className="flex items-start justify-between gap-2 mb-2">
-            <span className="text-[13px] font-semibold text-ink">{order.orderNumber}</span>
-            <div className="flex gap-1.5 shrink-0">
+            <button
+              onClick={() => onSelectOrder(order.id)}
+              className="text-[13px] font-semibold text-ink hover:text-brand text-left"
+            >
+              {order.orderNumber}
+            </button>
+            <div className="flex items-center gap-1.5 shrink-0">
               <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${WORK_STATUS_COLORS[order.workStatus] ?? 'bg-[rgba(122,132,144,0.1)] text-ink-muted'}`}>
                 {WORK_STATUS_LABELS[order.workStatus] ?? order.workStatus}
               </span>
@@ -144,18 +171,36 @@ export function OpenOrdersList({ onSelectOrder }: Props) {
             </div>
           </div>
 
-          {order.vehicle ? (
-            <p className="text-[12px] text-ink-muted mb-1">
-              🚗 {order.vehicle.plateNumber}
-              {order.vehicle.brand ? ` — ${order.vehicle.brand}` : ''}
-              {order.vehicle.model ? ` ${order.vehicle.model}` : ''}
-            </p>
-          ) : null}
+          <button
+            onClick={() => onSelectOrder(order.id)}
+            className="w-full text-left"
+          >
+            {order.vehicle ? (
+              <p className="text-[12px] text-ink-muted mb-1">
+                {order.vehicle.plateNumber}
+                {order.vehicle.brand ? ` — ${order.vehicle.brand}` : ''}
+                {order.vehicle.model ? ` ${order.vehicle.model}` : ''}
+              </p>
+            ) : null}
 
-          {order.complaint ? (
-            <p className="text-[12px] text-ink-faint truncate">{order.complaint}</p>
-          ) : null}
-        </button>
+            {order.complaint ? (
+              <p className="text-[12px] text-ink-faint truncate">{order.complaint}</p>
+            ) : null}
+          </button>
+
+          {/* Delete button — only show if not paid */}
+          {order.paymentStatus !== 'PAID' && (
+            <div className="mt-2 pt-2 border-t border-border-light flex justify-end">
+              <button
+                onClick={() => handleDelete(order.id, order.orderNumber)}
+                disabled={deletingId === order.id}
+                className="text-[12px] font-medium text-danger hover:text-red-700 disabled:opacity-50 transition-colors px-2 py-1"
+              >
+                {deletingId === order.id ? 'Menghapus...' : 'Hapus Order'}
+              </button>
+            </div>
+          )}
+        </div>
       ))}
     </div>
   )

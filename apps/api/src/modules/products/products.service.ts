@@ -297,3 +297,40 @@ export async function updateVariant(
 
   return updated
 }
+
+// ─── deleteProduct (soft-delete via isActive) ─────────────────────────────
+
+export async function deleteProduct(
+  id: string,
+  userId: string,
+  ipAddress: string
+): Promise<Product> {
+  const [old] = await db
+    .select()
+    .from(products)
+    .where(eq(products.id, id))
+    .limit(1)
+
+  if (!old) {
+    throw new Error('PRODUCT_NOT_FOUND')
+  }
+
+  // Soft-delete: set isActive = false
+  const [updated] = await db
+    .update(products)
+    .set({ isActive: false, updatedAt: new Date() })
+    .where(eq(products.id, id))
+    .returning()
+
+  await logAudit({
+    userId,
+    action: 'DELETE',
+    tableName: 'products',
+    recordId: id,
+    oldValue: { name: old.name, isActive: old.isActive },
+    newValue: { name: updated.name, isActive: updated.isActive },
+    ipAddress,
+  })
+
+  return updated
+}

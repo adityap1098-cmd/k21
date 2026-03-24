@@ -30,6 +30,21 @@ export type NewCustomer = typeof customers.$inferInsert
 export type Vehicle = typeof vehicles.$inferSelect
 export type NewVehicle = typeof vehicles.$inferInsert
 
+// --- Mechanics ---
+
+export const mechanics = pgTable('mechanics', {
+  id:        uuid('id').primaryKey().defaultRandom(),
+  name:      varchar('name', { length: 255 }).notNull(),
+  phone:     varchar('phone', { length: 30 }),
+  specialty: varchar('specialty', { length: 255 }),  // e.g. "Mesin", "Body & Cat", "Listrik"
+  isActive:  boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export type Mechanic = typeof mechanics.$inferSelect
+export type NewMechanic = typeof mechanics.$inferInsert
+
 // --- Service enums ---
 
 export const workStatusEnum = pgEnum('work_status', ['BOOKING', 'CHECKED_IN', 'IN_PROGRESS', 'COMPLETED'])
@@ -54,9 +69,10 @@ export const serviceOrders = pgTable('service_orders', {
   id:                   uuid('id').primaryKey().defaultRandom(),
   orderNumber:          varchar('order_number', { length: 20 }).notNull().unique(),
   vehicleId:            uuid('vehicle_id').notNull().references(() => vehicles.id),
-  mechanicId:           uuid('mechanic_id'),  // no FK — mechanics table deferred
+  mechanicId:           varchar('mechanic_id', { length: 255 }),  // stores name — mechanics table deferred
   workStatus:           workStatusEnum('work_status').notNull().default('BOOKING'),
   paymentStatus:        paymentStatusEnum('payment_status').notNull().default('UNPAID'),
+  kilometer:            integer('kilometer'),
   complaint:            text('complaint'),
   estimatedCompletionAt: timestamp('estimated_completion_at', { withTimezone: true }),
   estimatedCost:        integer('estimated_cost'),

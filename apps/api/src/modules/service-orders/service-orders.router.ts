@@ -16,13 +16,16 @@ import {
   recordServicePayment,
   getReceivables,
   getServiceHistory,
+  getServiceHistoryByCustomer,
+  deleteServiceOrder,
 } from './service-orders.service.js'
 
 export const serviceOrdersRouter = Router()
 
 const createOrderSchema = z.object({
   vehicleId: z.string().uuid(),
-  mechanicId: z.string().uuid().optional(),
+  mechanicId: z.string().min(1).max(255).optional(), // name or UUID — mechanics table deferred
+  kilometer: z.number().int().min(0).optional(),
   complaint: z.string().optional(),
   estimatedCompletionAt: z.string().datetime().optional(),
   estimatedCost: z.number().int().optional(),
@@ -34,7 +37,7 @@ const updateStatusSchema = z.object({
 })
 
 const assignMechanicSchema = z.object({
-  mechanicId: z.string().uuid(),
+  mechanicId: z.string().min(1).max(255), // name or UUID — mechanics table deferred
 })
 
 const updateEstimateSchema = z.object({
@@ -55,6 +58,7 @@ const recordPaymentSchema = z.object({
   amount: z.number().int().positive(),
   method: z.enum(['CASH', 'TRANSFER', 'QRIS']),
   reference: z.string().optional(),
+  idempotencyKey: z.string().uuid().optional(),
 })
 
 // GET / — list open orders
@@ -87,6 +91,17 @@ serviceOrdersRouter.get('/history/:plateNumber', authenticate, async (req, res) 
     res.json({ success: true, data, error: null })
   } catch (err) {
     console.error('[service-orders] GET /history failed:', err)
+    res.status(500).json({ success: false, data: null, error: 'Internal server error' })
+  }
+})
+
+// GET /history-by-customer/:customerId — service history by customer (all vehicles)
+serviceOrdersRouter.get('/history-by-customer/:customerId', authenticate, async (req, res) => {
+  try {
+    const data = await getServiceHistoryByCustomer(req.params.customerId)
+    res.json({ success: true, data, error: null })
+  } catch (err) {
+    console.error('[service-orders] GET /history-by-customer failed:', err)
     res.status(500).json({ success: false, data: null, error: 'Internal server error' })
   }
 })
@@ -249,6 +264,25 @@ serviceOrdersRouter.post('/:id/payments', authenticate, requireRole('Admin', 'Ow
       res.status(422).json({ success: false, data: null, error: message })
     } else {
       console.error('[service-orders] POST /:id/payments failed:', err)
+      res.status(500).json({ success: false, data: null, error: 'Internal server error' })
+    }
+  }
+})
+
+// DELETE /:id — delete service order (only if not paid)
+serviceOrdersRouter.delete('/:id', authenticate, requireRole('Admin', 'Owner', 'Cashier'), async (req, res) => {
+  try {
+    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const data = await deleteServiceOrder(req.params.id, req.user!.sub, ipAddress)
+    res.json({ success: true, data, error: null })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    if (message === 'SERVICE_ORDER_NOT_FOUND') {
+      res.status(404).json({ success: false, data: null, error: message })
+    } else if (message === 'CANNOT_DELETE_PAID_ORDER') {
+      res.status(422).json({ success: false, data: null, error: 'Tidak bisa menghapus order yang sudah dibayar' })
+    } else {
+      console.error('[service-orders] DELETE /:id failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }

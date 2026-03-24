@@ -1,0 +1,4654 @@
+[
+  {
+    "name": "Kampas Ganda KVY Beat Karbu Beat FI Scoopy",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0001",
+        "attributes": {},
+        "price": 125000.0,
+        "cost_price": 87500.0
+      }
+    ]
+  },
+  {
+    "name": "Cylinder Vario150 Boring 150 62MM Kit Seher RX7",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0002",
+        "attributes": {},
+        "price": 705000.0,
+        "cost_price": 493500.0
+      }
+    ]
+  },
+  {
+    "name": "Paking Tembaga Beat 58MM KVY GF Racing",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0003",
+        "attributes": {},
+        "price": 77000.0,
+        "cost_price": 53900.0
+      }
+    ]
+  },
+  {
+    "name": "Pen Struk QTT Vario125 NMAX Vario150 PIN Struk QTT Vario NMAX PIN Struk Vario",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0004",
+        "attributes": {
+          "Ukuran": "1mm Vario125"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0005",
+        "attributes": {
+          "Ukuran": "1.5mm Vario125"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0006",
+        "attributes": {
+          "Ukuran": "3mm Vario125"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0007",
+        "attributes": {
+          "Ukuran": "1mm nmax"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0008",
+        "attributes": {
+          "Ukuran": "2mm nmax"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0009",
+        "attributes": {
+          "Ukuran": "2.5mm nmax"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0010",
+        "attributes": {
+          "Ukuran": "3mm nmax"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      }
+    ]
+  },
+  {
+    "name": "Gearbox Vario150 Pcx150 GF Racing 14 42 14 43",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0011",
+        "attributes": {
+          "Ukuran": "14/42"
+        },
+        "price": 645000.0,
+        "cost_price": 451500.0
+      },
+      {
+        "sku": "PRD-0012",
+        "attributes": {
+          "Ukuran": "14/43"
+        },
+        "price": 645000.0,
+        "cost_price": 451500.0
+      }
+    ]
+  },
+  {
+    "name": "Piston Kawahara 63.5 PIN 14 HI-COM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0013",
+        "attributes": {},
+        "price": 400000.0,
+        "cost_price": 280000.0
+      }
+    ]
+  },
+  {
+    "name": "Roller Beat ESP Roller Beat FI Koizumi Roller Koizumi",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0014",
+        "attributes": {
+          "Ukuran": "7g"
+        },
+        "price": 40000.0,
+        "cost_price": 28000.0
+      },
+      {
+        "sku": "PRD-0015",
+        "attributes": {
+          "Ukuran": "8gr"
+        },
+        "price": 40000.0,
+        "cost_price": 28000.0
+      },
+      {
+        "sku": "PRD-0016",
+        "attributes": {
+          "Ukuran": "9gr"
+        },
+        "price": 40000.0,
+        "cost_price": 28000.0
+      }
+    ]
+  },
+  {
+    "name": "Throttle Body Vario 125 Vario150 Pcx150 TB Vario 30MM 32MM 34MM",
+    "category": "Sistem Bahan Bakar",
+    "variants": [
+      {
+        "sku": "PRD-0017",
+        "attributes": {
+          "Ukuran": "PCX 150 34MM"
+        },
+        "price": 600000.0,
+        "cost_price": 420000.0
+      },
+      {
+        "sku": "PRD-0018",
+        "attributes": {
+          "Ukuran": "VARIO 125, 150 30MM"
+        },
+        "price": 600000.0,
+        "cost_price": 420000.0
+      },
+      {
+        "sku": "PRD-0019",
+        "attributes": {
+          "Ukuran": "VARIO 125, 150 32MM"
+        },
+        "price": 600000.0,
+        "cost_price": 420000.0
+      },
+      {
+        "sku": "PRD-0020",
+        "attributes": {
+          "Ukuran": "VARIO 125, 150 34MM"
+        },
+        "price": 600000.0,
+        "cost_price": 420000.0
+      },
+      {
+        "sku": "PRD-0021",
+        "attributes": {
+          "Ukuran": "VARIO 125, 150 36MM"
+        },
+        "price": 600000.0,
+        "cost_price": 420000.0
+      },
+      {
+        "sku": "PRD-0022",
+        "attributes": {
+          "Ukuran": "VARIO 160 34MM"
+        },
+        "price": 600000.0,
+        "cost_price": 420000.0
+      }
+    ]
+  },
+  {
+    "name": "Juken Vario125 New K60 5++",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0023",
+        "attributes": {},
+        "price": 1295000.0,
+        "cost_price": 906500.0
+      }
+    ]
+  },
+  {
+    "name": "Noken As BRT Aerox New T1 Noken As Aerox Camshaft Aerox T1",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0024",
+        "attributes": {},
+        "price": 565000.0,
+        "cost_price": 395500.0
+      }
+    ]
+  },
+  {
+    "name": "Seher Piston Kawahara 62 PIN 14 Type HI-COM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0025",
+        "attributes": {},
+        "price": 385000.0,
+        "cost_price": 269500.0
+      }
+    ]
+  },
+  {
+    "name": "Sensor TPS Honda Genio By CPO Coolpower",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0026",
+        "attributes": {},
+        "price": 200000.0,
+        "cost_price": 140000.0
+      }
+    ]
+  },
+  {
+    "name": "Gear Box Mio 14 39 40 41 13 39 GF Racing",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0027",
+        "attributes": {
+          "Ukuran": "13/39"
+        },
+        "price": 375000.0,
+        "cost_price": 262500.0
+      },
+      {
+        "sku": "PRD-0028",
+        "attributes": {
+          "Ukuran": "14/39"
+        },
+        "price": 375000.0,
+        "cost_price": 262500.0
+      },
+      {
+        "sku": "PRD-0029",
+        "attributes": {
+          "Ukuran": "14/40"
+        },
+        "price": 375000.0,
+        "cost_price": 262500.0
+      },
+      {
+        "sku": "PRD-0030",
+        "attributes": {
+          "Ukuran": "14/41"
+        },
+        "price": 375000.0,
+        "cost_price": 262500.0
+      }
+    ]
+  },
+  {
+    "name": "Thermostat Bypass Radiator NMAX Aerox XMAX Universal",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0031",
+        "attributes": {
+          "Warna": "Purple"
+        },
+        "price": 187000.0,
+        "cost_price": 130900.0
+      },
+      {
+        "sku": "PRD-0032",
+        "attributes": {
+          "Warna": "Silver"
+        },
+        "price": 187000.0,
+        "cost_price": 130900.0
+      },
+      {
+        "sku": "PRD-0033",
+        "attributes": {
+          "Warna": "Black"
+        },
+        "price": 187000.0,
+        "cost_price": 130900.0
+      },
+      {
+        "sku": "PRD-0034",
+        "attributes": {
+          "Warna": "Blue"
+        },
+        "price": 187000.0,
+        "cost_price": 130900.0
+      },
+      {
+        "sku": "PRD-0035",
+        "attributes": {
+          "Warna": "Grey"
+        },
+        "price": 187000.0,
+        "cost_price": 130900.0
+      }
+    ]
+  },
+  {
+    "name": "ISC CPO Untuk Vario Dan NMAX",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0036",
+        "attributes": {
+          "Type": "Vario125"
+        },
+        "price": 115000.0,
+        "cost_price": 80500.0
+      },
+      {
+        "sku": "PRD-0037",
+        "attributes": {
+          "Type": "Beat Fi"
+        },
+        "price": 115000.0,
+        "cost_price": 80500.0
+      },
+      {
+        "sku": "PRD-0038",
+        "attributes": {
+          "Type": "Nmax"
+        },
+        "price": 115000.0,
+        "cost_price": 80500.0
+      },
+      {
+        "sku": "PRD-0039",
+        "attributes": {
+          "Type": "Aerox"
+        },
+        "price": 115000.0,
+        "cost_price": 80500.0
+      },
+      {
+        "sku": "PRD-0040",
+        "attributes": {
+          "Type": "Isc Vario160"
+        },
+        "price": 115000.0,
+        "cost_price": 80500.0
+      }
+    ]
+  },
+  {
+    "name": "Koil BRT Koil Injeksi Koil Karbu Koil Racing BRT",
+    "category": "Sistem Bahan Bakar",
+    "variants": [
+      {
+        "sku": "PRD-0041",
+        "attributes": {
+          "Type": "Koil+Busi CR7HIX"
+        },
+        "price": 165000.0,
+        "cost_price": 115500.0
+      },
+      {
+        "sku": "PRD-0042",
+        "attributes": {
+          "Type": "KOIL+Busi DPR8E1X"
+        },
+        "price": 165000.0,
+        "cost_price": 115500.0
+      },
+      {
+        "sku": "PRD-0043",
+        "attributes": {
+          "Type": "Koil Injeksi Only"
+        },
+        "price": 155000.0,
+        "cost_price": 108500.0
+      },
+      {
+        "sku": "PRD-0044",
+        "attributes": {
+          "Type": "Koil Karbu Only"
+        },
+        "price": 155000.0,
+        "cost_price": 108500.0
+      },
+      {
+        "sku": "PRD-0045",
+        "attributes": {
+          "Type": "Busi DPR8E1X"
+        },
+        "price": 75000.0,
+        "cost_price": 52500.0
+      },
+      {
+        "sku": "PRD-0046",
+        "attributes": {
+          "Type": "Busi CR7HIX/Mio"
+        },
+        "price": 75000.0,
+        "cost_price": 52500.0
+      }
+    ]
+  },
+  {
+    "name": "Kampas Ganda Aerox New B65 Vario125 Vario150 Pcx150 Aerox NMAX",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0047",
+        "attributes": {},
+        "price": 225000.0,
+        "cost_price": 157500.0
+      }
+    ]
+  },
+  {
+    "name": "Pulley Roller CVT 11GR UMA Racing V3 Yamaha NMAX Old Aerox155 Lexi125",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0048",
+        "attributes": {},
+        "price": 749000.0,
+        "cost_price": 524300.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep MTN Tiger Revo Megapro GL CB Per Klep Herex Conical 250CC Up VL-021",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0049",
+        "attributes": {},
+        "price": 400000.0,
+        "cost_price": 280000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Vespa MATIC 3v 35MM Per Klep MTN Vespa VL-025",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0050",
+        "attributes": {},
+        "price": 325000.0,
+        "cost_price": 227500.0
+      }
+    ]
+  },
+  {
+    "name": "ECU UMA Vario NMAX Aerox155 New Mxking Sonic",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0051",
+        "attributes": {
+          "Type": "Vario150"
+        },
+        "price": 4400000.0,
+        "cost_price": 3080000.0
+      },
+      {
+        "sku": "PRD-0052",
+        "attributes": {
+          "Type": "Nmax New"
+        },
+        "price": 4400000.0,
+        "cost_price": 3080000.0
+      },
+      {
+        "sku": "PRD-0053",
+        "attributes": {
+          "Type": "Aerox New"
+        },
+        "price": 4400000.0,
+        "cost_price": 3080000.0
+      },
+      {
+        "sku": "PRD-0054",
+        "attributes": {
+          "Type": "Nmax Old"
+        },
+        "price": 4400000.0,
+        "cost_price": 3080000.0
+      },
+      {
+        "sku": "PRD-0055",
+        "attributes": {
+          "Type": "Mxking V2"
+        },
+        "price": 3900000.0,
+        "cost_price": 2730000.0
+      },
+      {
+        "sku": "PRD-0056",
+        "attributes": {
+          "Type": "Sonic"
+        },
+        "price": 3900000.0,
+        "cost_price": 2730000.0
+      }
+    ]
+  },
+  {
+    "name": "TB Throttle Body Sonic CPO TB Sonic CPO",
+    "category": "Sistem Bahan Bakar",
+    "variants": [
+      {
+        "sku": "PRD-0057",
+        "attributes": {
+          "Ukuran": "32"
+        },
+        "price": 800000.0,
+        "cost_price": 560000.0
+      },
+      {
+        "sku": "PRD-0058",
+        "attributes": {
+          "Ukuran": "34"
+        },
+        "price": 800000.0,
+        "cost_price": 560000.0
+      },
+      {
+        "sku": "PRD-0059",
+        "attributes": {
+          "Ukuran": "36"
+        },
+        "price": 800000.0,
+        "cost_price": 560000.0
+      },
+      {
+        "sku": "PRD-0060",
+        "attributes": {
+          "Ukuran": "38"
+        },
+        "price": 800000.0,
+        "cost_price": 560000.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT MTN 1200RPM Beat Beat FI Vario125 Vario150 Vespa",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0061",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0062",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0063",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0064",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0065",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Jepang Per Klep Mio Beat Per Klep MTN Tinggi32mm Per Klep VL-001 Daily",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0066",
+        "attributes": {},
+        "price": 235000.0,
+        "cost_price": 164500.0
+      }
+    ]
+  },
+  {
+    "name": "Boring Kit Cylinder Kit Mio 58.5 Boring Mio 54MM RX7",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0067",
+        "attributes": {
+          "Ukuran": "58.5"
+        },
+        "price": 585000.0,
+        "cost_price": 409500.0
+      },
+      {
+        "sku": "PRD-0068",
+        "attributes": {
+          "Ukuran": "54"
+        },
+        "price": 585000.0,
+        "cost_price": 409500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep KOJ Beat Per Klep Beat Deluxe FI Series Tinggi 32MM Per Klep MTN VL-007 PNP Retainer KOJ Bisa Lift Tinggi Max Lift 11",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0069",
+        "attributes": {},
+        "price": 165000.0,
+        "cost_price": 115500.0
+      }
+    ]
+  },
+  {
+    "name": "Piston Kawahara Seher Kawahara PIN 13 14 15 55 58.5 60 62 63 63.5 64",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0070",
+        "attributes": {
+          "Ukuran": "55 P 13"
+        },
+        "price": 325000.0,
+        "cost_price": 227500.0
+      },
+      {
+        "sku": "PRD-0071",
+        "attributes": {
+          "Ukuran": "62 P 14"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0072",
+        "attributes": {
+          "Ukuran": "63.5 P 14"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0073",
+        "attributes": {
+          "Ukuran": "60 P 13"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0074",
+        "attributes": {
+          "Ukuran": "60 P 14"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0075",
+        "attributes": {
+          "Ukuran": "58.5 P 14"
+        },
+        "price": 375000.0,
+        "cost_price": 262500.0
+      },
+      {
+        "sku": "PRD-0076",
+        "attributes": {
+          "Ukuran": "58.5 P 13"
+        },
+        "price": 375000.0,
+        "cost_price": 262500.0
+      },
+      {
+        "sku": "PRD-0077",
+        "attributes": {
+          "Ukuran": "64 P 14"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0078",
+        "attributes": {
+          "Ukuran": "59 p 15"
+        },
+        "price": 375000.0,
+        "cost_price": 262500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep KOJ Per Klep Mio J Tinggi 33.5 PNP Mio J PNP KOJ Series Per Klep MTN Mio J Per Klep MTN KOJ",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0079",
+        "attributes": {},
+        "price": 175000.0,
+        "cost_price": 122500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Tiger Per Klep Herex Max Lift 13",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0080",
+        "attributes": {},
+        "price": 500000.0,
+        "cost_price": 350000.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT Vario125 Vario150 Pcx150 RPM2000 MTNSpringjapan",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0081",
+        "attributes": {},
+        "price": 145000.0,
+        "cost_price": 101500.0
+      }
+    ]
+  },
+  {
+    "name": "Roller Mio Roller Beat Karbu Roller KVY Roller Daytona 5 6 7 8",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0082",
+        "attributes": {
+          "Type": "Mio"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0083",
+        "attributes": {
+          "Type": "Mio"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0084",
+        "attributes": {
+          "Type": "Mio"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0085",
+        "attributes": {
+          "Type": "Mio"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0086",
+        "attributes": {
+          "Type": "Mio"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0087",
+        "attributes": {
+          "Type": "Beat Karbu/KVY"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0088",
+        "attributes": {
+          "Type": "Beat Karbu/KVY"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0089",
+        "attributes": {
+          "Type": "Beat Karbu/KVY"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0090",
+        "attributes": {
+          "Type": "Beat Karbu/KVY"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0091",
+        "attributes": {
+          "Type": "Beat Karbu/KVY"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Vario125 Vario 150 PCX VL 007 MTN Spring Japan",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0092",
+        "attributes": {},
+        "price": 190000.0,
+        "cost_price": 133000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Scorpio (medium/hard VL-026) Per Klep Scorpio MTN Medium",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0093",
+        "attributes": {
+          "Typr": "Hard"
+        },
+        "price": 380000.0,
+        "cost_price": 266000.0
+      },
+      {
+        "sku": "PRD-0094",
+        "attributes": {
+          "Typr": "Medium"
+        },
+        "price": 380000.0,
+        "cost_price": 266000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep MTN VL011 Tinggi 36.5MM Sonic Others",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0095",
+        "attributes": {},
+        "price": 320000.0,
+        "cost_price": 224000.0
+      }
+    ]
+  },
+  {
+    "name": "TPS CPO Vario, FI, Scoopy FI, Vario125, Vario150",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0096",
+        "attributes": {},
+        "price": 200000.0,
+        "cost_price": 140000.0
+      }
+    ]
+  },
+  {
+    "name": "Roller XMAX 10GR 11GR 12GR 13GR 14GR Roller XMAX RX7",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0097",
+        "attributes": {
+          "Ukuran": "10gr"
+        },
+        "price": 110000.0,
+        "cost_price": 77000.0
+      },
+      {
+        "sku": "PRD-0098",
+        "attributes": {
+          "Ukuran": "11gr"
+        },
+        "price": 110000.0,
+        "cost_price": 77000.0
+      },
+      {
+        "sku": "PRD-0099",
+        "attributes": {
+          "Ukuran": "12gr"
+        },
+        "price": 110000.0,
+        "cost_price": 77000.0
+      },
+      {
+        "sku": "PRD-0100",
+        "attributes": {
+          "Ukuran": "13gr"
+        },
+        "price": 110000.0,
+        "cost_price": 77000.0
+      },
+      {
+        "sku": "PRD-0101",
+        "attributes": {
+          "Ukuran": "14gr"
+        },
+        "price": 110000.0,
+        "cost_price": 77000.0
+      },
+      {
+        "sku": "PRD-0102",
+        "attributes": {
+          "Ukuran": "15gr"
+        },
+        "price": 110000.0,
+        "cost_price": 77000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Mio Beat MATIC Bebek 32MM Universal MTN Spring Japan",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0103",
+        "attributes": {},
+        "price": 235000.0,
+        "cost_price": 164500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Mxking NMAX Aerox VL012 Tinggi 36.5MM Mtnspringjapan",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0104",
+        "attributes": {},
+        "price": 460000.0,
+        "cost_price": 322000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Inner Tiger VL-009 MTN (inner Only) Outer Use Original",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0105",
+        "attributes": {},
+        "price": 139999.0,
+        "cost_price": 97999.3
+      }
+    ]
+  },
+  {
+    "name": "Intake BRT Bebek MATIC 28MM 30MM 32MM",
+    "category": "Sistem Bahan Bakar",
+    "variants": [
+      {
+        "sku": "PRD-0106",
+        "attributes": {
+          "Ukuran": "28mm"
+        },
+        "price": 275000.0,
+        "cost_price": 192500.0
+      },
+      {
+        "sku": "PRD-0107",
+        "attributes": {
+          "Ukuran": "30mm"
+        },
+        "price": 275000.0,
+        "cost_price": 192500.0
+      },
+      {
+        "sku": "PRD-0108",
+        "attributes": {
+          "Ukuran": "32mm"
+        },
+        "price": 275000.0,
+        "cost_price": 192500.0
+      }
+    ]
+  },
+  {
+    "name": "PIN Stroke Pen Stroke Beat Mio 1MM 1.5MM 2MM 2.5MM 3MM PIN Stroke GF Racing",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0109",
+        "attributes": {
+          "Ukuran": "Mio 1mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0110",
+        "attributes": {
+          "Ukuran": "Mio 2.5mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0111",
+        "attributes": {
+          "Ukuran": "Mio 3mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0112",
+        "attributes": {
+          "Ukuran": "Beat 1mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0113",
+        "attributes": {
+          "Ukuran": "Beat 2mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0114",
+        "attributes": {
+          "Ukuran": "Beat 2.5mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0115",
+        "attributes": {
+          "Ukuran": "Beat 1.5mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0116",
+        "attributes": {
+          "Ukuran": "Vario125 2mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0117",
+        "attributes": {
+          "Ukuran": "Mio 2mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0118",
+        "attributes": {
+          "Ukuran": "MIO 1.5mm"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      }
+    ]
+  },
+  {
+    "name": "Klep GF Racing 23 27 34 29 Batang 4.5MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0119",
+        "attributes": {
+          "Ukuran": "23.27/4.5mm"
+        },
+        "price": 165000.0,
+        "cost_price": 115500.0
+      },
+      {
+        "sku": "PRD-0120",
+        "attributes": {
+          "Ukuran": "34.29/4.5mm"
+        },
+        "price": 165000.0,
+        "cost_price": 115500.0
+      }
+    ]
+  },
+  {
+    "name": "Cylinder Head Mio Kop Head Mio CPO 28 24 30 26",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0121",
+        "attributes": {
+          "Ukuran": "28/24"
+        },
+        "price": 800000.0,
+        "cost_price": 560000.0
+      },
+      {
+        "sku": "PRD-0122",
+        "attributes": {
+          "Ukuran": "30/26"
+        },
+        "price": 825000.0,
+        "cost_price": 577500.0
+      },
+      {
+        "sku": "PRD-0123",
+        "attributes": {
+          "Ukuran": "28/24 Albronze"
+        },
+        "price": 900000.0,
+        "cost_price": 630000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Conical Mio Beat VL-024 33.5MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0124",
+        "attributes": {},
+        "price": 270000.0,
+        "cost_price": 189000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep NMAX Aerox Lexy Medium Tinggi 35MM Per Klep MTN VL-019",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0125",
+        "attributes": {},
+        "price": 245000.0,
+        "cost_price": 171500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Beat FI KOJ Beat Deluxe Scoopy KOJ KIA Tinggi 32MM Per Klep MTN KOJ VL-027",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0126",
+        "attributes": {},
+        "price": 165000.0,
+        "cost_price": 115500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep KLX CRF Per Klep Conical Max Lift 11.5 VL-023",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0127",
+        "attributes": {},
+        "price": 475000.0,
+        "cost_price": 332500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Kanvas NMAX Aerox RPM100 RPM1500 Mtnspringjapan",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0128",
+        "attributes": {
+          "Ukuran": "Rpm1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0129",
+        "attributes": {
+          "Ukuran": "Rpm1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep KLX CRF VL003 Mtnspringjapan Per Klep MTN KLX Per Klep MTN CRF",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0130",
+        "attributes": {},
+        "price": 310000.0,
+        "cost_price": 217000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep MTN Vario150 Pcx150 Vario125 Adv150 Medium MTN Springjapan VL-018 Tinggi 35MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0131",
+        "attributes": {},
+        "price": 169999.0,
+        "cost_price": 118999.3
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Jepang 32MM Kompetisi VL004 Original MTN Spring Japan",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0132",
+        "attributes": {
+          "Type": "VL-017"
+        },
+        "price": 410000.0,
+        "cost_price": 287000.0
+      },
+      {
+        "sku": "PRD-0133",
+        "attributes": {
+          "Type": "VL-015"
+        },
+        "price": 510000.0,
+        "cost_price": 357000.0
+      },
+      {
+        "sku": "PRD-0134",
+        "attributes": {
+          "Type": "VL-004"
+        },
+        "price": 410000.0,
+        "cost_price": 287000.0
+      },
+      {
+        "sku": "PRD-0135",
+        "attributes": {
+          "Type": "VL-020 Conical"
+        },
+        "price": 500000.0,
+        "cost_price": 350000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep NMAX Aerox VL006 MTN Spring Japan",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0136",
+        "attributes": {},
+        "price": 265000.0,
+        "cost_price": 185500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Mio J Per Klep MTN Mio J 33.5MM VL-028",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0137",
+        "attributes": {},
+        "price": 175000.0,
+        "cost_price": 122500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Mio Per Klep Beat Per Klep MATIC 34MM Per Klep MTN VL-002",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0138",
+        "attributes": {},
+        "price": 160000.0,
+        "cost_price": 112000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Sentri XMAX MTN RPM 1500",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0139",
+        "attributes": {},
+        "price": 65000.0,
+        "cost_price": 45500.0
+      }
+    ]
+  },
+  {
+    "name": "Kampas Ganda Daytona Kampas Ganda Beat /Fi Esp/ Genio Scoopy Beat Street",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0140",
+        "attributes": {},
+        "price": 137700.0,
+        "cost_price": 96390.0
+      }
+    ]
+  },
+  {
+    "name": "Retainer NMAX 5MM Retianer R25 4.5mmpnp Per Klep Conical Retainer NMAX",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0141",
+        "attributes": {
+          "Type": "Retainer R25 1WD 1pc"
+        },
+        "price": 22000.0,
+        "cost_price": 15400.0
+      },
+      {
+        "sku": "PRD-0142",
+        "attributes": {
+          "Type": "Retainer 2DP NMAX 1p"
+        },
+        "price": 22000.0,
+        "cost_price": 15400.0
+      },
+      {
+        "sku": "PRD-0143",
+        "attributes": {
+          "Type": "1set NMAX 2pcs"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0144",
+        "attributes": {
+          "Type": "1set R25 2pcs"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0145",
+        "attributes": {
+          "Type": "1set NMAX 4pcs"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0146",
+        "attributes": {
+          "Type": "1set R25 4pcs"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT MTN 1200 Beat FI Genio Scoopy Vario125 Vario150 Vespa 1200RPM",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0147",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0148",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0149",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0150",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0151",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0152",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0153",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      }
+    ]
+  },
+  {
+    "name": "Piston Hispeed Seher Hispeed 55 58.5 59 PIN 13 15",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0154",
+        "attributes": {
+          "Ukuran": "55 p 13"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0155",
+        "attributes": {
+          "Ukuran": "58 p 13"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0156",
+        "attributes": {
+          "Ukuran": "59 p 13"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0157",
+        "attributes": {
+          "Ukuran": "58.5 p 13"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT Beat Vario125 Per CVT KTC 1000RPM 1500RPM",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0158",
+        "attributes": {
+          "1000": "1500"
+        },
+        "price": 125000.0,
+        "cost_price": 87500.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT Vario150 PCX Xeon Per CVT Vario150 KTC",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0159",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0160",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0161",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      }
+    ]
+  },
+  {
+    "name": "Dinamo Stater MOTO1 Dinamo Stater Mio",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0162",
+        "attributes": {},
+        "price": 550000.0,
+        "cost_price": 385000.0
+      }
+    ]
+  },
+  {
+    "name": "Paket Per CVT XMAX Roller Per Sentri XMAX 1500 Roller XMAX RX7",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0163",
+        "attributes": {
+          "Paket": "CW005/Per Sentri"
+        },
+        "price": 55000.0,
+        "cost_price": 38500.0
+      },
+      {
+        "sku": "PRD-0164",
+        "attributes": {
+          "Paket": "CVT017/Per cvt"
+        },
+        "price": 175000.0,
+        "cost_price": 122500.0
+      },
+      {
+        "sku": "PRD-0165",
+        "attributes": {
+          "Paket": "Roller RX7"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0166",
+        "attributes": {
+          "Paket": "Paket Roller 10gr"
+        },
+        "price": 310000.0,
+        "cost_price": 217000.0
+      },
+      {
+        "sku": "PRD-0167",
+        "attributes": {
+          "Paket": "Paket Roller 11gr"
+        },
+        "price": 310000.0,
+        "cost_price": 217000.0
+      },
+      {
+        "sku": "PRD-0168",
+        "attributes": {
+          "Paket": "Paket Roller 12gr"
+        },
+        "price": 310000.0,
+        "cost_price": 217000.0
+      },
+      {
+        "sku": "PRD-0169",
+        "attributes": {
+          "Paket": "Paket Roller 13gr"
+        },
+        "price": 310000.0,
+        "cost_price": 217000.0
+      },
+      {
+        "sku": "PRD-0170",
+        "attributes": {
+          "Paket": "Paket Roller 14gr"
+        },
+        "price": 310000.0,
+        "cost_price": 217000.0
+      },
+      {
+        "sku": "PRD-0171",
+        "attributes": {
+          "Paket": "Paket roller 15gr"
+        },
+        "price": 310000.0,
+        "cost_price": 217000.0
+      }
+    ]
+  },
+  {
+    "name": "Seher Piston Kawahara 58.5 PIN 14 Tipe C",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0172",
+        "attributes": {},
+        "price": 325000.0,
+        "cost_price": 227500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Mxking Jupiter Mx Old Conical Series Per Klep Mxking MTN",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0173",
+        "attributes": {},
+        "price": 600000.0,
+        "cost_price": 420000.0
+      }
+    ]
+  },
+  {
+    "name": "ISC Manual CPO ISC Vario Pcx150 Pcx160 Aerox",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0174",
+        "attributes": {
+          "Type": "Vario/Beat Esp"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0175",
+        "attributes": {
+          "Type": "PCX 160"
+        },
+        "price": 75000.0,
+        "cost_price": 52500.0
+      },
+      {
+        "sku": "PRD-0176",
+        "attributes": {
+          "Type": "PCX 150"
+        },
+        "price": 75000.0,
+        "cost_price": 52500.0
+      },
+      {
+        "sku": "PRD-0177",
+        "attributes": {
+          "Type": "Aerox/Nmax"
+        },
+        "price": 115000.0,
+        "cost_price": 80500.0
+      }
+    ]
+  },
+  {
+    "name": "Roller Vario125 Vario150 Pcx150 Roller Daytona",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0178",
+        "attributes": {
+          "Ukuran": "7gr"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0179",
+        "attributes": {
+          "Ukuran": "8gr"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0180",
+        "attributes": {
+          "Ukuran": "9gr"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0181",
+        "attributes": {
+          "Ukuran": "10gr"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0182",
+        "attributes": {
+          "Ukuran": "11gr"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Sentri Vario Vespa NMAX Per Sentri MTN 2000 2500 Per Sentri MTN",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0183",
+        "attributes": {
+          "Ukuran": "RPM 2000"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0184",
+        "attributes": {
+          "Ukuran": "RPM 2500"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      }
+    ]
+  },
+  {
+    "name": "Paking Cylinder Almunium NMAX Aerox Paking Almunium NMAX Aerox 1MM 2MM 3MM 4MM GFRacing",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0185",
+        "attributes": {
+          "Ukuran": "1mm"
+        },
+        "price": 67000.0,
+        "cost_price": 46900.0
+      },
+      {
+        "sku": "PRD-0186",
+        "attributes": {
+          "Ukuran": "2mm"
+        },
+        "price": 77000.0,
+        "cost_price": 53900.0
+      },
+      {
+        "sku": "PRD-0187",
+        "attributes": {
+          "Ukuran": "3mm"
+        },
+        "price": 92000.0,
+        "cost_price": 64400.0
+      },
+      {
+        "sku": "PRD-0188",
+        "attributes": {
+          "Ukuran": "4mm"
+        },
+        "price": 107000.0,
+        "cost_price": 74900.0
+      }
+    ]
+  },
+  {
+    "name": "Injektor Honda Injektor Yamaha Injektor RX7 160CC 180CC 200CC",
+    "category": "Sistem Bahan Bakar",
+    "variants": [
+      {
+        "sku": "PRD-0189",
+        "attributes": {
+          "Type": "Yamaha"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0190",
+        "attributes": {
+          "Type": "Yamaha"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0191",
+        "attributes": {
+          "Type": "Yamaha"
+        },
+        "price": 250000.0,
+        "cost_price": 175000.0
+      },
+      {
+        "sku": "PRD-0192",
+        "attributes": {
+          "Type": "Honda"
+        },
+        "price": 225000.0,
+        "cost_price": 157500.0
+      },
+      {
+        "sku": "PRD-0193",
+        "attributes": {
+          "Type": "Honda"
+        },
+        "price": 225000.0,
+        "cost_price": 157500.0
+      },
+      {
+        "sku": "PRD-0194",
+        "attributes": {
+          "Type": "Honda"
+        },
+        "price": 225000.0,
+        "cost_price": 157500.0
+      }
+    ]
+  },
+  {
+    "name": "ISC CRF Cb150 Cbr150 ISC CPO",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0195",
+        "attributes": {},
+        "price": 92000.0,
+        "cost_price": 64400.0
+      }
+    ]
+  },
+  {
+    "name": "Head Mio 4klep 22 19 Head Mio CPO 4klep",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0196",
+        "attributes": {},
+        "price": 2200000.0,
+        "cost_price": 1540000.0
+      }
+    ]
+  },
+  {
+    "name": "Gigi Sentrik Geser Vario150 Pcx150 NMAX Aerox GF Racing",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0197",
+        "attributes": {
+          "Type": "Vario150"
+        },
+        "price": 320000.0,
+        "cost_price": 224000.0
+      },
+      {
+        "sku": "PRD-0198",
+        "attributes": {
+          "Type": "Pcx150"
+        },
+        "price": 320000.0,
+        "cost_price": 224000.0
+      },
+      {
+        "sku": "PRD-0199",
+        "attributes": {
+          "Type": "Nmax"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0200",
+        "attributes": {
+          "Type": "Aerox"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      }
+    ]
+  },
+  {
+    "name": "Gear Sentrik Geser KOJ Vario Gigi Sentrik AH1 Genio Vario150",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0201",
+        "attributes": {
+          "Type": "KOj/Genio"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0202",
+        "attributes": {
+          "Type": "Vario150"
+        },
+        "price": 138000.0,
+        "cost_price": 96600.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep FU Karbu VL005 Mtnspringjapan",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0203",
+        "attributes": {},
+        "price": 310000.0,
+        "cost_price": 217000.0
+      }
+    ]
+  },
+  {
+    "name": "Kop Busi KTC Cangklong Busi KTC Kop Busi Racing",
+    "category": "Busi & Pengapian",
+    "variants": [
+      {
+        "sku": "PRD-0204",
+        "attributes": {},
+        "price": 35000.0,
+        "cost_price": 24500.0
+      }
+    ]
+  },
+  {
+    "name": "Shim Shim MOTO1 5MM 4.5MM 1set (2pcs)",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0205",
+        "attributes": {
+          "Ukuran": "4.5mm"
+        },
+        "price": 85000.0,
+        "cost_price": 59500.0
+      },
+      {
+        "sku": "PRD-0206",
+        "attributes": {
+          "Ukuran": "5mm"
+        },
+        "price": 85000.0,
+        "cost_price": 59500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Sentri Mio Beat Per Sentri MTN 1850RPM 1700RPM Per Sentri MTN",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0207",
+        "attributes": {
+          "Ukuran": "1700rpm"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0208",
+        "attributes": {
+          "Ukuran": "1850rpm"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      }
+    ]
+  },
+  {
+    "name": "Saklar Engine On/off Saklar Motor Untuk Engine Stop High Quality",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0209",
+        "attributes": {},
+        "price": 100000.0,
+        "cost_price": 70000.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT KTC Mio Sporty 2000RPM 1500RPM",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0210",
+        "attributes": {
+          "1000": "1500"
+        },
+        "price": 125000.0,
+        "cost_price": 87500.0
+      },
+      {
+        "sku": "PRD-0211",
+        "attributes": {
+          "1000": "2000"
+        },
+        "price": 125000.0,
+        "cost_price": 87500.0
+      }
+    ]
+  },
+  {
+    "name": "Cylinder Head Vario150 Pcx150 Non Porting 30/26 27/31 Head Vario150 CPO",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0212",
+        "attributes": {
+          "Ukuran": "30/26"
+        },
+        "price": 1025000.0,
+        "cost_price": 717500.0
+      },
+      {
+        "sku": "PRD-0213",
+        "attributes": {
+          "Ukuran": "31/27"
+        },
+        "price": 1025000.0,
+        "cost_price": 717500.0
+      }
+    ]
+  },
+  {
+    "name": "Paking Almunium Paking Stroke Mio Beat Beat FI PCX GF Racing",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0214",
+        "attributes": {
+          "Variasi/ukuran": "Mio 0.5mm"
+        },
+        "price": 45000.0,
+        "cost_price": 31500.0
+      },
+      {
+        "sku": "PRD-0215",
+        "attributes": {
+          "Variasi/ukuran": "Mio 3mm"
+        },
+        "price": 72500.0,
+        "cost_price": 50750.0
+      },
+      {
+        "sku": "PRD-0216",
+        "attributes": {
+          "Variasi/ukuran": "PCX 3mm"
+        },
+        "price": 72500.0,
+        "cost_price": 50750.0
+      },
+      {
+        "sku": "PRD-0217",
+        "attributes": {
+          "Variasi/ukuran": "Beat FI 1mm"
+        },
+        "price": 62500.0,
+        "cost_price": 43750.0
+      },
+      {
+        "sku": "PRD-0218",
+        "attributes": {
+          "Variasi/ukuran": "Beat Fi 2mm"
+        },
+        "price": 72500.0,
+        "cost_price": 50750.0
+      },
+      {
+        "sku": "PRD-0219",
+        "attributes": {
+          "Variasi/ukuran": "Beat Fi 3mm"
+        },
+        "price": 85000.0,
+        "cost_price": 59500.0
+      },
+      {
+        "sku": "PRD-0220",
+        "attributes": {
+          "Variasi/ukuran": "Beat Karbu 2mm"
+        },
+        "price": 62500.0,
+        "cost_price": 43750.0
+      },
+      {
+        "sku": "PRD-0221",
+        "attributes": {
+          "Variasi/ukuran": "Beat Karbu 3mm"
+        },
+        "price": 72500.0,
+        "cost_price": 50750.0
+      },
+      {
+        "sku": "PRD-0222",
+        "attributes": {
+          "Variasi/ukuran": "Mio 1mm"
+        },
+        "price": 55000.0,
+        "cost_price": 38500.0
+      },
+      {
+        "sku": "PRD-0223",
+        "attributes": {
+          "Variasi/ukuran": "Mio 2mm"
+        },
+        "price": 62500.0,
+        "cost_price": 43750.0
+      },
+      {
+        "sku": "PRD-0224",
+        "attributes": {
+          "Variasi/ukuran": "Pcx 1mm"
+        },
+        "price": 62500.0,
+        "cost_price": 43750.0
+      },
+      {
+        "sku": "PRD-0225",
+        "attributes": {
+          "Variasi/ukuran": "Pcx 2mm"
+        },
+        "price": 72500.0,
+        "cost_price": 50750.0
+      }
+    ]
+  },
+  {
+    "name": "Sensor CKP Genio Beat ESP NMAX Aerox HM1",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0226",
+        "attributes": {
+          "Type": "Genio"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0227",
+        "attributes": {
+          "Type": "Beat Esp"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0228",
+        "attributes": {
+          "Type": "Nmax"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0229",
+        "attributes": {
+          "Type": "Aerox"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      }
+    ]
+  },
+  {
+    "name": "Karbu Pe 24 26 28 GEN2 Black Cool Power (cpo)",
+    "category": "Sistem Bahan Bakar",
+    "variants": [
+      {
+        "sku": "PRD-0230",
+        "attributes": {
+          "Ukuran": "Pe 24"
+        },
+        "price": 335000.0,
+        "cost_price": 234500.0
+      },
+      {
+        "sku": "PRD-0231",
+        "attributes": {
+          "Ukuran": "Pe 26"
+        },
+        "price": 335000.0,
+        "cost_price": 234500.0
+      },
+      {
+        "sku": "PRD-0232",
+        "attributes": {
+          "Ukuran": "Pe 28"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      }
+    ]
+  },
+  {
+    "name": "Piston RX7 Super Forged PIN 13 Ukuran 56 58 59 62 63 63.5",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0233",
+        "attributes": {
+          "Ukuran": "56"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0234",
+        "attributes": {
+          "Ukuran": "58"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0235",
+        "attributes": {
+          "Ukuran": "59"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0236",
+        "attributes": {
+          "Ukuran": "62"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0237",
+        "attributes": {
+          "Ukuran": "63"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0238",
+        "attributes": {
+          "Ukuran": "63.5"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0239",
+        "attributes": {
+          "Ukuran": "58.5"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0240",
+        "attributes": {
+          "Ukuran": "60"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0241",
+        "attributes": {
+          "Ukuran": "62.5"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0242",
+        "attributes": {
+          "Ukuran": "55"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      },
+      {
+        "sku": "PRD-0243",
+        "attributes": {
+          "Ukuran": "57"
+        },
+        "price": 450000.0,
+        "cost_price": 315000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Kanvas Sentri Vario125 Vario150 Miom3 RPM1500 RPM1000",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0244",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0245",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Mxking Jupiter Mx Old Oval Series Per Klep MTN VL-030 Kompetisi Hard",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0246",
+        "attributes": {},
+        "price": 650000.0,
+        "cost_price": 455000.0
+      }
+    ]
+  },
+  {
+    "name": "Paking Tembaga Vario125 Vario150 Paking Tembaga Mio Paking Tembaga Beat Tebal 0.5MM 58MM 59MM 60MM 63MM 64MM 65MM 66MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0247",
+        "attributes": {
+          "Ukuran": "Beat KVY 58mm"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0248",
+        "attributes": {
+          "Ukuran": "Mio 59"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0249",
+        "attributes": {
+          "Ukuran": "Mio 60"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0250",
+        "attributes": {
+          "Ukuran": "Mio 58"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0251",
+        "attributes": {
+          "Ukuran": "Mio 63"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0252",
+        "attributes": {
+          "Ukuran": "Nmax 63mm"
+        },
+        "price": 75000.0,
+        "cost_price": 52500.0
+      },
+      {
+        "sku": "PRD-0253",
+        "attributes": {
+          "Ukuran": "Vario125 58"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0254",
+        "attributes": {
+          "Ukuran": "Vario125 59"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0255",
+        "attributes": {
+          "Ukuran": "Vario125 60"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0256",
+        "attributes": {
+          "Ukuran": "Vario125 63"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0257",
+        "attributes": {
+          "Ukuran": "Nmax 60 gf"
+        },
+        "price": 75000.0,
+        "cost_price": 52500.0
+      },
+      {
+        "sku": "PRD-0258",
+        "attributes": {
+          "Ukuran": "Vario150 64mm"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0259",
+        "attributes": {
+          "Ukuran": "Nmax 58mm"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0260",
+        "attributes": {
+          "Ukuran": "Nmax 59mm"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0261",
+        "attributes": {
+          "Ukuran": "Mio 66mm"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0262",
+        "attributes": {
+          "Ukuran": "Mio 65mm"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0263",
+        "attributes": {
+          "Ukuran": "Mio 64mm"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      }
+    ]
+  },
+  {
+    "name": "Noken As Mentah RX7 KOJ Genio Beat Beat FI NMAX XMAX Vario150 Vario160",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0264",
+        "attributes": {
+          "Type": "BEAT FI"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0265",
+        "attributes": {
+          "Type": "BEAT KARBU"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0266",
+        "attributes": {
+          "Type": "NMAX BIG PIN 1"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0267",
+        "attributes": {
+          "Type": "NMAX BIG PIN 2"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0268",
+        "attributes": {
+          "Type": "VARIO150/PCX150"
+        },
+        "price": 165000.0,
+        "cost_price": 115500.0
+      },
+      {
+        "sku": "PRD-0269",
+        "attributes": {
+          "Type": "VARIO160/PCX160"
+        },
+        "price": 165000.0,
+        "cost_price": 115500.0
+      },
+      {
+        "sku": "PRD-0270",
+        "attributes": {
+          "Type": "VESPA"
+        },
+        "price": 200000.0,
+        "cost_price": 140000.0
+      },
+      {
+        "sku": "PRD-0271",
+        "attributes": {
+          "Type": "XMAX"
+        },
+        "price": 400000.0,
+        "cost_price": 280000.0
+      },
+      {
+        "sku": "PRD-0272",
+        "attributes": {
+          "Type": "KOJ/Genio"
+        },
+        "price": 165000.0,
+        "cost_price": 115500.0
+      },
+      {
+        "sku": "PRD-0273",
+        "attributes": {
+          "Type": "Beat Karbu CR-PRO"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0274",
+        "attributes": {
+          "Type": "MIO GF"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      }
+    ]
+  },
+  {
+    "name": "Paking Head XMAX Ashuka Metal 0.3MM 76MM 78MM 80MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0275",
+        "attributes": {
+          "Ukuran": "76mm"
+        },
+        "price": 207500.0,
+        "cost_price": 145250.0
+      },
+      {
+        "sku": "PRD-0276",
+        "attributes": {
+          "Ukuran": "78mm"
+        },
+        "price": 207500.0,
+        "cost_price": 145250.0
+      },
+      {
+        "sku": "PRD-0277",
+        "attributes": {
+          "Ukuran": "80mm"
+        },
+        "price": 207500.0,
+        "cost_price": 145250.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT PCX Vario150 MTN Spring Japan RPM1500 RPM1000 RPM2000",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0278",
+        "attributes": {
+          "Ukuran": "Rpm1000 CVT-007"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0279",
+        "attributes": {
+          "Ukuran": "Rpm1500 CVT-006"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0280",
+        "attributes": {
+          "Ukuran": "Sentri 1500 CW-003"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0281",
+        "attributes": {
+          "Ukuran": "Sentri 1000 CW-003"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0282",
+        "attributes": {
+          "Ukuran": "Rpm2000 CVT-008"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0283",
+        "attributes": {
+          "Ukuran": "sentri 2000 CW-004"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      }
+    ]
+  },
+  {
+    "name": "Setelan Tensioner Beat Mio MOTO1 Tonjokan Keteng Mio Beat MOTO1",
+    "category": "Rantai & Gear",
+    "variants": [
+      {
+        "sku": "PRD-0284",
+        "attributes": {
+          "Variasi": "Mio (merah)"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0285",
+        "attributes": {
+          "Variasi": "Beat Merah"
+        },
+        "price": 75000.0,
+        "cost_price": 52500.0
+      },
+      {
+        "sku": "PRD-0286",
+        "attributes": {
+          "Variasi": "Mio (biru) MOTO1"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0287",
+        "attributes": {
+          "Variasi": "Beat Biru"
+        },
+        "price": 75000.0,
+        "cost_price": 52500.0
+      },
+      {
+        "sku": "PRD-0288",
+        "attributes": {
+          "Variasi": "Mio CR-PRO"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      }
+    ]
+  },
+  {
+    "name": "Paking Head Tembaga Vario150 0.3MM AH1",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0289",
+        "attributes": {
+          "Ukuran": "58mm"
+        },
+        "price": 63500.0,
+        "cost_price": 44450.0
+      },
+      {
+        "sku": "PRD-0290",
+        "attributes": {
+          "Ukuran": "61mm"
+        },
+        "price": 63500.0,
+        "cost_price": 44450.0
+      },
+      {
+        "sku": "PRD-0291",
+        "attributes": {
+          "Ukuran": "60mm"
+        },
+        "price": 63500.0,
+        "cost_price": 44450.0
+      },
+      {
+        "sku": "PRD-0292",
+        "attributes": {
+          "Ukuran": "64mm"
+        },
+        "price": 63500.0,
+        "cost_price": 44450.0
+      },
+      {
+        "sku": "PRD-0293",
+        "attributes": {
+          "Ukuran": "65mm"
+        },
+        "price": 63500.0,
+        "cost_price": 44450.0
+      }
+    ]
+  },
+  {
+    "name": "Cylinder Kit Vario150 58 Non Ceramic Set Ring Piston Gasket PIN Piston Circlip",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0294",
+        "attributes": {},
+        "price": 375000.0,
+        "cost_price": 262500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Koizumi Per Klep Mio Beat Genio Vario150 Vario110",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0295",
+        "attributes": {
+          "Type": "MIO 34MM MEDIUM"
+        },
+        "price": 200000.0,
+        "cost_price": 140000.0
+      },
+      {
+        "sku": "PRD-0296",
+        "attributes": {
+          "Type": "BEAT 32MM MEDIUM"
+        },
+        "price": 200000.0,
+        "cost_price": 140000.0
+      },
+      {
+        "sku": "PRD-0297",
+        "attributes": {
+          "Type": "GENIO 32MM MEDIUM"
+        },
+        "price": 200000.0,
+        "cost_price": 140000.0
+      },
+      {
+        "sku": "PRD-0298",
+        "attributes": {
+          "Type": "MIO 32MM MEDIUM"
+        },
+        "price": 200000.0,
+        "cost_price": 140000.0
+      },
+      {
+        "sku": "PRD-0299",
+        "attributes": {
+          "Type": "Vario150 Medium"
+        },
+        "price": 160000.0,
+        "cost_price": 112000.0
+      },
+      {
+        "sku": "PRD-0300",
+        "attributes": {
+          "Type": "Beat 34MM Medium"
+        },
+        "price": 200000.0,
+        "cost_price": 140000.0
+      }
+    ]
+  },
+  {
+    "name": "Ashuka Paking Head Vario150 Metal 0.3MM 59 65 66",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0301",
+        "attributes": {
+          "Ukuran": "59"
+        },
+        "price": 59500.0,
+        "cost_price": 41650.0
+      },
+      {
+        "sku": "PRD-0302",
+        "attributes": {
+          "Ukuran": "65"
+        },
+        "price": 59500.0,
+        "cost_price": 41650.0
+      },
+      {
+        "sku": "PRD-0303",
+        "attributes": {
+          "Ukuran": "66"
+        },
+        "price": 59500.0,
+        "cost_price": 41650.0
+      }
+    ]
+  },
+  {
+    "name": "Ashuka Gasket Packing Head Metal 0.3MM Vario160 Pcx160 60MM 63MM 65MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0304",
+        "attributes": {
+          "Ukuran": "60MM"
+        },
+        "price": 60000.0,
+        "cost_price": 42000.0
+      },
+      {
+        "sku": "PRD-0305",
+        "attributes": {
+          "Ukuran": "63MM"
+        },
+        "price": 60000.0,
+        "cost_price": 42000.0
+      },
+      {
+        "sku": "PRD-0306",
+        "attributes": {
+          "Ukuran": "65MM"
+        },
+        "price": 60000.0,
+        "cost_price": 42000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep MTN VL 002 Mio Beat Scoopy FI 34MM + Inner",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0307",
+        "attributes": {},
+        "price": 255000.0,
+        "cost_price": 178500.0
+      }
+    ]
+  },
+  {
+    "name": "Blok Cylinder Mio 58.5 Set Ring Piston DUM Tidak Flat Cylinder Mio 58.5 Set",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0308",
+        "attributes": {},
+        "price": 350000.0,
+        "cost_price": 245000.0
+      }
+    ]
+  },
+  {
+    "name": "Ashuka Packing Head Metal0.3mm XMAX 76MM 78MM 80MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0309",
+        "attributes": {
+          "Ukuran": "76MM"
+        },
+        "price": 149500.0,
+        "cost_price": 104650.0
+      },
+      {
+        "sku": "PRD-0310",
+        "attributes": {
+          "Ukuran": "78MM"
+        },
+        "price": 149500.0,
+        "cost_price": 104650.0
+      },
+      {
+        "sku": "PRD-0311",
+        "attributes": {
+          "Ukuran": "80MM"
+        },
+        "price": 149500.0,
+        "cost_price": 104650.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep MTN 34hard Kompetisi Per Klep MTN VL 033 Per Klep Universal MATIC Bebek",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0312",
+        "attributes": {},
+        "price": 600000.0,
+        "cost_price": 420000.0
+      }
+    ]
+  },
+  {
+    "name": "Blok Cylinder Kit Vario160 Pcx160 Non Ceramic 60MM 63MM Cylinder Manta",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0313",
+        "attributes": {
+          "Ukuran": "60MM"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      },
+      {
+        "sku": "PRD-0314",
+        "attributes": {
+          "Ukuran": "63MM"
+        },
+        "price": 425000.0,
+        "cost_price": 297500.0
+      }
+    ]
+  },
+  {
+    "name": "Karbu Karburator CPO PWK Type B 26 B 28",
+    "category": "Sistem Bahan Bakar",
+    "variants": [
+      {
+        "sku": "PRD-0315",
+        "attributes": {
+          "Ukuran": "PWK B 26"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      },
+      {
+        "sku": "PRD-0316",
+        "attributes": {
+          "Ukuran": "PWK B 28"
+        },
+        "price": 350000.0,
+        "cost_price": 245000.0
+      }
+    ]
+  },
+  {
+    "name": "Gigi Sentrik Geser Mio Beat KLX CRF Jupiter NGO",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0317",
+        "attributes": {
+          "Type": "Mio"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0318",
+        "attributes": {
+          "Type": "Beat Karbu"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0319",
+        "attributes": {
+          "Type": "Klx"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0320",
+        "attributes": {
+          "Type": "Jupiter"
+        },
+        "price": 120000.0,
+        "cost_price": 84000.0
+      },
+      {
+        "sku": "PRD-0321",
+        "attributes": {
+          "Type": "CRF"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Vario125 Vario150 Per Klep MTN VL 037 Tinggi 35MM Cocok Untuk 180CC Up Lift Max 11",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0322",
+        "attributes": {},
+        "price": 340000.0,
+        "cost_price": 238000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep XMAX Medium Tinggi 35.6MM Max Lift 12 300CC Up",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0323",
+        "attributes": {},
+        "price": 820000.0,
+        "cost_price": 574000.0
+      }
+    ]
+  },
+  {
+    "name": "Cylinder Mio 58.5 Boring Mio 58.5 HM1 Blok Seher Mio 58.5",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0324",
+        "attributes": {},
+        "price": 345000.0,
+        "cost_price": 241500.0
+      }
+    ]
+  },
+  {
+    "name": "Noken As Mentah AH1 Noken As Mentah Mio Beat Vario K44 Beat KZL",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0325",
+        "attributes": {
+          "Type": "MIO"
+        },
+        "price": 100000.0,
+        "cost_price": 70000.0
+      },
+      {
+        "sku": "PRD-0326",
+        "attributes": {
+          "Type": "Beat KVY"
+        },
+        "price": 141000.0,
+        "cost_price": 98700.0
+      },
+      {
+        "sku": "PRD-0327",
+        "attributes": {
+          "Type": "BEATK44+BEARING"
+        },
+        "price": 146000.0,
+        "cost_price": 102200.0
+      },
+      {
+        "sku": "PRD-0328",
+        "attributes": {
+          "Type": "BEAT KZL+BEARING"
+        },
+        "price": 141000.0,
+        "cost_price": 98700.0
+      },
+      {
+        "sku": "PRD-0329",
+        "attributes": {
+          "Type": "VARIO125/150 (BIG)"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep MTN VL 032 Per Klep Universal Bebek MATIC Up 40CC Lift 11 Per Klep Kompetisi 31.6MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0330",
+        "attributes": {},
+        "price": 720000.0,
+        "cost_price": 504000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Double/inner Per Klep Untuk VL-002, VL-003, VL-004",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0331",
+        "attributes": {},
+        "price": 100000.0,
+        "cost_price": 70000.0
+      }
+    ]
+  },
+  {
+    "name": "Piston LHK 55 58 58.5 59 60 62 63 PIN 13 14 15",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0332",
+        "attributes": {
+          "Ukuran": "55 P 13"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0333",
+        "attributes": {
+          "Ukuran": "58 p 13"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0334",
+        "attributes": {
+          "Ukuran": "58.5 p 13"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0335",
+        "attributes": {
+          "Ukuran": "59 p 13"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0336",
+        "attributes": {
+          "Ukuran": "60 p 13"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0337",
+        "attributes": {
+          "Ukuran": "62 p 13"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0338",
+        "attributes": {
+          "Ukuran": "63 p 13"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0339",
+        "attributes": {
+          "Ukuran": "59 p 14"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0340",
+        "attributes": {
+          "Ukuran": "62 p 14"
+        },
+        "price": 625000.0,
+        "cost_price": 437500.0
+      },
+      {
+        "sku": "PRD-0341",
+        "attributes": {
+          "Ukuran": "58 p 15"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0342",
+        "attributes": {
+          "Ukuran": "58.5 p 15"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0343",
+        "attributes": {
+          "Ukuran": "59 p 15"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0344",
+        "attributes": {
+          "Ukuran": "60 P 14"
+        },
+        "price": 535000.0,
+        "cost_price": 374500.0
+      },
+      {
+        "sku": "PRD-0345",
+        "attributes": {
+          "Ukuran": "63 P 14"
+        },
+        "price": 625000.0,
+        "cost_price": 437500.0
+      }
+    ]
+  },
+  {
+    "name": "Rocker Arm Mio 4V (besi) Bearing Templar Material Japan High Quality",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0346",
+        "attributes": {},
+        "price": 350000.0,
+        "cost_price": 245000.0
+      }
+    ]
+  },
+  {
+    "name": "Setelan Tensioner NMAX Manta Racing Adjustable Tensioner NMAX",
+    "category": "Rantai & Gear",
+    "variants": [
+      {
+        "sku": "PRD-0347",
+        "attributes": {},
+        "price": 90000.0,
+        "cost_price": 63000.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT MTN Vario Mio NMAX Aerox Mio J Per CVT MTN 1000 1500 2000 1200 1800 2500 Per CVT MTN Spring Japan",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0348",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0349",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0350",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0351",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0352",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0353",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0354",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0355",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0356",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0357",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0358",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0359",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0360",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0361",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0362",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0363",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0364",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0365",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0366",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0367",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0368",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0369",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0370",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0371",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0372",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0373",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0374",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0375",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0376",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0377",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0378",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0379",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0380",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0381",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0382",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0383",
+        "attributes": {
+          "Ukuran": "1200"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0384",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0385",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0386",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0387",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0388",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0389",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0390",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0391",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0392",
+        "attributes": {
+          "Ukuran": "1800"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0393",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0394",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0395",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0396",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0397",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0398",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0399",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0400",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      },
+      {
+        "sku": "PRD-0401",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 130000.0,
+        "cost_price": 91000.0
+      }
+    ]
+  },
+  {
+    "name": "Klep MOTO1 28 24 34 29 Batang 4.5MM Batang 5MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0402",
+        "attributes": {
+          "Ukuran": "34.29/5mm"
+        },
+        "price": 169000.0,
+        "cost_price": 118300.0
+      },
+      {
+        "sku": "PRD-0403",
+        "attributes": {
+          "Ukuran": "28.24/5mm"
+        },
+        "price": 169000.0,
+        "cost_price": 118300.0
+      },
+      {
+        "sku": "PRD-0404",
+        "attributes": {
+          "Ukuran": "34.29/4.5mm"
+        },
+        "price": 169000.0,
+        "cost_price": 118300.0
+      },
+      {
+        "sku": "PRD-0405",
+        "attributes": {
+          "Ukuran": "28.24/4.5mm"
+        },
+        "price": 169000.0,
+        "cost_price": 118300.0
+      },
+      {
+        "sku": "PRD-0406",
+        "attributes": {
+          "Ukuran": "31/26 4.5mm"
+        },
+        "price": 169000.0,
+        "cost_price": 118300.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep 34MM Kode VL002 By Mtnspringjapan",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0407",
+        "attributes": {},
+        "price": 160000.0,
+        "cost_price": 112000.0
+      }
+    ]
+  },
+  {
+    "name": "Blok Cylinder Kit Vario KZR 58MM Set Ring Piston PIN Piston Gasket Circlip Blok Manta Racing",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0408",
+        "attributes": {},
+        "price": 375000.0,
+        "cost_price": 262500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Pcx160 Vario160 MTNSpringJapan 38MM Kuning/Putih",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0409",
+        "attributes": {},
+        "price": 310000.0,
+        "cost_price": 217000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Vario160 Pcx160 Kompetisi 180-300cc Max Lift 10.5 Per Klep MTN Oval VL 035",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0410",
+        "attributes": {},
+        "price": 560000.0,
+        "cost_price": 392000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep MTN Jupiter Mx FU Injeksi Gsx Kode VL008",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0411",
+        "attributes": {},
+        "price": 310000.0,
+        "cost_price": 217000.0
+      }
+    ]
+  },
+  {
+    "name": "Lem Permatek Blue Besar",
+    "category": "Perkakas & Tools",
+    "variants": [
+      {
+        "sku": "PRD-0412",
+        "attributes": {},
+        "price": 135000.0,
+        "cost_price": 94500.0
+      }
+    ]
+  },
+  {
+    "name": "Per CVT MTN Beat Vario125 Scoopy RPM1000 RPM1500",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0413",
+        "attributes": {
+          "Warna": "rpm1000"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      },
+      {
+        "sku": "PRD-0414",
+        "attributes": {
+          "Warna": "rpm1500"
+        },
+        "price": 105000.0,
+        "cost_price": 73500.0
+      }
+    ]
+  },
+  {
+    "name": "Karbu PWK UMA Racing 24 28 30 32 Karburator UMA",
+    "category": "Sistem Bahan Bakar",
+    "variants": [
+      {
+        "sku": "PRD-0415",
+        "attributes": {
+          "Ukuran": "24"
+        },
+        "price": 685000.0,
+        "cost_price": 479500.0
+      },
+      {
+        "sku": "PRD-0416",
+        "attributes": {
+          "Ukuran": "30"
+        },
+        "price": 835000.0,
+        "cost_price": 584500.0
+      },
+      {
+        "sku": "PRD-0417",
+        "attributes": {
+          "Ukuran": "32"
+        },
+        "price": 885000.0,
+        "cost_price": 619500.0
+      },
+      {
+        "sku": "PRD-0418",
+        "attributes": {
+          "Ukuran": "28"
+        },
+        "price": 735000.0,
+        "cost_price": 514500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep GF Racing Per Klep Beat Per Klep Mio Per Klep 32MM 34MM Per Klep Vario Pcx150 GF Racing",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0419",
+        "attributes": {
+          "Type": "MIO 34MM"
+        },
+        "price": 72000.0,
+        "cost_price": 50400.0
+      },
+      {
+        "sku": "PRD-0420",
+        "attributes": {
+          "Type": "Beat 32MM"
+        },
+        "price": 82000.0,
+        "cost_price": 57400.0
+      },
+      {
+        "sku": "PRD-0421",
+        "attributes": {
+          "Type": "Vario/PCX150"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep MATIC Bebek Universal Per Klep MTN VL-034 Medium++ Max Lift 12 Tinggi 33.2",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0422",
+        "attributes": {},
+        "price": 350000.0,
+        "cost_price": 245000.0
+      }
+    ]
+  },
+  {
+    "name": "Sim Shim Klep 4.5MM 5MM Manta Racing",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0423",
+        "attributes": {
+          "Ukuran": "5MM"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0424",
+        "attributes": {
+          "Ukuran": "45MM"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      }
+    ]
+  },
+  {
+    "name": "Per Sentri MTN Beat Mio Vario125 NMAX Aerox Lexy RPM 1000 1500 1700 1850 2000 2500",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0425",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0426",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0427",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0428",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0429",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0430",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0431",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0432",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0433",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0434",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0435",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0436",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0437",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0438",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0439",
+        "attributes": {
+          "Ukuran": "1700"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0440",
+        "attributes": {
+          "Ukuran": "1700"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0441",
+        "attributes": {
+          "Ukuran": "1700"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0442",
+        "attributes": {
+          "Ukuran": "1700"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0443",
+        "attributes": {
+          "Ukuran": "1700"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0444",
+        "attributes": {
+          "Ukuran": "1700"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0445",
+        "attributes": {
+          "Ukuran": "1700"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0446",
+        "attributes": {
+          "Ukuran": "1850"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0447",
+        "attributes": {
+          "Ukuran": "1850"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0448",
+        "attributes": {
+          "Ukuran": "1850"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0449",
+        "attributes": {
+          "Ukuran": "1850"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0450",
+        "attributes": {
+          "Ukuran": "1850"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0451",
+        "attributes": {
+          "Ukuran": "1850"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0452",
+        "attributes": {
+          "Ukuran": "1850"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0453",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0454",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0455",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0456",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0457",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0458",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0459",
+        "attributes": {
+          "Ukuran": "2000"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0460",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0461",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0462",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0463",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0464",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0465",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      },
+      {
+        "sku": "PRD-0466",
+        "attributes": {
+          "Ukuran": "2500"
+        },
+        "price": 42000.0,
+        "cost_price": 29400.0
+      }
+    ]
+  },
+  {
+    "name": "Per Kanvas Mio Beat RPM 1500 Tahan Lama",
+    "category": "Transmisi & Kopling",
+    "variants": [
+      {
+        "sku": "PRD-0467",
+        "attributes": {
+          "Ukuran": "1500"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      },
+      {
+        "sku": "PRD-0468",
+        "attributes": {
+          "Ukuran": "1000"
+        },
+        "price": 35000.0,
+        "cost_price": 24500.0
+      }
+    ]
+  },
+  {
+    "name": "Ashuka Paking Head Metal 0.3MM NMAX Aerox",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0469",
+        "attributes": {
+          "Ukuran": "60MM"
+        },
+        "price": 59500.0,
+        "cost_price": 41650.0
+      },
+      {
+        "sku": "PRD-0470",
+        "attributes": {
+          "Ukuran": "63MM"
+        },
+        "price": 59500.0,
+        "cost_price": 41650.0
+      },
+      {
+        "sku": "PRD-0471",
+        "attributes": {
+          "Ukuran": "65MM"
+        },
+        "price": 59500.0,
+        "cost_price": 41650.0
+      }
+    ]
+  },
+  {
+    "name": "Klep Valve Klep In Ex Klep Racing Payung Klep Manta Racing Klep 21 22 24 25 26 28 23 27 28 30 31 Batang 4.5MM 5MM",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0472",
+        "attributes": {
+          "Ukuran": "21*4.5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0473",
+        "attributes": {
+          "Ukuran": "22*4.5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0474",
+        "attributes": {
+          "Ukuran": "24*4.5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0475",
+        "attributes": {
+          "Ukuran": "25*4.5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0476",
+        "attributes": {
+          "Ukuran": "26*4.5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0477",
+        "attributes": {
+          "Ukuran": "28*4.5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0478",
+        "attributes": {
+          "Ukuran": "28/24 4.5"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0479",
+        "attributes": {
+          "Ukuran": "22*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0480",
+        "attributes": {
+          "Ukuran": "23*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0481",
+        "attributes": {
+          "Ukuran": "24*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0482",
+        "attributes": {
+          "Ukuran": "25*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0483",
+        "attributes": {
+          "Ukuran": "26*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0484",
+        "attributes": {
+          "Ukuran": "27*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0485",
+        "attributes": {
+          "Ukuran": "28*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0486",
+        "attributes": {
+          "Ukuran": "30*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0487",
+        "attributes": {
+          "Ukuran": "31*5"
+        },
+        "price": 80000.0,
+        "cost_price": 56000.0
+      },
+      {
+        "sku": "PRD-0488",
+        "attributes": {
+          "Ukuran": "28/24 5mm"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0489",
+        "attributes": {
+          "Ukuran": "30/25 5mm"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0490",
+        "attributes": {
+          "Ukuran": "27/23 5mm"
+        },
+        "price": 150000.0,
+        "cost_price": 105000.0
+      },
+      {
+        "sku": "PRD-0491",
+        "attributes": {
+          "Ukuran": "31/26 5mm"
+        },
+        "price": 160000.0,
+        "cost_price": 112000.0
+      }
+    ]
+  },
+  {
+    "name": "TPS Vario125 Vario150 Beat FI TPS Manta Racing",
+    "category": "Kelistrikan",
+    "variants": [
+      {
+        "sku": "PRD-0492",
+        "attributes": {},
+        "price": 160000.0,
+        "cost_price": 112000.0
+      }
+    ]
+  },
+  {
+    "name": "Per Klep Mio Beat 34MM MTN Japan Per Klep Jepang 32MM Per Klep KOJ Per Klep Beat Deluxe Per Klep MTN",
+    "category": "Mesin",
+    "variants": [
+      {
+        "sku": "PRD-0493",
+        "attributes": {
+          "Ukuran": "32mmdaily"
+        },
+        "price": 235000.0,
+        "cost_price": 164500.0
+      },
+      {
+        "sku": "PRD-0494",
+        "attributes": {
+          "Ukuran": "32kompetisi"
+        },
+        "price": 400000.0,
+        "cost_price": 280000.0
+      },
+      {
+        "sku": "PRD-0495",
+        "attributes": {
+          "Ukuran": "34mm"
+        },
+        "price": 160000.0,
+        "cost_price": 112000.0
+      },
+      {
+        "sku": "PRD-0496",
+        "attributes": {
+          "Ukuran": "Per KOJ 32mm 027"
+        },
+        "price": 165000.0,
+        "cost_price": 115500.0
+      },
+      {
+        "sku": "PRD-0497",
+        "attributes": {
+          "Ukuran": "PER KLEP KOJ 33.5MM"
+        },
+        "price": 175000.0,
+        "cost_price": 122500.0
+      },
+      {
+        "sku": "PRD-0498",
+        "attributes": {
+          "Ukuran": "MIO J"
+        },
+        "price": 175000.0,
+        "cost_price": 122500.0
+      }
+    ]
+  }
+]

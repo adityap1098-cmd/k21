@@ -68,6 +68,15 @@ export async function api<T>(
     credentials: 'include',
   })
 
+  // If 403 PASSWORD_CHANGE_REQUIRED, return immediately (don't redirect)
+  if (res.status === 403) {
+    const body = await res.json()
+    if (body?.error === 'PASSWORD_CHANGE_REQUIRED') {
+      return { success: false, data: null, error: 'PASSWORD_CHANGE_REQUIRED' }
+    }
+    return body
+  }
+
   // If 401, try refresh once
   if (res.status === 401 && token) {
     const refreshed = await refreshToken()

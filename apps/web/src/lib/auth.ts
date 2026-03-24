@@ -6,6 +6,8 @@ import { getAccessToken, clearAccessToken } from './api'
 interface User {
   sub: string
   role: string
+  email?: string
+  name?: string
   mustChangePassword: boolean
 }
 
@@ -37,7 +39,13 @@ export function useAuth() {
     setLoading(false)
   }, [])
 
-  function logout() {
+  async function logout() {
+    try {
+      // Invalidate refresh token on server (fire-and-forget — don't block on failure)
+      await fetch('/api/v1/auth/logout', { method: 'POST', credentials: 'include' })
+    } catch {
+      // Network failure is acceptable — token will expire naturally
+    }
     clearAccessToken()
     window.location.href = '/login'
   }

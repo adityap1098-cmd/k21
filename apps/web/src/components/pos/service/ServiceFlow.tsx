@@ -7,6 +7,8 @@ import { ServiceOrderPanel } from './ServiceOrderPanel'
 import { ServicePaymentModal } from './ServicePaymentModal'
 import { ServiceHistoryView } from './ServiceHistoryView'
 import { ReceivablesView } from './ReceivablesView'
+import { ReceiptModal } from '@/components/pos/ReceiptModal'
+import type { ReceiptData } from '@/lib/receipt/encoder'
 
 type TabId = 'new-order' | 'open-orders' | 'history' | 'receivables'
 type Step = 'select-customer' | 'manage-order'
@@ -26,12 +28,11 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'receivables', label: 'Piutang' },
 ]
 
-export function ServiceFlow() {
+export function ServiceFlow({ compact, onTransactionComplete }: { compact?: boolean; onTransactionComplete?: () => void } = {}) {
   const [activeTab, setActiveTab] = useState<TabId>('new-order')
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null)
   const [step, setStep] = useState<Step>('select-customer')
 
-  // View state for open-orders tab: list or detail
   const [openOrdersSelectedId, setOpenOrdersSelectedId] = useState<string | null>(null)
 
   // Payment modal state
@@ -41,6 +42,9 @@ export function ServiceFlow() {
     orderTotal: number
     existingPaymentsTotal: number
   }>({ isOpen: false, orderId: '', orderTotal: 0, existingPaymentsTotal: 0 })
+
+  // Receipt modal state (same as retail)
+  const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
 
   const handleOrderCreated = useCallback((order: ServiceOrder) => {
     setActiveOrderId(order.id)
@@ -70,26 +74,24 @@ export function ServiceFlow() {
     setPaymentModal({ isOpen: true, orderId, orderTotal: total, existingPaymentsTotal: paid })
   }, [])
 
-  const handlePaymentSuccess = useCallback(() => {
+  const handlePaymentSuccess = useCallback((data: ReceiptData) => {
     setPaymentModal(prev => ({ ...prev, isOpen: false }))
-    // The order panel will refresh via its own onOrderUpdated
-  }, [])
+    setReceiptData(data)
+    onTransactionComplete?.()
+  }, [onTransactionComplete])
 
   const handlePaymentClose = useCallback(() => {
     setPaymentModal(prev => ({ ...prev, isOpen: false }))
   }, [])
 
-  // Noop for order update notifications (open orders list will refresh on next visit)
   const handleOrderUpdated = useCallback(() => {}, [])
 
-  // Derive tab content based on activeTab and step
   const renderTabContent = () => {
     switch (activeTab) {
       case 'new-order':
         if (step === 'select-customer') {
           return <CustomerVehicleForm onOrderCreated={handleOrderCreated} />
         }
-        // manage-order step — show ServiceOrderPanel for newly created order
         return activeOrderId ? (
           <ServiceOrderPanel
             orderId={activeOrderId}
@@ -100,7 +102,6 @@ export function ServiceFlow() {
         ) : null
 
       case 'open-orders':
-        // If an order is selected from the list, show its detail panel
         if (openOrdersSelectedId) {
           return (
             <ServiceOrderPanel
@@ -111,45 +112,42 @@ export function ServiceFlow() {
             />
           )
         }
-        // Otherwise show the list
         return <OpenOrdersList onSelectOrder={handleOpenOrderSelect} />
 
       case 'history':
         return <ServiceHistoryView />
       case 'receivables':
-        return <ReceivablesView />
+        return <ReceivablesView onRequestPayment={handleRequestPayment} />
     }
   }
 
   return (
     <div data-testid="service-flow" className="flex flex-col h-full bg-surface">
       {/* Tab bar */}
-      <div className="flex items-center gap-1.5 px-4 py-3 shrink-0 overflow-x-auto no-scrollbar">
+      <div className={`flex items-center gap-1 shrink-0 overflow-x-auto no-scrollbar ${compact ? 'px-3 py-1.5' : 'px-4 py-3 gap-1.5'}`}>
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => {
               setActiveTab(tab.id)
-              // Reset open-orders selection when switching tabs
               if (tab.id !== 'open-orders') {
                 setOpenOrdersSelectedId(null)
               }
             }}
-            className={`flex items-center rounded-[20px] py-[7px] px-4 shrink-0 transition-colors ${
-              activeTab === tab.id
-                ? 'bg-ink text-white'
-                : 'bg-surface-raised border border-border text-ink hover:bg-surface-subtle'
+            className={`flex items-center shrink-0 transition-colors ${
+              compact
+                ? `rounded-lg py-1 px-2.5 ${activeTab === tab.id ? 'bg-brand text-white' : 'bg-surface-subtle border border-border text-ink-secondary hover:bg-surface-raised hover:text-ink'}`
+                : `rounded-[20px] py-[7px] px-4 ${activeTab === tab.id ? 'bg-brand text-white' : 'bg-surface-subtle border border-border text-ink-secondary hover:bg-surface-raised hover:text-ink'}`
             }`}
           >
-            <span className="font-medium text-[13px] leading-4">{tab.label}</span>
+            <span className={`font-medium leading-4 ${compact ? 'text-[11px]' : 'text-[13px]'}`}>{tab.label}</span>
           </button>
         ))}
 
-        {/* Quick action: new order shortcut */}
         {activeTab !== 'new-order' || step !== 'select-customer' ? (
           <button
             onClick={handleNewOrder}
-            className="ml-auto px-3 py-1.5 text-[13px] text-brand hover:text-brand-hover font-medium transition-colors shrink-0"
+            className={`ml-auto text-brand hover:text-brand-hover font-medium transition-colors shrink-0 ${compact ? 'px-2 py-1 text-[11px]' : 'px-3 py-1.5 text-[13px]'}`}
           >
             + Order Baru
           </button>
@@ -161,7 +159,7 @@ export function ServiceFlow() {
         {renderTabContent()}
       </div>
 
-      {/* Payment modal — rendered at ServiceFlow level */}
+      {/* Payment modal */}
       <ServicePaymentModal
         isOpen={paymentModal.isOpen}
         orderId={paymentModal.orderId}
@@ -169,6 +167,13 @@ export function ServiceFlow() {
         existingPaymentsTotal={paymentModal.existingPaymentsTotal}
         onSuccess={handlePaymentSuccess}
         onClose={handlePaymentClose}
+      />
+
+      {/* Receipt modal — same component as retail */}
+      <ReceiptModal
+        isOpen={receiptData !== null}
+        receiptData={receiptData}
+        onClose={() => setReceiptData(null)}
       />
     </div>
   )

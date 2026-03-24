@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "deep-research", "runs": [{"id": "eval-warehouse-with_skill", "prompt": "Audit apakah modul warehouse sudah terimplementasi dengan benar dari backend ke frontend di project K21", "eval_id": 0, "outputs": [{"name": "output.md", "type": "text", "content": "# Audit: Warehouse Module Implementation (Backend \u2194 Frontend)\n**Project:** K21 (Monorepo)\n**Date:** 2026-03-22\n**Methodology:** Deep Research Skill (Layer 1\u20133 analysis)\n\n---\n\n## Executive Summary\n\n| Metric | Result |\n|--------|--------|\n| **Overall Status** | \u26a0\ufe0f **Partial** |\n| **Backend Coverage** | \u2705 **Full (3/3 endpoints)** |\n| **Frontend Coverage** | \ud83d\udd34 **Partial (1/3 endpoints)** |\n| **Frontend-Backend Sync** | \u2705 **Matched payload schema** |\n| **Integration Status** | \u26a0\ufe0f **Functional but incomplete features** |\n| **Critical Gaps** | Warehouse stock detail view, stock transfer UI |\n\n---\n\n## Layer 1: Implementation Detail (Actual Code)\n\n### Backend Implementation\n\n#### **Endpoint 1: GET `/api/v1/warehouse/warehouses`** \u2705\n\n**Location:** `/apps/api/src/modules/warehouse/warehouse.router.ts:26\u201339`\n\n- **Implementation Type:** Real (non-stub)\n- **Service Called:** `listWarehouses()`\n- **Return Value:** Hardcoded array of 3 warehouses from config\n  ```typescript\n  const WAREHOUSES: Warehouse[] = [\n    { id: 'warehouse-gudang-a', name: 'Gudang A', address: 'Jl. Gudang, Jakarta', isActive: true },\n    { id: 'warehouse-gudang-b', name: 'Gudang B', address: 'Jl. Gudang Alt, Jakarta', isActive: true },\n    { id: 'warehouse-display-toko', name: 'Display Toko', address: 'Jl. Toko Utama, Jakarta', isActive: true }\n  ]\n  ```\n- **Database Query:** None \u2014 returns static configuration\n- **Auth:** Requires `authenticate` + `requireRole('Owner', 'Admin', 'Warehouse Staff')`\n- **Response Format:** `{ success: true, data: Warehouse[], error: null }`\n- **Status:** \u2705 **Fully Implemented**\n\n---\n\n#### **Endpoint 2: GET `/api/v1/warehouse/warehouses/:id/stock`** \ud83d\udfe1\n\n**Location:** `/apps/api/src/modules/warehouse/warehouse.router.ts:48\u201367`\n\n- **Implementation Type:** Stub/Placeholder\n- **Service Called:** `getWarehouseStock(warehouseId)`\n- **Critical Issue:** Query is incomplete \u2014 warehouse attribution logic missing\n\n**Code Analysis:**\n```typescript\n// Line 93-97 in warehouse.service.ts\n.where(\n  and(\n    // Match movements with reference starting with warehouse ID (e.g., \"warehouse-gudang-a:...\")\n    // If no reference, we can't attribute to a warehouse, so we exclude\n  )\n)\n```\n\nThe `and()` condition is **empty** \u2014 no actual WHERE clause filtering by warehouse ID. This means:\n1. The query returns an empty `movements` array\n2. No variants are selected (line 101 `variantIds.length === 0` \u2192 returns `[]`)\n3. The endpoint always returns empty stock for every warehouse\n\n**Expected Return:** Array of `WarehouseStock[]` (variant + qty per warehouse)\n**Actual Return:** Always `[]` (empty)\n\n**Database Fields Issue:** Schema lacks warehouse location tracking:\n- `inventory_movements` has a `reference` field (varchar 255) but NO dedicated location/warehouse field\n- `product_variants` has `stockQty` but NO warehouse location\n\n**Auth:** Requires `authenticate` + `requireRole('Owner', 'Admin', 'Warehouse Staff')`\n**Error Handling:** 404 if warehouse ID not found in static config\n**Status:** \ud83d\udfe1 **Stub \u2014 Interface exists, returns empty data**\n\n---\n\n#### **Endpoint 3: POST `/api/v1/warehouse/transfers`** \u2705\n\n**Location:** `/apps/api/src/modules/warehouse/warehouse.router.ts:78\u2013120`\n\n- **Implementation Type:** Real (non-stub)\n- **Service Called:** `transferStock()`\n- **Zod Schema Validation:**\n  ```typescript\n  {\n    variantId: z.string().uuid(),\n    fromWarehouse: z.string().min(1),\n    toWarehouse: z.string().min(1),\n    qty: z.number().int().positive(),\n    reference: z.string().optional()\n  }\n  ```\n- **Database Interaction:**\n  1. Verifies both warehouses exist in static config\n  2. Validates variant exists + has sufficient stock\n  3. Records movement with type `TRANSFER` via `recordMovement()`\n  4. Updates `product_variants.stock_qty` with SQL: `stock_qty = stock_qty - qty`\n\n**Transactional:** Yes (wrapped in `db.transaction()`)\n**Side Effects:**\n- Creates row in `inventory_movements` with `movementType='TRANSFER'`, `qty` (negative per convention)\n- Decrements `product_variants.stock_qty` by exact qty\n\n**Error Codes:**\n- 400: Invalid payload or qty \u2264 0\n- 404: Warehouse or variant not found\n- 409: Insufficient stock\n- 500: Database error\n\n**Status:** \u2705 **Fully Implemented**\n\n---\n\n### Frontend Implementation\n\n#### **Page: `/warehouse` (/apps/web/src/app/warehouse/page.tsx)** \u26a0\ufe0f\n\n**Component Type:** `'use client'` React page\n**Structure:**\n1. **Warehouses Tab** (active default)\n   - Calls: `apiGet<Warehouse[]>('/api/v1/warehouse/warehouses')`\n   - Displays: Cards with warehouse name, address, active status, location type badges\n   - Search: Text filter by warehouse name\n   - Actions: \"Picking List\" button (no handler), \"Tambah Gudang\" button (no handler)\n\n2. **Picking & Packing Tab** (placeholder)\n   - Static UI with empty state message\n   - No API calls, no functionality\n\n**Data Flow:**\n```\nuseEffect \u2192 loadData() \u2192 apiGet('/api/v1/warehouse/warehouses')\n  \u2192 res.success? setWarehouses(res.data) \u2192 render cards\n```\n\n**API Call Verification:**\n- **Endpoint Called:** `/api/v1/warehouse/warehouses` \u2705\n- **Response Type Expected:** `Warehouse[]` (id, name, address, isActive) \u2705\n- **Payload Handling:** Correct \u2014 uses `apiGet<Warehouse[]>()` \u2705\n- **Type Safety:** Warehouse interface defined (line 18-20) \u2705\n\n**Issue 1: Warehouse Stock Details Missing** \ud83d\udd34\n- No link/button to view stock for a specific warehouse\n- `getWarehouseStock()` endpoint exists but never called from frontend\n- Card shows only metadata, not inventory\n\n**Issue 2: Stock Transfer UI Missing** \ud83d\udd34\n- No form to create transfers\n- `/api/v1/warehouse/transfers` endpoint exists but never called\n- \"Picking List\" button has no click handler\n- \"Tambah Gudang\" button has no click handler\n\n**Issue 3: Picking & Packing Stub** \ud83d\udfe1\n- Tab exists but contains only static empty state\n- No functionality, no API calls\n- Acts as placeholder for future feature\n\n**Status:** \ud83d\udd34 **Partial \u2014 1/3 endpoints used (list only)**\n\n---\n\n## Layer 2: Contract/Interface Matching\n\n### Request/Response Schemas\n\n| Endpoint | Frontend Sends | Backend Expects | Status |\n|----------|---|---|---|\n| **GET /warehouses** | (none) | (none) | \u2705 Match |\n| **GET /warehouses/:id/stock** | (none) | (none) | \u2705 Match (but endpoint returns empty) |\n| **POST /transfers** | Not called | `{ variantId: UUID, fromWarehouse: string, toWarehouse: string, qty: int>0, reference?: string }` | \ud83d\udd34 Not implemented |\n\n**Cross-check Detail (POST /transfers):**\n```\nFrontend:        (no form exists)\nBackend expects: { variantId, fromWarehouse, toWarehouse, qty, reference? }\nStatus:          \ud83d\udd34 Mismatch \u2014 frontend form doesn't exist\n```\n\n---\n\n## Layer 3: Existence & Navigation\n\n| Item | Location | Status |\n|------|----------|--------|\n| **Backend Router** | `/apps/api/src/modules/warehouse/` | \u2705 Exists |\n| **Router Registration** | `/apps/api/src/index.ts:62` (`v1Router.use('/warehouse', warehouseRouter)`) | \u2705 Registered |\n| **Frontend Page** | `/apps/web/src/app/warehouse/page.tsx` | \u2705 Exists |\n| **Sidebar Nav Link** | `/apps/web/src/components/layout/Sidebar.tsx:51` | \u2705 Present |\n| **Nav Link Visibility** | Roles: `Owner`, `Admin`, `Warehouse Staff` | \u2705 Correct |\n| **Dashboard Quick Link** | `/apps/web/src/app/dashboard/page.tsx` | \u2705 Links to `/warehouse` for Warehouse Staff role |\n\n**Navigation Status:** \u2705 **Full** \u2014 all links present and role-restricted correctly\n\n---\n\n## Gap Analysis with Impact\n\n### Gap 1: `getWarehouseStock()` returns empty \ud83d\udd34\n\n**What's Missing:**\n- Query in `warehouse.service.ts:87\u201398` has empty WHERE clause\n- Cannot filter `inventory_movements` by warehouse ID\n\n**Root Cause:**\n- No `warehouse_id` or `location` field in database schema\n- `reference` field exists but implementation to parse warehouse ID from it is incomplete\n\n**Current Behavior:**\n```\nGET /api/v1/warehouse/warehouses/warehouse-gudang-a/stock\n\u2192 Returns [] (empty array, always)\n```\n\n**Impact:**\n- **Severity:** \ud83d\udd34 High (feature broken)\n- **User Experience:** Warehouse staff cannot view inventory per warehouse location\n- **Operational Impact:** Cannot determine stock distribution across warehouses\n\n**Workaround:** Stock aggregation would need:\n1. Add `warehouse_id` column to `inventory_movements` or `product_variants`\n2. Or parse `reference` field convention reliably (current: incomplete)\n\n---\n\n### Gap 2: No UI for stock transfer \ud83d\udd34\n\n**What's Missing:**\n- No form component to collect: variantId, fromWarehouse, toWarehouse, qty, reference\n- No button/modal to trigger transfer\n- No success/error feedback after POST\n\n**Current State:**\n- Backend endpoint ready (POST `/api/v1/warehouse/transfers`)\n- Frontend page exists but contains no transfer form\n\n**Impact:**\n- **Severity:** \ud83d\udd34 High (feature inaccessible)\n- **User Experience:** Cannot perform stock transfers via UI\n- **Operational Impact:** Stock transfers impossible unless done via API directly\n\n---\n\n### Gap 3: Picking & Packing tab is placeholder \ud83d\udfe1\n\n**What's Missing:**\n- No order picking list logic\n- No integration with POS/orders module\n- Static empty state only\n\n**Impact:**\n- **Severity:** \ud83d\udfe1 Medium (feature announced but non-functional)\n- **User Experience:** Confusing UI element with no function\n- **Operational Impact:** Warehouse staff see feature but cannot use it\n\n---\n\n### Gap 4: \"Tambah Gudang\" button has no handler \ud83d\udfe1\n\n**What's Missing:**\n- Button exists (line 53) but has no `onClick` handler\n- No form/modal to add warehouse\n\n**Impact:**\n- **Severity:** \ud83d\udfe1 Low (warehouses are static config anyway)\n- **User Experience:** Button appears clickable but does nothing\n- **Operational Impact:** Warehouses must be added via code/config, not UI\n\n---\n\n## Detailed Integration Status\n\n### Endpoint Coverage Matrix\n\n| # | Endpoint | Backend | Frontend | Integration | Notes |\n|---|----------|---------|----------|-------------|-------|\n| 1 | `GET /warehouses` | \u2705 Implemented | \u2705 Called | \u2705 Connected | List works correctly |\n| 2 | `GET /warehouses/:id/stock` | \ud83d\udfe1 Stub | \u274c Not called | \ud83d\udd34 Broken | Query returns empty; not wired to UI |\n| 3 | `POST /transfers` | \u2705 Implemented | \u274c Not called | \ud83d\udd34 Missing | Endpoint ready but no form UI |\n\n**Overall Coverage:** 1/3 endpoints used (33%)\n\n---\n\n## Database Schema Issues\n\n### Current State\n\n**inventory_movements** table:\n```sql\nid              UUID (primary key)\nvariant_id      UUID \u2192 product_variants\nmovement_type   ENUM ('SALE', 'PURCHASE', 'TRANSFER', 'RETURN', 'ADJUSTMENT')\nqty             INTEGER (signed: negative for SALE/TRANSFER, positive for others)\nreference       VARCHAR(255) \u2190 Can store warehouse info but no schema constraint\nreason          VARCHAR(500)\napproved_by     UUID\nperformed_by    UUID\ncreated_at      TIMESTAMP\n```\n\n**product_variants** table:\n```sql\nid              UUID\nsku             VARCHAR\nstock_qty       INTEGER (no warehouse split)\nlow_stock_threshold INTEGER\n... (other fields)\n```\n\n### Schema Gaps for Warehouse Operations\n\n1. **No warehouse location tracking**\n   - `product_variants.stock_qty` is global, not per-warehouse\n   - Transfers decrement global stock, cannot track warehouse-specific quantities\n\n2. **No dedicated warehouse_stock table**\n   - Would need: `{ warehouse_id, variant_id, qty, updated_at }`\n   - Would split global `stock_qty` by location\n\n3. **reference field is ad-hoc**\n   - No validation of format\n   - No foreign key to warehouses (which are static)\n   - Warehouse attribution is unreliable (current implementation: broken)\n\n---\n\n## Code Quality & Architecture\n\n### Strengths \u2705\n\n1. **Router registration proper** \u2014 warehouse router registered under `/api/v1/warehouse` prefix\n2. **Zod validation complete** \u2014 POST /transfers validates payload fully\n3. **RBAC in place** \u2014 all endpoints require role-based access\n4. **Transactional updates** \u2014 transfers use `db.transaction()` to ensure atomicity\n5. **Type safety** \u2014 frontend types match backend response structure (where implemented)\n6. **Navigation UI correct** \u2014 sidebar links respect roles\n\n### Weaknesses \ud83d\udd34\n\n1. **Incomplete service implementation** \u2014 `getWarehouseStock()` has empty WHERE clause (critical bug)\n2. **No warehouse entity model** \u2014 static config only, no table\n3. **Missing UI layer** \u2014 stock view and transfer form not built\n4. **Picking feature incomplete** \u2014 announced but non-functional\n5. **No tests** \u2014 no `warehouse.test.ts` or `warehouse.spec.ts` files exist\n6. **Placeholder handlers** \u2014 UI buttons without click handlers\n\n---\n\n## Summary Table: Implementation Completeness\n\n| Layer | Component | Status | Coverage |\n|-------|-----------|--------|----------|\n| **Backend** | Router | \u2705 Full | 3/3 endpoints defined |\n| **Backend** | Services | \u26a0\ufe0f Partial | 2/3 fully working (stock query is stub) |\n| **Backend** | Database | \ud83d\udd34 Gap | No warehouse-specific stock table; no location field |\n| **Frontend** | Page/Layout | \u2705 Full | `/warehouse` page exists, sidebar link present |\n| **Frontend** | API Calls | \ud83d\udd34 Partial | Only 1/3 endpoints called (list warehouses) |\n| **Frontend** | UI Components | \ud83d\udd34 Partial | Cards for list, no transfer form, picking is stub |\n| **Frontend** | Forms | \u274c None | No input forms for transfer or add warehouse |\n| **Integration** | End-to-end Flow | \ud83d\udd34 Broken | Stock view returns empty; transfers inaccessible |\n\n---\n\n## Recommendations (Priority Order)\n\n### P0 \u2014 Critical (Blocks Core Functionality)\n\n1. **Fix `getWarehouseStock()` query**\n   - Add WHERE clause to actually filter by warehouse\n   - Decision: either parse `reference` field reliably OR add `warehouse_id` column to schema\n\n2. **Add stock transfer form to UI**\n   - Create modal/form to collect: product (variant), from warehouse, to warehouse, qty\n   - Integrate with `POST /api/v1/warehouse/transfers`\n   - Add success/error feedback\n\n### P1 \u2014 High (Important Feature Gap)\n\n3. **Implement warehouse stock detail view**\n   - Add click handler to warehouse card to navigate to detail page\n   - Call `GET /api/v1/warehouse/warehouses/:id/stock` and display results in table\n   - Show per-variant stock quantities\n\n4. **Add \"Tambah Gudang\" functionality**\n   - If warehouses should be dynamic: create modal form + POST endpoint\n   - If static: remove button to reduce confusion\n\n### P2 \u2014 Medium (Polish)\n\n5. **Implement Picking & Packing feature**\n   - Connect to orders module (POS)\n   - Generate picking lists from pending orders\n   - Track fulfillment status\n\n6. **Add warehouse management tests**\n   - Unit tests for transfer logic\n   - Integration tests for end-to-end flow\n   - Test edge cases (insufficient stock, invalid warehouse, etc.)\n\n---\n\n## Conclusion\n\n**Status: \u26a0\ufe0f Partial Implementation**\n\nThe warehouse module has a **solid backend foundation** (3 endpoints with proper RBAC and validation) but **incomplete frontend integration and a critical bug** in the stock retrieval service.\n\n**What Works:**\n- \u2705 Warehouse list endpoint returns correct data\n- \u2705 Transfer endpoint validates payload and updates inventory correctly\n- \u2705 Navigation and role-based access control\n\n**What Doesn't Work:**\n- \ud83d\udd34 Stock detail endpoint returns empty (query is broken)\n- \ud83d\udd34 No UI to view warehouse stock\n- \ud83d\udd34 No UI to perform stock transfers\n- \ud83d\udfe1 Picking & Packing feature is not implemented\n\n**Estimated Completion:**\n- Fix stock query: 1\u20132 hours\n- Build transfer form UI: 2\u20133 hours\n- Build stock detail view: 2\u20133 hours\n- Total: ~6\u20138 hours to reach \u2705 **Full** status\n\n"}], "grading": null}, {"id": "eval-warehouse-without_skill", "prompt": "Audit apakah modul warehouse sudah terimplementasi dengan benar dari backend ke frontend di project K21", "eval_id": 0, "outputs": [{"name": "output.md", "type": "text", "content": "# Audit Warehouse Module - K21 Project\n## Backend \u2192 Frontend Implementation Coverage\n\n**Date:** 2026-03-22\n**Project:** K21 (Teladan27 Motor POS + Bengkel Management System)\n**Scope:** Warehouse module implementation from backend to frontend\n\n---\n\n## Executive Summary\n\nThe warehouse module has **PARTIAL implementation** with significant gaps between backend and frontend.\n\n| Category | Status | Details |\n|----------|--------|---------|\n| **Backend Endpoints** | \u2705 Implemented | 3 endpoints defined and registered |\n| **Backend Services** | \ud83d\udfe1 Partial | Stub implementation with hardcoded data |\n| **Frontend Page** | \u26a0\ufe0f Partial | Page exists but only 1/3 endpoints are called |\n| **Feature Coverage** | \ud83d\udd34 Missing | Stock details & transfer features not implemented |\n| **Overall Status** | \ud83d\udd34 **INCOMPLETE** | ~33% coverage |\n\n---\n\n## Step 1: Backend Endpoints Inventory\n\n### Warehouse Router (`apps/api/src/modules/warehouse/warehouse.router.ts`)\n\n**Total Routes: 3**\n\n| # | Method | Path | Handler | Required Roles | Status |\n|---|--------|------|---------|---|---------|\n| 1 | GET | `/warehouses` | `listWarehouses()` | Owner, Admin, Warehouse Staff | \u2705 Implemented |\n| 2 | GET | `/warehouses/:id/stock` | `getWarehouseStock(id)` | Owner, Admin, Warehouse Staff | \ud83d\udfe1 Stub |\n| 3 | POST | `/transfers` | `transferStock(params)` | Owner, Admin, Warehouse Staff | \ud83d\udfe1 Stub |\n\n**Registration:** \u2705 Properly registered in `apps/api/src/index.ts` (line 62: `v1Router.use('/warehouse', warehouseRouter)`)\n\n---\n\n## Step 2: Backend Service Implementation Analysis\n\n### File: `apps/api/src/modules/warehouse/warehouse.service.ts`\n\n#### Issue #1: Warehouse List is Hardcoded (Lines 40-59)\n```typescript\nconst WAREHOUSES: Warehouse[] = [\n  { id: 'warehouse-gudang-a', name: 'Gudang A', address: 'Jl. Gudang, Jakarta', isActive: true },\n  { id: 'warehouse-gudang-b', name: 'Gudang B', address: 'Jl. Gudang Alt, Jakarta', isActive: true },\n  { id: 'warehouse-display-toko', name: 'Display Toko', address: 'Jl. Toko Utama, Jakarta', isActive: true },\n]\n```\n**Impact:** No persistence layer; warehouses cannot be created/edited via API.\n\n#### Issue #2: getWarehouseStock() is Broken (Lines 75-133)\n**Critical Finding:** The function contains incomplete query logic:\n- Lines 87-98: Empty WHERE clause `where(and())` \u2014 no actual filtering\n- Lines 115: `where(and())` \u2014 again, empty filter\n- Lines 130: Returns placeholder product names: `'Product for SKU ${v.sku}'` \u2014 should join with products table\n\n**Root Cause:** The schema lacks a `warehouse_location` field in `inventory_movements`. The service tries to work around this by matching references starting with warehouse ID, but the query is never executed.\n\n**Code Analysis:**\n```typescript\n// Line 87-98: movements query with empty WHERE\nconst movements = await db\n  .select({ variantId: inventoryMovements.variantId, qty: inventoryMovements.qty })\n  .from(inventoryMovements)\n  .where(and())  // \u274c EMPTY \u2014 no filtering\n\n// Line 107-115: variants query with empty WHERE\nconst variants = await db.select(...)\n  .from(productVariants)\n  .where(and())  // \u274c EMPTY \u2014 matches ALL variants, not those in warehouse\n```\n\n**Expected Behavior:** Should filter to only variants present in the requested warehouse.\n**Actual Behavior:** Returns all product variants with generic stock values (placeholder implementation).\n\n#### Issue #3: transferStock() References Missing Implementation (Lines 175-185)\n- Calls `recordMovement()` with `movementType: 'TRANSFER'`\n- Generates transfer reference: `transfer:{fromWarehouse}\u2192{toWarehouse}`\n- **Problem:** No warehouse location tracking in inventory_movements table\n- No way to audit warehouse-specific stock levels after transfer\n\n**Summary:** \u2705 Basic logic exists, but warehouse tracking is not wired to the database schema.\n\n---\n\n## Step 3: Frontend Page Analysis\n\n### File: `apps/web/src/app/warehouse/page.tsx`\n\n#### API Call Coverage: **1/3 endpoints (33%)**\n\n| Endpoint | Frontend Call | Status |\n|----------|---------------|--------|\n| `GET /warehouses` | \u2705 Line 38 | **CALLED** |\n| `GET /warehouses/:id/stock` | \u274c Never called | **MISSING** |\n| `POST /transfers` | \u274c Never called | **MISSING** |\n\n#### Frontend Implementation Details\n\n**What is implemented:**\n- \u2705 List warehouses with name, address, active status\n- \u2705 Search/filter warehouses by name\n- \u2705 Tab UI for \"Gudang & Lokasi\" and \"Picking & Packing\"\n\n**What is NOT implemented (stub/placeholder):**\n- \ud83d\udd34 \"Tambah Gudang\" button: No click handler or modal\n- \ud83d\udd34 \"Picking List\" button: No click handler\n- \ud83d\udd34 Warehouse stock details: No endpoint call for `/warehouses/:id/stock`\n- \ud83d\udd34 Stock transfer UI: No modal/form for POST `/transfers`\n- \ud83d\udd34 \"Picking & Packing\" tab: Only shows placeholder message\n\n**Code Evidence:**\n\nLines 51-53 (buttons with no handlers):\n```typescript\n<Button variant=\"secondary\" icon={<ClipboardList size={15} />}>Picking List</Button>\n<Button icon={<Plus size={15} />}>Tambah Gudang</Button>\n```\n**Issue:** No `onClick` props \u2014 buttons are non-functional.\n\nLines 99-122 (warehouse cards):\n```typescript\n<Card key={w.id} className=\"...cursor-pointer\">\n  {/* Displays name, address, active status */}\n  {/* Lines 116-120 show badge placeholders for ZONE/RACK/BIN */}\n  {/* But no click handler to load stock or open transfer modal */}\n</Card>\n```\n**Issue:** Cards are clickable visually but do nothing on click.\n\nLines 128-136 (picking tab):\n```typescript\n{activeTab === 'picking' && (\n  <Card className=\"...\">\n    <PackageCheck size={32} className=\"text-ink-faint\" />\n    <p>Picking list akan muncul di sini...</p>\n  </Card>\n)}\n```\n**Issue:** Pure placeholder \u2014 no data loading or functionality.\n\n#### Frontend Type Definitions\n\nLines 16-20:\n```typescript\ninterface Warehouse {\n  id: string; name: string; address: string | null; isActive: boolean\n}\n```\n**Match Status:** \u2705 Matches backend return type exactly.\n\n---\n\n## Step 4: Integration Matrix\n\n### Coverage Summary\n\n| # | Component | Status | Coverage | Details |\n|---|-----------|--------|----------|---------|\n| **Backend** | Warehouse Router | \u2705 | 3/3 routes | All defined, registered |\n| | Warehouse Service | \ud83d\udfe1 | 1/3 functions | `listWarehouses()` works; others stub/broken |\n| | Database Schema | \ud83d\udd34 | 0/1 warehouse tables | No `warehouses` table; no location tracking in movements |\n| **Frontend** | Warehouse Page | \u26a0\ufe0f | 1/3 endpoints called | Only `GET /warehouses` called |\n| | Components | \ud83d\udd34 | 0/2 features | No modal/form for add warehouse or transfer |\n| | User Interactions | \ud83d\udd34 | 0/4 buttons | All buttons non-functional |\n\n### Endpoint Call Matrix\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Backend Endpoint                                         \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 GET /api/v1/warehouse/warehouses                        \u2502\n\u2502   \u2192 Frontend Call: YES (warehouse.page.tsx:38)          \u2502\n\u2502   \u2192 Status: \u2705 WORKING                                  \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 GET /api/v1/warehouse/warehouses/:id/stock              \u2502\n\u2502   \u2192 Frontend Call: NO                                   \u2502\n\u2502   \u2192 Status: \ud83d\udd34 NOT IMPLEMENTED                          \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 POST /api/v1/warehouse/transfers                        \u2502\n\u2502   \u2192 Frontend Call: NO                                   \u2502\n\u2502   \u2192 Status: \ud83d\udd34 NOT IMPLEMENTED                          \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n---\n\n## Step 5: Detailed Gap Analysis\n\n### Gap #1: Warehouse Stock Details Endpoint\n**Severity:** \ud83d\udd34 **CRITICAL**\n\n| Aspect | Detail |\n|--------|--------|\n| **Endpoint** | `GET /warehouses/:id/stock` |\n| **Backend** | Defined in router, service implementation is broken (empty WHERE clauses) |\n| **Frontend** | No UI to call this endpoint; no modal/detail view |\n| **Impact** | Users cannot see what products are in each warehouse |\n| **Root Cause** | Missing schema: no `warehouse_location` field in `inventory_movements` table |\n| **Fix Required** | (1) Add warehouse location tracking to DB schema, (2) Update service query, (3) Add detail modal to frontend |\n\n**Backend Query Issues (warehouse.service.ts lines 87-98):**\n```typescript\n// Current: Empty WHERE clause\nconst movements = await db.select(...).from(inventoryMovements).where(and())\n\n// Should be: Filter by warehouse location from reference\nconst movements = await db.select(...).from(inventoryMovements)\n  .where(sql`reference LIKE ${`${warehouseId}:%`}`)\n```\n\n### Gap #2: Stock Transfer UI\n**Severity:** \ud83d\udd34 **CRITICAL**\n\n| Aspect | Detail |\n|--------|--------|\n| **Endpoint** | `POST /transfers` |\n| **Backend** | Defined and functional, records TRANSFER movement |\n| **Frontend** | No UI/modal to submit transfer request |\n| **Impact** | Cannot perform inter-warehouse stock transfers |\n| **User Story** | \"As Warehouse Staff, I want to move stock from Gudang A to Gudang B\" |\n| **Fix Required** | Create transfer modal with: from-warehouse select, to-warehouse select, variant search, qty input |\n\n**Expected Request Body (from router validation, line 11-17):**\n```typescript\n{\n  variantId: string (UUID),\n  fromWarehouse: string (e.g., \"warehouse-gudang-a\"),\n  toWarehouse: string (e.g., \"warehouse-gudang-b\"),\n  qty: number (positive integer),\n  reference?: string (optional)\n}\n```\n\n### Gap #3: Warehouse CRUD Operations\n**Severity:** \ud83d\udd34 **CRITICAL**\n\n| Aspect | Detail |\n|--------|--------|\n| **Operations** | Create, Update, Delete warehouse |\n| **Backend** | No endpoints defined; warehouses hardcoded in service |\n| **Frontend** | \"Tambah Gudang\" button has no handler |\n| **Database** | No `warehouses` table in schema |\n| **Impact** | Cannot add/modify warehouse locations; stuck with 3 hardcoded warehouses |\n| **Fix Required** | (1) Create `warehouses` table, (2) Add CRUD endpoints, (3) Add forms/modals in frontend |\n\n### Gap #4: Picking & Packing Feature\n**Severity:** \ud83d\udfe1 **MEDIUM** (future feature)\n\n| Aspect | Detail |\n|--------|--------|\n| **Status** | Marked as \"future\" in UI (placeholder message) |\n| **Backend** | No endpoints defined |\n| **Frontend** | Tab exists, shows placeholder only |\n| **Impact** | Cosmetic; doesn't block warehouse basic operations |\n\n---\n\n## Step 6: Schema & Data Model Issues\n\n### Current Schema State\n\n| Table | Issue | Impact |\n|-------|-------|--------|\n| `inventory_movements` | No `warehouse_location` field | Cannot track which warehouse owns stock |\n| `product_variants` | Single `stock_qty` column | All warehouses share same stock pool (incorrect) |\n| `warehouses` | Table doesn't exist | Warehouses are hardcoded in service (not persistent) |\n\n**Current Architecture:** GLOBAL STOCK MODEL (all warehouses share one stock qty)\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Product Variant                         \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 id: UUID                                \u2502\n\u2502 sku: VARCHAR                            \u2502\n\u2502 stock_qty: INTEGER (GLOBAL, NOT PER-WH) \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n**Required Architecture:** PER-WAREHOUSE STOCK MODEL\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510     \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Warehouse                \u2502     \u2502 Warehouse Stock          \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524     \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 id: UUID                 \u2502     \u2502 id: UUID                 \u2502\n\u2502 name: VARCHAR            \u2502\u2500\u2500\u2500\u2500\u2192\u2502 warehouse_id: FK         \u2502\n\u2502 address: VARCHAR         \u2502     \u2502 variant_id: FK           \u2502\n\u2502 is_active: BOOLEAN       \u2502     \u2502 qty: INTEGER (per-wh)    \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n---\n\n## Step 7: Code Quality & Implementation Issues\n\n### Issue #1: Hardcoded Warehouse List\n**File:** `warehouse.service.ts` lines 40-59\n**Severity:** \ud83d\udd34 CRITICAL\n\nWarehouses are immutable constants:\n- Cannot be created/updated/deleted via API\n- Warehouse IDs are opaque strings (`warehouse-gudang-a`)\n- No way to add new warehouses without code changes\n\n### Issue #2: Incomplete Query Logic\n**File:** `warehouse.service.ts` lines 87-98, 107-115\n**Severity:** \ud83d\udd34 CRITICAL\n\nEmpty WHERE clauses in database queries:\n```typescript\n.where(and())  // Matches everything, filters nothing\n```\n\nThis is a query construction error that would need debugging to catch.\n\n### Issue #3: Missing Product Name Join\n**File:** `warehouse.service.ts` line 130\n**Severity:** \ud83d\udfe1 MEDIUM\n\nPlaceholder instead of actual product name:\n```typescript\nproductName: `Product for SKU ${v.sku}`, // Should join with products table\n```\n\n### Issue #4: Non-Functional UI Buttons\n**File:** `warehouse/page.tsx` lines 51-53\n**Severity:** \ud83d\udfe1 MEDIUM\n\n```typescript\n<Button icon={<Plus size={15} />}>Tambah Gudang</Button>\n// \u2191 No onClick handler\n```\n\nUsers may attempt to click these buttons, leading to confusion.\n\n### Issue #5: No Modal/Form Components\n**Severity:** \ud83d\udd34 CRITICAL\n\nMissing components:\n- `WarehouseForm` (for add/edit warehouse)\n- `TransferModal` (for stock transfers)\n- `WarehouseStockModal` (for viewing warehouse inventory detail)\n\nThese should follow existing patterns in the codebase:\n- `components/forms/UserForm.tsx` (for user CRUD)\n- `components/pos/PaymentModal.tsx` (for modals)\n\n---\n\n## Step 8: Navigation & Integration\n\n### Sidebar Registration\n**File:** `apps/web/src/components/layout/Sidebar.tsx` line 51\n**Status:** \u2705 Properly registered\n\n```typescript\n{ href: '/warehouse', label: 'Warehouse', icon: Warehouse, roles: ['Owner', 'Admin', 'Warehouse Staff'] }\n```\n\n### Dashboard Link\n**File:** `apps/web/src/app/dashboard/page.tsx` line 366\n**Status:** \u2705 Dashboard has \"Warehouse\" button that routes to `/warehouse`\n\n---\n\n## Compliance with Project Standards\n\n### API Naming & Pattern\n| Standard | Required | Implementation | Status |\n|----------|----------|---|--------|\n| Route prefix | `/api/v1/` | \u2705 Used | \u2705 PASS |\n| Authentication | `authenticate` middleware | \u2705 Applied | \u2705 PASS |\n| Role-based access | `requireRole(...)` | \u2705 Applied | \u2705 PASS |\n| Response format | `{ success, data, error }` | \u2705 Used | \u2705 PASS |\n| Zod validation | Request body schema | \u2705 Used for transfers | \u2705 PASS |\n\n### Frontend Patterns\n| Pattern | Required | Implementation | Status |\n|---------|----------|---|--------|\n| `useClient` directive | Required in client components | \u2705 Line 1 | \u2705 PASS |\n| `DashboardLayout` wrapper | Required for pages | \u2705 Used | \u2705 PASS |\n| API call method | `apiGet`/`apiPost` | \u2705 `apiGet` used | \u2705 PASS |\n| Locale (Indonesian) | All UI text in `id-ID` | \u2705 Used | \u2705 PASS |\n| Component re-use | Use UI library components | \u2705 Card, Button, Badge, Input | \u2705 PASS |\n\n---\n\n## Recommendations by Priority\n\n### Priority 1: Critical Fixes (Blocking)\n\n#### 1a. Add Warehouse Persistence\n**Why:** Warehouses are currently hardcoded; cannot be managed via UI\n**What:**\n1. Create `warehouses` table with: id, name, address, is_active, created_at, updated_at\n2. Add CRUD endpoints: GET (list), GET/:id, POST, PATCH/:id, DELETE/:id\n3. Replace hardcoded array with database queries\n\n**Effort:** ~2-3 hours\n\n#### 1b. Fix getWarehouseStock() Query\n**Why:** Endpoint exists but returns wrong data (all variants, not warehouse-specific)\n**What:**\n1. Add `warehouse_location` field to `inventory_movements` table OR\n2. Create separate `warehouse_stock` table to track qty per (warehouse, variant) pair\n3. Rewrite service function to query correctly\n\n**Effort:** ~2-3 hours\n\n#### 1c. Add Stock Transfer UI\n**Why:** Backend endpoint exists but has no UI\n**What:**\n1. Create `TransferModal` component with form\n2. Wire \"transfer\" button/action in warehouse detail or inventory views\n3. Handle success/error responses\n\n**Effort:** ~2 hours\n\n### Priority 2: Important Features (High-Value)\n\n#### 2a. Add Warehouse Detail/Stock View\n**Why:** Users can list warehouses but cannot see what's in each\n**What:**\n1. Create warehouse detail view/modal showing product variants and quantities\n2. Call `GET /warehouses/:id/stock` when modal opens\n3. Display products in table with columns: SKU, Product Name, Qty\n\n**Effort:** ~1.5 hours\n\n#### 2b. Add Warehouse Create/Edit\n**Why:** \"Tambah Gudang\" button is non-functional\n**What:**\n1. Create `WarehouseForm` modal component\n2. Handle success/error\n3. Refresh warehouse list after create/edit\n\n**Effort:** ~2 hours\n\n### Priority 3: Nice-to-Have (Medium Value)\n\n#### 3a. Implement Picking & Packing Tab\n**Why:** Helps with order fulfillment workflow\n**What:**\n1. Design picking list UI (based on pending orders)\n2. Create backend endpoint to generate picking lists\n3. Add mark-as-picked functionality\n\n**Effort:** ~3-4 hours\n\n#### 3b. Warehouse Location Hierarchy (ZONE/RACK/BIN)\n**Why:** UI already shows these badges; should support full hierarchy\n**What:**\n1. Create location hierarchy tables: zones, racks, bins\n2. Track inventory by bin location (very granular)\n3. Add location picker to stock transfer\n\n**Effort:** ~4-5 hours (future feature)\n\n---\n\n## Detailed Findings Summary\n\n### What's Working \u2705\n- Backend router properly registered in main app\n- Endpoint for listing warehouses is implemented and called\n- Frontend page has proper UI structure and styling\n- Role-based access control correctly applied (Owner/Admin/Warehouse Staff)\n- Navigation sidebar has warehouse link\n\n### What's Broken \ud83d\udd34\n- `getWarehouseStock()` service has empty WHERE clauses and returns wrong data\n- `transferStock()` has no UI to call it\n- Warehouses are hardcoded constants, not stored in database\n- \"Tambah Gudang\" and \"Picking List\" buttons have no handlers\n- No modals/forms for warehouse CRUD or stock transfers\n- Warehouse stock is not tracked per-warehouse (no schema support)\n\n### What's Incomplete \ud83d\udfe1\n- Picking & packing feature (placeholder tab only)\n- Product name not joined in warehouse stock response\n- Warehouse location hierarchy (ZONE/RACK/BIN) shown in UI but not backed by data\n\n---\n\n## Testing Notes\n\n**To verify broken functionality:**\n\n1. **Call GET /warehouses** \u2192 \u2705 Should return 3 hardcoded warehouses\n2. **Call GET /warehouses/warehouse-gudang-a/stock** \u2192 \ud83d\udd34 Will return all variants (not filtered by warehouse)\n3. **Call POST /transfers** \u2192 \u2705 API works, but no UI to test\n4. **Click \"Tambah Gudang\" button** \u2192 \ud83d\udd34 Nothing happens\n5. **Click \"Picking List\" button** \u2192 \ud83d\udd34 Nothing happens\n\n---\n\n## Conclusion\n\n**Overall Implementation Status: \ud83d\udd34 INCOMPLETE (33% coverage)**\n\nThe warehouse module has a reasonable foundation:\n- Backend router and basic endpoints are defined\n- Frontend page structure exists\n- Navigation is wired\n\nHowever, it is **not production-ready** due to:\n1. Critical data model gaps (no persistent warehouses, no per-warehouse stock tracking)\n2. Incomplete frontend implementation (2/3 endpoints not called, critical buttons non-functional)\n3. Stub implementations in backend service (empty queries, hardcoded data)\n\n**Time to Production:** ~8-12 hours of focused development work to resolve all Priority 1 & 2 issues.\n\n**Recommendation:** Address Priority 1 items before the warehouse module can be used in production.\n"}], "grading": null}], "previous_feedback": {}, "previous_outputs": {}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

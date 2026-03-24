@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useShiftStore, type ActiveShift } from '@/lib/store/shift.store'
 import { authFetch } from '@/lib/auth-fetch'
 
@@ -11,10 +11,16 @@ interface Props {
 
 interface ReconciliationData {
   openingFloat: number
-  salesByMethod: { CASH: number; TRANSFER: number; QRIS: number }
+  salesByCash: number
+  salesByTransfer: number
+  salesByQris: number
+  cashIn: number
+  cashOut: number
   expectedCash: number
   actualCash: number
   discrepancy: number
+  // legacy compat
+  salesByMethod?: { CASH: number; TRANSFER: number; QRIS: number }
 }
 
 function formatRp(n: number): string {
@@ -33,14 +39,46 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
 
   // Open shift form state
   const [openingFloat, setOpeningFloat] = useState<number>(0)
+  const [openingFloatDisplay, setOpeningFloatDisplay] = useState<string>('')
   const [isOpeningShift, setIsOpeningShift] = useState(false)
   const [openError, setOpenError] = useState<string | null>(null)
 
   // Close shift form state
   const [closingCash, setClosingCash] = useState<number>(0)
+  const [closingCashDisplay, setClosingCashDisplay] = useState<string>('')
   const [isClosingShift, setIsClosingShift] = useState(false)
   const [closeError, setCloseError] = useState<string | null>(null)
   const [reconciliation, setReconciliation] = useState<ReconciliationData | null>(null)
+
+  // Live expected cash (fetched when close form opens)
+  const [liveRecon, setLiveRecon] = useState<ReconciliationData | null>(null)
+  const [loadingRecon, setLoadingRecon] = useState(false)
+
+  // Fetch live reconciliation when drawer opens and shift is active
+  useEffect(() => {
+    if (!isOpen || !activeShift || reconciliation) return
+    setLoadingRecon(true)
+    authFetch(`/api/v1/shifts/${activeShift.id}/reconciliation`)
+      .then(r => r.json())
+      .then((body: { success: boolean; data?: ReconciliationData }) => {
+        if (body.success && body.data) setLiveRecon(body.data)
+      })
+      .catch(() => {})
+      .finally(() => setLoadingRecon(false))
+  }, [isOpen, activeShift, reconciliation])
+
+  function handleFloatInput(raw: string, setter: (n: number) => void, displaySetter: (s: string) => void) {
+    // Strip semua non-digit
+    const digits = raw.replace(/\D/g, '')
+    if (digits === '') {
+      setter(0)
+      displaySetter('')
+      return
+    }
+    const num = parseInt(digits, 10)
+    setter(num)
+    displaySetter(num.toLocaleString('id-ID'))
+  }
 
   async function handleOpenShift() {
     setIsOpeningShift(true)
@@ -106,7 +144,16 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
         setCloseError(body.error ?? `HTTP ${res.status}`)
         return
       }
-      setReconciliation(body.data!)
+      const raw = body.data!
+      // Normalize: backend may return salesByMethod or salesByCash/Transfer/Qris
+      setReconciliation({
+        ...raw,
+        salesByCash: raw.salesByMethod?.CASH ?? (raw as any).salesByCash ?? 0,
+        salesByTransfer: raw.salesByMethod?.TRANSFER ?? (raw as any).salesByTransfer ?? 0,
+        salesByQris: raw.salesByMethod?.QRIS ?? (raw as any).salesByQris ?? 0,
+        cashIn: (raw as any).cashIn ?? 0,
+        cashOut: (raw as any).cashOut ?? 0,
+      })
     } catch {
       setCloseError('Gagal menghubungi server')
     } finally {
@@ -149,12 +196,12 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
                   Kas Awal (Rp)
                 </label>
                 <input
-                  type="number"
-                  min={0}
-                  value={openingFloat}
-                  onChange={e => setOpeningFloat(parseInt(e.target.value, 10) || 0)}
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-                  placeholder="mis: 500000"
+                  type="text"
+                  inputMode="numeric"
+                  value={openingFloatDisplay}
+                  onChange={e => handleFloatInput(e.target.value, setOpeningFloat, setOpeningFloatDisplay)}
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none"
+                  placeholder="mis: 500.000"
                 />
               </div>
 
@@ -191,18 +238,93 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
                 </div>
               </div>
 
+              {/* ─── Live expected cash panel ─── */}
+              {loadingRecon && (
+                <div className="flex items-center gap-2 text-xs text-ink-muted py-1">
+                  <div className="w-3.5 h-3.5 border-2 border-brand border-t-transparent rounded-full animate-spin shrink-0" />
+                  Menghitung posisi kas...
+                </div>
+              )}
+              {liveRecon && !loadingRecon && (
+                <div className="bg-surface rounded-lg p-3 space-y-2 text-sm border border-border">
+                  <p className="text-xs font-semibold text-ink-secondary uppercase tracking-wide">Posisi Kas Saat Ini</p>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-ink-muted">
+                      <span>Kas awal</span>
+                      <span>{formatRp(liveRecon.openingFloat)}</span>
+                    </div>
+                    <div className="flex justify-between text-ink-muted">
+                      <span>+ Penjualan tunai</span>
+                      <span className="text-success">+{formatRp(liveRecon.salesByCash)}</span>
+                    </div>
+                    {liveRecon.cashIn > 0 && (
+                      <div className="flex justify-between text-ink-muted">
+                        <span>+ Kas masuk</span>
+                        <span className="text-success">+{formatRp(liveRecon.cashIn)}</span>
+                      </div>
+                    )}
+                    {liveRecon.cashOut > 0 && (
+                      <div className="flex justify-between text-ink-muted">
+                        <span>− Kas keluar</span>
+                        <span className="text-danger">−{formatRp(liveRecon.cashOut)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="border-t border-border pt-2 flex justify-between font-semibold text-ink">
+                    <span>Kas yang seharusnya ada</span>
+                    <span className="text-brand font-mono">{formatRp(liveRecon.expectedCash)}</span>
+                  </div>
+
+                  {liveRecon.salesByTransfer > 0 || liveRecon.salesByQris > 0 ? (
+                    <div className="pt-1 space-y-1 border-t border-border">
+                      <p className="text-[11px] text-ink-muted">Non-tunai (tidak masuk laci):</p>
+                      {liveRecon.salesByTransfer > 0 && (
+                        <div className="flex justify-between text-ink-muted text-[12px]">
+                          <span>Transfer</span>
+                          <span>{formatRp(liveRecon.salesByTransfer)}</span>
+                        </div>
+                      )}
+                      {liveRecon.salesByQris > 0 && (
+                        <div className="flex justify-between text-ink-muted text-[12px]">
+                          <span>QRIS</span>
+                          <span>{formatRp(liveRecon.salesByQris)}</span>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-ink-secondary mb-1">
-                  Kas Aktual (Rp)
+                  Kas Aktual di Laci (Rp)
                 </label>
                 <input
-                  type="number"
-                  min={0}
-                  value={closingCash}
-                  onChange={e => setClosingCash(parseInt(e.target.value, 10) || 0)}
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-                  placeholder="Jumlah kas di laci"
+                  type="text"
+                  inputMode="numeric"
+                  value={closingCashDisplay}
+                  onChange={e => handleFloatInput(e.target.value, setClosingCash, setClosingCashDisplay)}
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none"
+                  placeholder="mis: 500.000"
                 />
+                {/* Selisih preview real-time */}
+                {liveRecon && closingCashDisplay !== '' && (() => {
+                  const diff = closingCash - liveRecon.expectedCash
+                  const isExact = diff === 0
+                  const isOver = diff > 0
+                  return (
+                    <div className={`mt-2 flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold ${
+                      isExact ? 'bg-success/10 text-success' : isOver ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+                    }`}>
+                      <span>{isExact ? 'Pas ✓' : isOver ? 'Kelebihan' : 'Kekurangan'}</span>
+                      <span className="font-mono">
+                        {isExact ? 'Rp 0' : `${isOver ? '+' : ''}${formatRp(diff)}`}
+                      </span>
+                    </div>
+                  )
+                })()}
               </div>
 
               {closeError && (
@@ -233,18 +355,36 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
                 <div className="border-t pt-2 space-y-1">
                   <p className="text-xs font-medium text-ink-muted uppercase tracking-wide">Penjualan</p>
                   <div className="flex justify-between">
-                    <span className="text-ink-muted">TUNAI</span>
-                    <span>{formatRp(reconciliation.salesByMethod?.CASH ?? 0)}</span>
+                    <span className="text-ink-muted">Tunai</span>
+                    <span>{formatRp(reconciliation.salesByCash ?? reconciliation.salesByMethod?.CASH ?? 0)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-ink-muted">TRANSFER</span>
-                    <span>{formatRp(reconciliation.salesByMethod?.TRANSFER ?? 0)}</span>
+                    <span className="text-ink-muted">Transfer</span>
+                    <span>{formatRp(reconciliation.salesByTransfer ?? reconciliation.salesByMethod?.TRANSFER ?? 0)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-ink-muted">QRIS</span>
-                    <span>{formatRp(reconciliation.salesByMethod?.QRIS ?? 0)}</span>
+                    <span>{formatRp(reconciliation.salesByQris ?? reconciliation.salesByMethod?.QRIS ?? 0)}</span>
                   </div>
                 </div>
+
+                {((reconciliation.cashIn ?? 0) > 0 || (reconciliation.cashOut ?? 0) > 0) && (
+                  <div className="border-t pt-2 space-y-1">
+                    <p className="text-xs font-medium text-ink-muted uppercase tracking-wide">Kas Masuk / Keluar</p>
+                    {(reconciliation.cashIn ?? 0) > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-ink-muted">Kas Masuk</span>
+                        <span className="text-success">+{formatRp(reconciliation.cashIn)}</span>
+                      </div>
+                    )}
+                    {(reconciliation.cashOut ?? 0) > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-ink-muted">Kas Keluar</span>
+                        <span className="text-red-400">-{formatRp(reconciliation.cashOut)}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="border-t pt-2 space-y-1">
                   <div className="flex justify-between">
@@ -262,6 +402,30 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
                     </span>
                   </div>
                 </div>
+
+                {/* Warning banner kalau ada selisih */}
+                {reconciliation.discrepancy !== 0 && (
+                  <div className={`rounded-lg px-3 py-2.5 text-sm flex gap-2 items-start ${
+                    reconciliation.discrepancy < 0
+                      ? 'bg-danger/10 text-danger'
+                      : 'bg-warning/10 text-warning'
+                  }`}>
+                    <span className="text-base leading-none mt-0.5">⚠️</span>
+                    <div>
+                      <p className="font-semibold text-[13px]">
+                        {reconciliation.discrepancy < 0 ? 'Kas Kurang' : 'Kas Lebih'}
+                      </p>
+                      <p className="text-[12px] mt-0.5 opacity-90">
+                        {reconciliation.discrepancy < 0
+                          ? 'Kemungkinan ada pemakaian kas yang tidak tercatat. Selisih ini sudah dicatat otomatis sebagai kas keluar.'
+                          : 'Kemungkinan ada pemasukan yang tidak tercatat atau kembalian kurang diberikan. Selisih ini sudah dicatat otomatis sebagai kas masuk.'}
+                      </p>
+                      <p className="text-[11px] mt-1 font-medium opacity-75">
+                        Cek detail di Riwayat Shift → Kas Masuk/Keluar
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button

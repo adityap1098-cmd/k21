@@ -1,7 +1,8 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { useCartStore, computeCartTotals } from '@/lib/store/cart.store'
 import { useShiftStore } from '@/lib/store/shift.store'
+import { useAuth } from '@/lib/auth'
 import { offlineDB } from '@/lib/db/offline-db'
 import { authFetch } from '@/lib/auth-fetch'
 import type { ReceiptData } from '@/lib/receipt/encoder'
@@ -23,20 +24,96 @@ interface Props {
 
 const QUICK_AMOUNTS = [50_000, 100_000, 200_000]
 
+const METHOD_OPTIONS: { value: PaymentMethod; label: string }[] = [
+  { value: 'CASH', label: 'TUNAI' },
+  { value: 'TRANSFER', label: 'TRANSFER' },
+  { value: 'QRIS', label: 'QRIS' },
+]
+
+function MethodDropdown({ value, onChange }: { value: PaymentMethod; onChange: (v: PaymentMethod) => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const selected = METHOD_OPTIONS.find(o => o.value === value)
+
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open])
+
+  return (
+    <div ref={ref} className="relative flex-1">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-3 py-2 border border-border rounded-lg bg-surface-raised text-sm text-ink cursor-pointer transition-colors hover:bg-surface-subtle"
+      >
+        <span className="font-medium">{selected?.label}</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-ink-muted flex-shrink-0" aria-hidden="true">
+          <path d="M3 5L6 8L9 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 right-0 mt-1 z-50 rounded-lg border border-border bg-surface-raised shadow-[0_4px_16px_rgba(0,0,0,0.2)] py-1">
+          {METHOD_OPTIONS.map(o => (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => { onChange(o.value); setOpen(false) }}
+              className={`w-full text-left px-3 py-2 text-sm transition-colors outline-none ${
+                o.value === value
+                  ? 'bg-brand-muted text-brand font-medium'
+                  : 'text-ink hover:bg-surface-subtle'
+              }`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function formatRp(n: number): string {
   return `Rp ${n.toLocaleString('id-ID')}`
+}
+
+function formatCurrencyInput(value: string): string {
+  const digits = value.replace(/\D/g, '')
+  if (!digits) return ''
+  return Number(digits).toLocaleString('id-ID')
+}
+
+function parseCurrencyInput(formatted: string): number {
+  return Number(formatted.replace(/\./g, '')) || 0
 }
 
 export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
   const { items, transactionDiscount, clearCart } = useCartStore()
   const { activeShift } = useShiftStore()
+  const { user } = useAuth()
 
+  // Store amounts as formatted strings for display, parse to numbers for logic
   const [legs, setLegs] = useState<PaymentLeg[]>([
     { method: 'CASH', amount: total, reference: '' },
   ])
-  const [cashTendered, setCashTendered] = useState<number>(total)
+  const [legAmountStrs, setLegAmountStrs] = useState<string[]>([formatCurrencyInput(String(total))])
+  const [cashTenderedStr, setCashTenderedStr] = useState<string>(formatCurrencyInput(String(total)))
+  const cashTendered = parseCurrencyInput(cashTenderedStr)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setLegs([{ method: 'CASH', amount: total, reference: '' }])
+      setLegAmountStrs([formatCurrencyInput(String(total))])
+      setCashTenderedStr(formatCurrencyInput(String(total)))
+    }
+  }, [isOpen, total])
 
   const legsTotal = useMemo(() => legs.reduce((sum, l) => sum + l.amount, 0), [legs])
 
@@ -51,21 +128,31 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
     setLegs(prev => prev.map((l, i) => (i === index ? { ...l, ...patch } : l)))
   }
 
+  function updateLegAmount(index: number, rawValue: string) {
+    const formatted = formatCurrencyInput(rawValue)
+    const numeric = parseCurrencyInput(formatted)
+    setLegAmountStrs(prev => prev.map((s, i) => (i === index ? formatted : s)))
+    updateLeg(index, { amount: numeric })
+  }
+
   function removeLeg(index: number) {
     setLegs(prev => prev.filter((_, i) => i !== index))
+    setLegAmountStrs(prev => prev.filter((_, i) => i !== index))
   }
 
   function addLeg() {
     if (legs.length >= 3) return
     const remaining = Math.max(0, total - legsTotal)
     setLegs(prev => [...prev, { method: 'CASH', amount: remaining, reference: '' }])
+    setLegAmountStrs(prev => [...prev, formatCurrencyInput(String(remaining))])
   }
 
   function handleQuickAmount(amount: number) {
-    setCashTendered(amount)
+    setCashTenderedStr(formatCurrencyInput(String(amount)))
     if (cashLegIndex >= 0) {
       const newCashAmount = Math.min(amount, cashOwed)
       updateLeg(cashLegIndex, { amount: newCashAmount })
+      setLegAmountStrs(prev => prev.map((s, i) => (i === cashLegIndex ? formatCurrencyInput(String(newCashAmount)) : s)))
     }
   }
 
@@ -87,6 +174,7 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
         const lineTotal = lineBase - discountAmount
         return {
           variantId: item.variantId,
+          name: item.name, // carry name for receipt — no index mismatch risk
           qty: item.qty,
           unitPrice: item.unitPrice,
           discountAmount,
@@ -96,7 +184,7 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
 
       const payments = legs.map(l => ({
         method: l.method,
-        amount: l.amount,
+        amount: Math.round(l.amount),
         reference: l.reference || undefined,
       }))
 
@@ -121,13 +209,15 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
       })
 
       const receiptData: ReceiptData = {
-        storeName: 'K21 Store',
+        storeName: 'Teladan27 Motor',
+        storeAddress: 'Jl. Budi No.2, Pasirkaliki, Kec. Cimahi Utara, Kota Bandung, Jawa Barat',
+        storePhone: '+62 858-4622-2290',
         transactionId: clientUuid,
         dateTime,
-        cashierName: activeShift.cashierId,
+        cashierName: user?.name || user?.email || 'Kasir',
         shiftId: activeShift.id,
-        items: saleItems.map((si, i) => ({
-          name: items[i].name,
+        items: saleItems.map(si => ({
+          name: si.name,
           qty: si.qty,
           unitPrice: si.unitPrice,
           discountAmount: si.discountAmount,
@@ -149,7 +239,10 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
 
         if (!res.ok) {
           const body = await res.json().catch(() => ({}))
-          throw new Error((body as { message?: string }).message ?? `HTTP ${res.status}`)
+          const msg = (body as { error?: string; message?: string }).error
+            ?? (body as { message?: string }).message
+            ?? `HTTP ${res.status}`
+          throw new Error(msg)
         }
 
         const body = (await res.json()) as { data: { id: string } }
@@ -179,8 +272,8 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-surface-raised rounded-xl shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Pembayaran</h2>
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold text-ink">Pembayaran</h2>
           <button
             onClick={onClose}
             className="text-ink-muted hover:text-ink-secondary text-xl leading-none"
@@ -199,18 +292,13 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
 
           {/* Payment legs */}
           {legs.map((leg, index) => (
-            <div key={index} className="border rounded-lg p-3 space-y-2">
+            <div key={index} className="border border-border rounded-lg p-3 space-y-2">
               {/* Method selector */}
               <div className="flex items-center gap-2">
-                <select
+                <MethodDropdown
                   value={leg.method}
-                  onChange={e => updateLeg(index, { method: e.target.value as PaymentMethod })}
-                  className="flex-1 border rounded px-2 py-1 text-sm"
-                >
-                  <option value="CASH">TUNAI</option>
-                  <option value="TRANSFER">TRANSFER</option>
-                  <option value="QRIS">QRIS</option>
-                </select>
+                  onChange={method => updateLeg(index, { method })}
+                />
                 {legs.length > 1 && (
                   <button
                     onClick={() => removeLeg(index)}
@@ -225,13 +313,17 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
               {/* Amount */}
               <div>
                 <label className="block text-xs text-ink-muted mb-1">Jumlah</label>
-                <input
-                  type="number"
-                  value={leg.amount}
-                  onChange={e => updateLeg(index, { amount: Number(e.target.value) })}
-                  className="w-full border rounded px-2 py-1 text-sm"
-                  min={0}
-                />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-muted">Rp</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={legAmountStrs[index] ?? ''}
+                    onChange={e => updateLegAmount(index, e.target.value)}
+                    onFocus={e => e.target.select()}
+                    className="w-full border border-border rounded-lg pl-9 pr-3 py-2 text-sm bg-surface-raised text-ink outline-none font-mono"
+                  />
+                </div>
               </div>
 
               {/* Reference — only for TRANSFER */}
@@ -243,7 +335,7 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
                     value={leg.reference}
                     onChange={e => updateLeg(index, { reference: e.target.value })}
                     placeholder="misal: BCA / 12345"
-                    className="w-full border rounded px-2 py-1 text-sm"
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised text-ink placeholder:text-ink-faint outline-none"
                   />
                   <p className="text-xs text-brand mt-1">
                     Masukkan nama bank dan nomor referensi, lalu klik Konfirmasi
@@ -263,27 +355,31 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
                 <div className="space-y-2">
                   <div>
                     <label className="block text-xs text-ink-muted mb-1">Uang Diterima</label>
-                    <input
-                      type="number"
-                      value={cashTendered}
-                      onChange={e => setCashTendered(Number(e.target.value))}
-                      className="w-full border rounded px-2 py-1 text-sm"
-                      min={0}
-                    />
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-muted">Rp</span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={cashTenderedStr}
+                        onChange={e => setCashTenderedStr(formatCurrencyInput(e.target.value))}
+                        onFocus={e => e.target.select()}
+                        className="w-full border border-border rounded-lg pl-9 pr-3 py-2 text-sm bg-surface-raised text-ink outline-none font-mono"
+                      />
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     {QUICK_AMOUNTS.map(amount => (
                       <button
                         key={amount}
                         onClick={() => handleQuickAmount(amount)}
-                        className="flex-1 border rounded py-1 text-xs font-medium hover:bg-surface"
+                        className="flex-1 border border-border rounded-lg py-1.5 text-xs font-medium text-ink-secondary hover:bg-surface-subtle transition-colors"
                       >
                         Rp{(amount / 1000).toFixed(0)}rb
                       </button>
                     ))}
                   </div>
                   {changeDue > 0 && (
-                    <div className="bg-green-50 border border-green-200 rounded p-2 text-center">
+                    <div className="bg-success-muted rounded-lg p-2 text-center">
                       <p className="text-xs text-success">Kembalian</p>
                       <p className="text-lg font-bold text-success">{formatRp(changeDue)}</p>
                     </div>

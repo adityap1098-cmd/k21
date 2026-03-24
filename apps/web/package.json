@@ -17,6 +17,7 @@
     "@serwist/next": "^9.5.7",
     "clsx": "^2.1.1",
     "dexie": "^4.3.0",
+    "exceljs": "^4.4.0",
     "dexie-react-hooks": "^4.2.0",
     "lucide-react": "^0.577.0",
     "next": "^14.2.0",

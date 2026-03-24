@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { authFetch } from '@/lib/auth-fetch'
 import { ServiceProductSelector } from './ServiceProductSelector'
 
@@ -18,6 +18,7 @@ interface ServiceOrderDetail {
   vehicleId: string
   customerId: string
   complaint: string | null
+  kilometer: number | null
   workStatus: string
   paymentStatus: string
   mechanicId: string | null
@@ -83,9 +84,21 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
   PAID: 'Lunas',
 }
 
+/* ── Currency formatting helpers ── */
+/** Format number to "10.000" style (Indonesian thousands separator) */
+function formatCurrencyInput(value: string): string {
+  const digits = value.replace(/\D/g, '')
+  if (!digits) return ''
+  return Number(digits).toLocaleString('id-ID')
+}
+
+/** Parse "10.000" back to raw number */
+function parseCurrencyInput(formatted: string): number {
+  return Number(formatted.replace(/\./g, '')) || 0
+}
+
 /* ── Shared input class ── */
-const inputClass = 'w-full bg-surface-raised border border-border rounded-xl py-3 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle transition-colors'
-const inputCompactClass = 'w-full bg-surface-raised border border-border rounded-xl py-2.5 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-subtle transition-colors'
+const inputCompactClass = 'w-full bg-surface-raised border border-border rounded-xl py-2.5 px-4 text-[13px] text-ink placeholder:text-ink-faint outline-none transition-colors'
 
 export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPayment }: Props) {
   const [order, setOrder] = useState<ServiceOrderDetail | null>(null)
@@ -94,14 +107,22 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
   const [error, setError] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
 
+  // Refs for Enter-to-save flow: mekanik → biaya → tanggal
+  const mechanicRef = useRef<HTMLSelectElement>(null)
+  const estCostRef = useRef<HTMLInputElement>(null)
+  const estDateRef = useRef<HTMLInputElement>(null)
+
   // Mechanic assignment
   const [mechanicInput, setMechanicInput] = useState('')
   const [mechanicSaving, setMechanicSaving] = useState(false)
+  const [mechanicSaved, setMechanicSaved] = useState(false)
+  const [mechanicsList, setMechanicsList] = useState<{ id: string; name: string }[]>([])
 
-  // Estimate fields
+  // Estimate fields — estCost stored as formatted string "10.000"
   const [estCost, setEstCost] = useState('')
   const [estDate, setEstDate] = useState('')
   const [estimateSaving, setEstimateSaving] = useState(false)
+  const [estimateSaved, setEstimateSaved] = useState(false)
 
   const fetchOrder = useCallback(async () => {
     try {
@@ -116,8 +137,10 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
       const o = body.data!
       setOrder(o)
       setMechanicInput(o.mechanicId ?? '')
-      setEstCost(o.estimatedCost != null ? String(o.estimatedCost) : '')
+      setMechanicSaved(!!o.mechanicId)
+      setEstCost(o.estimatedCost != null ? formatCurrencyInput(String(o.estimatedCost)) : '')
       setEstDate(o.estimatedCompletionAt ? o.estimatedCompletionAt.slice(0, 16) : '')
+      setEstimateSaved(o.estimatedCost != null)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Network error'
       console.error('[ServiceOrderPanel] Fetch order error:', { orderId, error: msg })
@@ -149,6 +172,13 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
 
   useEffect(() => {
     loadAll()
+    // Fetch mechanics list for dropdown
+    authFetch('/api/v1/mechanics')
+      .then(r => r.json())
+      .then((body: ApiResponse<{ id: string; name: string }[]>) => {
+        if (body.success && body.data) setMechanicsList(body.data)
+      })
+      .catch(() => { /* silent — dropdown will just be empty */ })
   }, [loadAll])
 
   const refreshAll = useCallback(async () => {
@@ -229,41 +259,15 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
     }
   }
 
-  // Assign mechanic
-  const saveMechanic = async () => {
-    if (!mechanicInput.trim()) return
-    setMechanicSaving(true)
-    setError(null)
-    try {
-      const res = await authFetch(`/api/v1/service-orders/${orderId}/mechanic`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mechanicId: mechanicInput.trim() }),
-      })
-      const body: ApiResponse<unknown> = await res.json()
-      if (!res.ok || !body.success) {
-        const msg = body.error || `HTTP ${res.status}`
-        console.error('[ServiceOrderPanel] Assign mechanic failed:', { orderId, status: res.status, error: msg })
-        setError(msg)
-        return
-      }
-      await fetchOrder()
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Network error'
-      console.error('[ServiceOrderPanel] Assign mechanic error:', { error: msg })
-      setError(msg)
-    } finally {
-      setMechanicSaving(false)
-    }
-  }
+  // saveMechanic is now handled inline in the select onChange
 
-  // Update estimate
+  // Update estimate — Enter on biaya focuses tanggal, Enter on tanggal saves
   const saveEstimate = async () => {
     setEstimateSaving(true)
     setError(null)
     try {
       const payload: Record<string, unknown> = {}
-      if (estCost) payload.estimatedCost = Number(estCost)
+      if (estCost) payload.estimatedCost = parseCurrencyInput(estCost)
       if (estDate) payload.estimatedCompletionAt = new Date(estDate).toISOString()
 
       const res = await authFetch(`/api/v1/service-orders/${orderId}/estimate`, {
@@ -274,15 +278,15 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
       const body: ApiResponse<unknown> = await res.json()
       if (!res.ok || !body.success) {
         const msg = body.error || `HTTP ${res.status}`
-        console.error('[ServiceOrderPanel] Update estimate failed:', { orderId, status: res.status, error: msg })
         setError(msg)
+        setEstimateSaved(false)
         return
       }
-      await fetchOrder()
+      setEstimateSaved(true)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Network error'
-      console.error('[ServiceOrderPanel] Update estimate error:', { error: msg })
       setError(msg)
+      setEstimateSaved(false)
     } finally {
       setEstimateSaving(false)
     }
@@ -317,7 +321,7 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
   }
 
   return (
-    <div data-testid="service-order-panel" className="p-5 space-y-4 max-h-full overflow-y-auto">
+    <div data-testid="service-order-panel" className="p-4 space-y-3 max-h-full overflow-y-auto">
       {/* Back button + Header */}
       <div>
         <button onClick={onBack} className="text-[13px] text-brand hover:text-brand-hover font-medium mb-2">← Kembali</button>
@@ -340,9 +344,16 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
           </p>
         ) : null}
 
-        {/* Complaint */}
-        {order.complaint ? (
-          <p className="text-[13px] text-ink-secondary mt-2 bg-surface-subtle rounded-xl p-3">Keluhan: {order.complaint}</p>
+        {/* Kilometer + Complaint */}
+        {(order.kilometer || order.complaint) ? (
+          <div className="mt-2 bg-surface-subtle rounded-xl p-3 space-y-1">
+            {order.kilometer ? (
+              <p className="text-[13px] text-ink-secondary"><span className="font-medium text-ink">KM:</span> {order.kilometer.toLocaleString('id-ID')} km</p>
+            ) : null}
+            {order.complaint ? (
+              <p className="text-[13px] text-ink-secondary"><span className="font-medium text-ink">Keluhan:</span> {order.complaint}</p>
+            ) : null}
+          </div>
         ) : null}
       </div>
 
@@ -353,61 +364,96 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
         </div>
       ) : null}
 
-      {/* Mechanic assignment */}
-      <div className="bg-surface-raised border border-border rounded-xl p-4 space-y-2">
-        <label className="text-[13px] font-medium text-ink">Mekanik</label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={mechanicInput}
-            onChange={e => setMechanicInput(e.target.value)}
-            placeholder="ID Mekanik"
-            className={inputCompactClass + ' flex-1'}
-          />
-          <button
-            onClick={saveMechanic}
-            disabled={mechanicSaving || !mechanicInput.trim()}
-            className="px-4 py-2.5 text-[13px] font-medium bg-surface-raised border border-border rounded-xl text-ink-secondary hover:bg-surface-subtle disabled:opacity-50 transition-colors"
-          >
-            {mechanicSaving ? '...' : 'Simpan'}
-          </button>
-        </div>
-      </div>
-
-      {/* Estimate fields */}
+      {/* Mechanic + Estimate — streamlined Enter-to-save flow */}
       <div className="bg-surface-raised border border-border rounded-xl p-4 space-y-3">
-        <label className="text-[13px] font-medium text-ink">Estimasi</label>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-[12px] text-ink-muted mb-1 block">Biaya (Rp)</label>
+        {/* Mekanik */}
+        <div>
+          <label className="text-[12px] text-ink-muted mb-1 block">Mekanik</label>
+          <div className="relative">
+            <select
+              ref={mechanicRef}
+              value={mechanicInput}
+              onChange={e => {
+                setMechanicInput(e.target.value)
+                setMechanicSaved(false)
+                // Auto-save on select
+                if (e.target.value) {
+                  const selectedName = e.target.value
+                  setMechanicSaving(true)
+                  authFetch(`/api/v1/service-orders/${orderId}/mechanic`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mechanicId: selectedName }),
+                  })
+                    .then(r => r.json())
+                    .then((body: ApiResponse<unknown>) => {
+                      if (body.success) { setMechanicSaved(true); setTimeout(() => estCostRef.current?.focus(), 100) }
+                      else setError(body.error || 'Gagal assign mekanik')
+                    })
+                    .catch(() => setError('Gagal assign mekanik'))
+                    .finally(() => setMechanicSaving(false))
+                }
+              }}
+              className={inputCompactClass + (mechanicSaved ? ' border-green-400' : '')}
+              disabled={mechanicSaving}
+            >
+              <option value="">— Pilih mekanik —</option>
+              {mechanicsList.map(m => (
+                <option key={m.id} value={m.name}>{m.name}</option>
+              ))}
+            </select>
+            {mechanicSaving && <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[11px] text-ink-muted">Menyimpan...</span>}
+            {mechanicSaved && !mechanicSaving && <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[11px] text-success">Tersimpan</span>}
+          </div>
+        </div>
+
+        {/* Estimasi Biaya */}
+        <div>
+          <label className="text-[12px] text-ink-muted mb-1 block">Estimasi Biaya (Rp)</label>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] text-ink-muted">Rp</span>
             <input
-              type="number"
+              ref={estCostRef}
+              type="text"
+              inputMode="numeric"
               value={estCost}
-              onChange={e => setEstCost(e.target.value)}
-              placeholder="Estimasi biaya"
-              className={inputCompactClass}
-              min={0}
+              onChange={e => { setEstCost(formatCurrencyInput(e.target.value)); setEstimateSaved(false) }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  // Save estimate and focus date
+                  saveEstimate().then(() => setTimeout(() => estDateRef.current?.focus(), 100))
+                }
+              }}
+              placeholder="0"
+              className={inputCompactClass + ' pl-10' + (estimateSaved ? ' border-green-400' : '')}
+              disabled={estimateSaving}
             />
-          </div>
-          <div>
-            <label className="text-[12px] text-ink-muted mb-1 block">Selesai</label>
-            <input
-              type="datetime-local"
-              value={estDate}
-              onChange={e => setEstDate(e.target.value)}
-              className={inputCompactClass}
-            />
+            {estimateSaved && !estimateSaving && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-success">Tersimpan</span>}
           </div>
         </div>
-        <div className="flex justify-end">
-          <button
-            onClick={saveEstimate}
+
+        {/* Estimasi Selesai */}
+        <div>
+          <label className="text-[12px] text-ink-muted mb-1 block">Estimasi Selesai</label>
+          <input
+            ref={estDateRef}
+            type="datetime-local"
+            value={estDate}
+            onChange={e => { setEstDate(e.target.value); setEstimateSaved(false) }}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                saveEstimate()
+              }
+            }}
+            className={inputCompactClass + (estimateSaved ? ' border-green-400' : '')}
             disabled={estimateSaving}
-            className="px-4 py-2.5 text-[13px] font-medium bg-surface-raised border border-border rounded-xl text-ink-secondary hover:bg-surface-subtle disabled:opacity-50 transition-colors"
-          >
-            {estimateSaving ? '...' : 'Simpan Estimasi'}
-          </button>
+          />
         </div>
+
+        {/* Hint */}
+        <p className="text-[11px] text-ink-faint text-center">Tekan Enter di setiap field untuk simpan & lanjut</p>
       </div>
 
       {/* Line items */}
@@ -450,8 +496,8 @@ export function ServiceOrderPanel({ orderId, onBack, onOrderUpdated, onRequestPa
         </div>
       </div>
 
-      {/* Product selector — only show if order is not completed/paid */}
-      {order.workStatus !== 'COMPLETED' || order.paymentStatus === 'UNPAID' ? (
+      {/* Product selector — only show if order is not completed AND payment is unpaid */}
+      {order.workStatus !== 'COMPLETED' && order.paymentStatus === 'UNPAID' ? (
         <div>
           <h4 className="text-[12px] font-semibold text-ink-muted uppercase tracking-wide mb-2">Tambah Item</h4>
           <ServiceProductSelector serviceOrderId={orderId} onItemAdded={refreshAll} />

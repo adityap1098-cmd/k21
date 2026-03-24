@@ -3,7 +3,7 @@
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 
 interface RevenueChartProps {
-  data: Array<{ date: string; pos: number; marketplace: number }>
+  data: Array<{ date: string; pos: number; service: number; cashOut?: number }>
   className?: string
 }
 
@@ -23,9 +23,13 @@ export function RevenueChart({ data, className }: RevenueChartProps) {
               <stop offset="0%" stopColor="#E85D3A" stopOpacity={0.2} />
               <stop offset="100%" stopColor="#E85D3A" stopOpacity={0} />
             </linearGradient>
-            <linearGradient id="gradMkt" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.15} />
-              <stop offset="100%" stopColor="#3B82F6" stopOpacity={0} />
+            <linearGradient id="gradSvc" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#16A34A" stopOpacity={0.15} />
+              <stop offset="100%" stopColor="#16A34A" stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="gradCashOut" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#EF4444" stopOpacity={0.15} />
+              <stop offset="100%" stopColor="#EF4444" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid
@@ -60,7 +64,7 @@ export function RevenueChart({ data, className }: RevenueChartProps) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             formatter={((value: any, name: any) => [
               `Rp ${Number(value).toLocaleString('id-ID')}`,
-              name === 'pos' ? 'POS' : 'Marketplace',
+              name === 'pos' ? 'POS Retail' : name === 'service' ? 'Service' : 'Pengeluaran Kas',
             ]) as any}
           />
           <Area
@@ -74,13 +78,25 @@ export function RevenueChart({ data, className }: RevenueChartProps) {
           />
           <Area
             type="monotone"
-            dataKey="marketplace"
-            stroke="#3B82F6"
+            dataKey="service"
+            stroke="#16A34A"
             strokeWidth={2}
-            fill="url(#gradMkt)"
+            fill="url(#gradSvc)"
             dot={false}
-            activeDot={{ r: 4, stroke: '#3B82F6', strokeWidth: 2, fill: 'white' }}
+            activeDot={{ r: 4, stroke: '#16A34A', strokeWidth: 2, fill: 'white' }}
           />
+          {data.some(d => (d.cashOut ?? 0) > 0) && (
+            <Area
+              type="monotone"
+              dataKey="cashOut"
+              stroke="#EF4444"
+              strokeWidth={2}
+              strokeDasharray="4 3"
+              fill="url(#gradCashOut)"
+              dot={false}
+              activeDot={{ r: 4, stroke: '#EF4444', strokeWidth: 2, fill: 'white' }}
+            />
+          )}
         </AreaChart>
       </ResponsiveContainer>
     </div>

@@ -2,6 +2,10 @@
 # Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 # IMPORTANT: Named docker-compose.dev.yml (NOT docker-compose.override.yml)
 # so it is NOT auto-applied by Docker — requires explicit -f flag.
+#
+# For LOCAL DEV: skip pgbouncer, connect directly to postgres.
+# Run only what you need:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres redis
 
 services:
   api:
@@ -11,6 +15,8 @@ services:
       - "3001:3001"
     environment:
       NODE_ENV: development
+      # Override DATABASE_URL to connect directly to postgres (skip pgbouncer)
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
 
   web:
     volumes:

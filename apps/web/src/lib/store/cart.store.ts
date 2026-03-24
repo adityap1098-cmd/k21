@@ -46,9 +46,9 @@ export const useCartStore = create<CartState>((set) => ({
 export function computeCartTotals(items: CartItem[], txDiscount: number) {
   const subtotal = items.reduce((sum, item) => {
     const lineBase = item.unitPrice * item.qty
-    const itemDisc = item.discountType === 'percent' ? lineBase * (item.discountValue / 100) : item.discountValue
+    const itemDisc = item.discountType === 'percent' ? Math.round(lineBase * (item.discountValue / 100)) : item.discountValue
     return sum + lineBase - itemDisc
   }, 0)
-  const total = Math.max(0, subtotal - txDiscount)
-  return { subtotal, total }
+  const total = Math.max(0, Math.round(subtotal - txDiscount))
+  return { subtotal: Math.round(subtotal), total }
 }

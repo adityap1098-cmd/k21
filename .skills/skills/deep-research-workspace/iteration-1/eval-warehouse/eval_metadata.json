@@ -1,0 +1,12 @@
+{
+  "eval_id": 0,
+  "eval_name": "audit-warehouse-module",
+  "prompt": "Audit apakah modul warehouse sudah terimplementasi dengan benar dari backend ke frontend di project K21",
+  "assertions": [
+    {"text": "Menyebutkan jumlah endpoint secara eksak (1/3, 2/3, atau 3/3)"},
+    {"text": "Mengidentifikasi bahwa getWarehouseStock() memiliki bug (empty WHERE clause atau returns empty)"},
+    {"text": "Mengidentifikasi tidak ada UI untuk stock transfer"},
+    {"text": "Membaca service implementation (bukan hanya router)"},
+    {"text": "Mengidentifikasi bahwa warehouse list hardcoded (bukan dari database)"}
+  ]
+}
