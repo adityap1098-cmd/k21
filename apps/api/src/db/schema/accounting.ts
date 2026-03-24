@@ -1,5 +1,4 @@
 import { pgTable, uuid, varchar, integer, boolean, text, timestamp, pgEnum } from 'drizzle-orm/pg-core'
-import { transactions } from './pos.js'
 
 // ─── Accounts (Chart of Accounts) ───────────────────────────────────────────
 
@@ -27,7 +26,7 @@ export const journalSourceTypeEnum = pgEnum('journal_source_type', [
 
 export const journalEntries = pgTable('journal_entries', {
   id:            uuid('id').primaryKey().defaultRandom(),
-  transactionId: uuid('transaction_id').notNull().references(() => transactions.id),
+  transactionId: uuid('transaction_id'),
   sourceType:    journalSourceTypeEnum('source_type').notNull(),
   sourceId:      uuid('source_id'),
   amount:        integer('amount').notNull(),

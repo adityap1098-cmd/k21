@@ -123,6 +123,28 @@ export async function createAccrualJournalEntry(
 }
 
 /**
+ * Inserts a marketplace sale journal entry for a fulfilled order.
+ * Single DR row with sourceType = 'MARKETPLACE_SALE', transactionId = null.
+ * Called by the marketplace worker inside an existing outer transaction.
+ * MUST NOT open its own db.transaction() — PgBouncer TRANSACTION mode forbids nesting.
+ */
+export async function createMarketplaceJournalEntry(
+  params: { orderId: string; total: number },
+  tx: DrizzleTx
+): Promise<void> {
+  await (tx as unknown as typeof db).insert(journalEntries).values({
+    id: randomUUID(),
+    transactionId: null,
+    sourceId: params.orderId,
+    sourceType: 'MARKETPLACE_SALE',
+    amount: params.total,
+    debitCredit: 'DR',
+    status: 'PENDING',
+    createdAt: new Date(),
+  })
+}
+
+/**
  * Inserts a cash receipt journal entry pair (DR Kas / CR Piutang)
  * when a payment is recorded against a service order.
  * Creates exactly 2 rows: one DR and one CR for double-entry accounting.

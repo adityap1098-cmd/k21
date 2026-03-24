@@ -2,14 +2,17 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { authenticate } from '../../middleware/authenticate.js'
 import { requireRole } from '../../middleware/require-role.js'
-import { listChannels, getChannelOrders, getWebhookEvents } from './marketplace.service.js'
+import { listChannels, getChannelOrders, getWebhookEvents, getOrderDetail } from './marketplace.service.js'
 
 export const marketplaceRouter = Router()
 
 // ─── Zod schemas ──────────────────────────────────────────────────────────
 
 const channelFiltersSchema = z.object({
-  status: z.string().optional(),
+  status: z.enum([
+    'PENDING', 'CONFIRMED', 'READY_TO_SHIP', 'SHIPPED',
+    'DELIVERED', 'CANCELLED', 'RETURNED', 'STOCK_CONFLICT',
+  ]).optional(),
   limit: z.coerce.number().int().positive().optional(),
   offset: z.coerce.number().int().nonnegative().optional(),
 })
@@ -70,6 +73,32 @@ marketplaceRouter.get(
       res.status(200).json({ success: true, data: orders, error: null })
     } catch (err) {
       console.error('[marketplace] GET /channels/:id/orders failed:', err)
+      res.status(500).json({ success: false, data: null, error: 'Internal server error' })
+    }
+  }
+)
+
+// ─── GET /channels/:id/orders/:orderId ──────────────────────────────────────
+
+/**
+ * Get a single order with its line items.
+ * Requires: authenticated Owner or Admin.
+ * Returns 200 { success: true, data: { order, items } } or 404 on missing order.
+ */
+marketplaceRouter.get(
+  '/channels/:id/orders/:orderId',
+  authenticate,
+  requireRole('Owner', 'Admin'),
+  async (req, res) => {
+    try {
+      const detail = await getOrderDetail(req.params.orderId)
+      res.status(200).json({ success: true, data: detail, error: null })
+    } catch (err) {
+      if ((err as Error).message === 'ORDER_NOT_FOUND') {
+        res.status(404).json({ success: false, data: null, error: 'ORDER_NOT_FOUND' })
+        return
+      }
+      console.error('[marketplace] GET /channels/:id/orders/:orderId failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
     }
   }

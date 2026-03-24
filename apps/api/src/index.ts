@@ -25,6 +25,8 @@ import { notificationsRouter } from './modules/notifications/index.js'
 import { auditLogsRouter } from './modules/audit-logs/audit-logs.router.js'
 import { suppliersRouter } from './modules/suppliers/suppliers.router.js'
 import { createLowStockWorker } from './queues/lowstock.queue.js'
+import { createMarketplaceWorker } from './queue/marketplace.worker.js'
+import { webhookRouter } from './modules/marketplace/webhook.router.js'
 import { globalErrorHandler } from './middleware/error-handler.js'
 
 export const app = express()
@@ -32,6 +34,12 @@ const PORT = process.env.PORT ?? 3001
 
 // Trust Nginx X-Forwarded-For header for correct req.ip in audit_logs
 app.set('trust proxy', 1)
+
+// IMPORTANT: Webhook router MUST be mounted BEFORE express.json().
+// It uses express.raw() at the route level to capture the raw Buffer
+// needed for HMAC-SHA256 verification. Mounting after express.json()
+// would parse the body first, destroying the raw bytes.
+app.use('/api/v1/webhooks', webhookRouter)
 
 app.use(express.json({ limit: '1mb' }))
 app.use(cookieParser()) // Must be before routes
@@ -121,12 +129,15 @@ if (process.env.NODE_ENV !== 'test') {
   })
   const worker = createLowStockWorker()
   console.log('[startup] low-stock worker started')
+  const marketplaceWorker = createMarketplaceWorker()
+  console.log('[startup] marketplace worker started')
 
   // Graceful shutdown
   const shutdown = async () => {
     console.log('[shutdown] Closing server...')
     server.close()
     await worker.close()
+    await marketplaceWorker.close()
     process.exit(0)
   }
   process.on('SIGTERM', shutdown)

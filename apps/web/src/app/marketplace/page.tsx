@@ -10,8 +10,7 @@ import {
   RefreshCw,
   Loader2,
   Globe,
-  Webhook,
-  Clock,
+  AlertTriangle,
 } from 'lucide-react'
 
 /* ─── Types ─── */
@@ -22,18 +21,21 @@ interface Channel {
 }
 
 interface ChannelOrder {
-  id: string; orderId: string; platform: string
-  status: string; totalAmount: number; createdAt: string
+  id: string; orderSn: string; platform: string; status: string
+  buyerName: string | null; totalAmount: string | null
+  skuResolutionStatus: string; createdAt: string
 }
 
 interface WebhookEvent {
-  id: string; eventType: string
-  processedAt: string; createdAt: string
+  id: string; eventType: string; processingStatus: string
+  errorMessage: string | null; processedAt: string | null; createdAt: string
 }
 
+/* ─── Color / label maps ─── */
+
 const PLATFORM_COLORS: Record<string, 'brand' | 'blue'> = {
-  'SHOPEE': 'brand',
-  'TIKTOK': 'blue',
+  'shopee': 'brand',
+  'tiktok': 'blue',
 }
 
 const STATUS_COLORS: Record<string, 'green' | 'red' | 'neutral'> = {
@@ -42,12 +44,42 @@ const STATUS_COLORS: Record<string, 'green' | 'red' | 'neutral'> = {
   'DISCONNECTED': 'neutral',
 }
 
-function formatRp(n: number) {
-  return `Rp ${n.toLocaleString('id-ID')}`
+const ORDER_STATUS_COLORS: Record<string, 'neutral' | 'blue' | 'amber' | 'green' | 'red'> = {
+  PENDING: 'neutral',
+  CONFIRMED: 'blue',
+  READY_TO_SHIP: 'amber',
+  SHIPPED: 'green',
+  DELIVERED: 'green',
+  CANCELLED: 'red',
+  RETURNED: 'amber',
+  STOCK_CONFLICT: 'red',
 }
 
+const ORDER_STATUS_LABELS: Record<string, string> = {
+  PENDING: 'Pending',
+  CONFIRMED: 'Dikonfirmasi',
+  READY_TO_SHIP: 'Siap Kirim',
+  SHIPPED: 'Terkirim',
+  DELIVERED: 'Diterima',
+  CANCELLED: 'Dibatalkan',
+  RETURNED: 'Dikembalikan',
+  STOCK_CONFLICT: 'Stok Konflik',
+}
+
+const WEBHOOK_STATUS_COLORS: Record<string, 'neutral' | 'green' | 'red' | 'amber'> = {
+  PENDING: 'neutral',
+  PROCESSED: 'green',
+  FAILED: 'red',
+  SKIPPED: 'amber',
+}
+
+/* ─── Helpers ─── */
+
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleString('id-ID', {
+    day: '2-digit', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  })
 }
 
 /* ─── Page ─── */
@@ -57,53 +89,47 @@ export default function MarketplacePage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'channels' | 'orders' | 'webhooks'>('channels')
 
-  // Tab-specific state — only load when that tab is visited
-  const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null)
   const [orders, setOrders] = useState<ChannelOrder[]>([])
   const [ordersLoading, setOrdersLoading] = useState(false)
-  const [webhooks, setWebhooks] = useState<WebhookEvent[]>([])
+  const [webhookEvents, setWebhookEvents] = useState<WebhookEvent[]>([])
   const [webhooksLoading, setWebhooksLoading] = useState(false)
 
-  const loadChannels = useCallback(async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
     const res = await apiGet<Channel[]>('/api/v1/marketplace/channels')
-    if (res.success && res.data) {
-      setChannels(res.data)
-      // Auto-select first channel for orders/webhooks
-      if (res.data.length > 0 && !selectedChannelId) {
-        setSelectedChannelId(res.data[0].id)
-      }
-    }
+    if (res.success && res.data) setChannels(res.data)
     setLoading(false)
-  }, [selectedChannelId])
+  }, [])
 
   const loadOrders = useCallback(async (channelId: string) => {
     setOrdersLoading(true)
-    const res = await apiGet<ChannelOrder[]>(`/api/v1/marketplace/channels/${channelId}/orders?limit=50`)
-    if (res.success && res.data) setOrders(res.data)
+    const res = await apiGet<{ data: ChannelOrder[]; total: number }>(
+      `/api/v1/marketplace/channels/${channelId}/orders`
+    )
+    if (res.success && res.data) setOrders(res.data.data)
     setOrdersLoading(false)
   }, [])
 
   const loadWebhooks = useCallback(async (channelId: string) => {
     setWebhooksLoading(true)
-    const res = await apiGet<WebhookEvent[]>(`/api/v1/marketplace/channels/${channelId}/webhooks?limit=50`)
-    if (res.success && res.data) setWebhooks(res.data)
+    const res = await apiGet<{ data: WebhookEvent[]; total: number }>(
+      `/api/v1/marketplace/channels/${channelId}/webhooks`
+    )
+    if (res.success && res.data) setWebhookEvents(res.data.data)
     setWebhooksLoading(false)
   }, [])
 
-  useEffect(() => { loadChannels() }, [])
+  useEffect(() => { loadData() }, [loadData])
 
-  // Load tab data when switching tabs or selecting channel
   useEffect(() => {
-    if (!selectedChannelId) return
-    if (activeTab === 'orders') loadOrders(selectedChannelId)
-    if (activeTab === 'webhooks') loadWebhooks(selectedChannelId)
-  }, [activeTab, selectedChannelId])
+    const channelId = channels[0]?.id
+    if (!channelId) return
+    if (activeTab === 'orders') loadOrders(channelId)
+    if (activeTab === 'webhooks') loadWebhooks(channelId)
+  }, [activeTab, channels, loadOrders, loadWebhooks])
 
   const activeChannels = channels.filter(c => c.status === 'ACTIVE').length
   const expiredChannels = channels.filter(c => c.status === 'TOKEN_EXPIRED').length
-
-  const selectedChannel = channels.find(c => c.id === selectedChannelId)
 
   return (
     <DashboardLayout>
@@ -112,14 +138,8 @@ export default function MarketplacePage() {
         subtitle="Shopee & TikTok Shop integration"
         actions={
           <>
-            <Button
-              variant="secondary"
-              icon={loading ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
-              onClick={loadChannels}
-              disabled={loading}
-            >
-              Refresh
-            </Button>
+            <Button variant="secondary" icon={<RefreshCw size={15} />}>Sync Stok</Button>
+            <Button icon={<Plus size={15} />}>Tambah Channel</Button>
           </>
         }
       />
@@ -141,28 +161,10 @@ export default function MarketplacePage() {
         ))}
       </div>
 
-      {/* Channel selector for orders/webhooks tabs */}
-      {(activeTab === 'orders' || activeTab === 'webhooks') && channels.length > 1 && (
-        <div className="flex items-center gap-2 animate-in">
-          <span className="text-sm text-ink-muted">Channel:</span>
-          {channels.map(ch => (
-            <button
-              key={ch.id}
-              onClick={() => setSelectedChannelId(ch.id)}
-              className={`px-3 py-1.5 rounded-lg border text-[13px] font-medium transition-colors ${
-                selectedChannelId === ch.id
-                  ? 'bg-brand text-white border-brand'
-                  : 'border-border text-ink-secondary hover:bg-surface-subtle'
-              }`}
-            >
-              {ch.shopName}
-            </button>
-          ))}
-        </div>
-      )}
-
+      {/* ─── Channels tab ─── */}
       {activeTab === 'channels' && (
         <>
+          {/* Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-in stagger-3">
             <MetricCard label="Total Channel" value={String(channels.length)} subtitle="Platform terhubung" />
             <MetricCard label="Aktif" value={String(activeChannels)} subtitle="Token valid" valueColor="text-success" />
@@ -175,9 +177,10 @@ export default function MarketplacePage() {
             />
           </div>
 
+          {/* Channel cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in stagger-4">
             {loading ? (
-              [1,2].map(i => (
+              [1, 2].map(i => (
                 <Card key={i} className="h-[140px] flex items-center justify-center">
                   <Loader2 size={20} className="text-ink-faint animate-spin" />
                 </Card>
@@ -189,20 +192,13 @@ export default function MarketplacePage() {
                 <p className="text-xs text-ink-faint">Hubungkan Shopee atau TikTok Shop untuk mulai</p>
               </Card>
             ) : channels.map(ch => (
-              <div
-                key={ch.id}
-                onClick={() => { setSelectedChannelId(ch.id); setActiveTab('orders') }}
-                className="cursor-pointer"
-              >
-              <Card
-                className="flex flex-col gap-3 hover:shadow-md transition-shadow"
-              >
+              <Card key={ch.id} className="flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      ch.platform === 'SHOPEE' ? 'bg-brand-muted' : 'bg-info-muted'
+                      ch.platform === 'shopee' ? 'bg-brand-muted' : 'bg-info-muted'
                     }`}>
-                      <ShoppingBag size={18} className={ch.platform === 'SHOPEE' ? 'text-brand' : 'text-info'} />
+                      <ShoppingBag size={18} className={ch.platform === 'shopee' ? 'text-brand' : 'text-info'} />
                     </div>
                     <div>
                       <h3 className="text-[15px] font-semibold text-ink">{ch.shopName}</h3>
@@ -220,89 +216,128 @@ export default function MarketplacePage() {
                     Token expires: {new Date(ch.tokenExpiresAt).toLocaleDateString('id-ID')}
                   </p>
                 )}
-                <p className="text-xs text-brand font-medium">Lihat order →</p>
               </Card>
-              </div>
             ))}
           </div>
         </>
       )}
 
+      {/* ─── Orders tab ─── */}
       {activeTab === 'orders' && (
-        <Card padding={false} className="flex-1 flex flex-col overflow-hidden animate-in stagger-3">
+        <div className="animate-in stagger-3">
           {ordersLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 size={24} className="animate-spin text-ink-faint" />
-            </div>
+            <Card className="flex items-center justify-center py-16">
+              <Loader2 size={24} className="text-ink-faint animate-spin" />
+            </Card>
           ) : orders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 gap-3">
-              <ShoppingBag size={32} className="text-ink-faint" />
-              <p className="text-sm font-medium text-ink-muted">
-                {selectedChannel ? `Tidak ada order masuk dari ${selectedChannel.shopName}` : 'Pilih channel'}
+            <Card className="flex flex-col items-center justify-center py-16 gap-3">
+              <Globe size={32} className="text-ink-faint" />
+              <p className="text-sm font-medium text-ink-muted">Belum ada order</p>
+              <p className="text-xs text-ink-faint max-w-sm text-center">
+                Order dari marketplace akan muncul di sini setelah webhook diterima
               </p>
-              <p className="text-xs text-ink-faint max-w-xs text-center">
-                Order marketplace akan masuk via webhook saat ada transaksi baru
-              </p>
-            </div>
+            </Card>
           ) : (
-            <>
-              <div className="grid grid-cols-[1fr_100px_100px_130px] items-center px-6 py-3 bg-surface-subtle border-b border-border gap-4">
-                <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Order ID</span>
-                <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Platform</span>
-                <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Total</span>
-                <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Waktu</span>
+            <Card padding={false} className="overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-[13px]">
+                  <thead>
+                    <tr className="border-b border-border bg-surface-subtle">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-ink-muted uppercase tracking-wider">Order SN</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-ink-muted uppercase tracking-wider">Pembeli</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-ink-muted uppercase tracking-wider">Status</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-ink-muted uppercase tracking-wider">SKU</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-ink-muted uppercase tracking-wider">Total</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-ink-muted uppercase tracking-wider">Waktu</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-light">
+                    {orders.map(o => (
+                      <tr key={o.id} className="hover:bg-surface-subtle transition-colors">
+                        <td className="px-4 py-3 font-mono text-xs text-ink">{o.orderSn}</td>
+                        <td className="px-4 py-3 text-ink-secondary">{o.buyerName ?? '—'}</td>
+                        <td className="px-4 py-3">
+                          <Badge color={ORDER_STATUS_COLORS[o.status] ?? 'neutral'}>
+                            {ORDER_STATUS_LABELS[o.status] ?? o.status}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3">
+                          {o.skuResolutionStatus !== 'RESOLVED' && (
+                            <Badge color="amber">
+                              <AlertTriangle size={11} className="inline mr-1" />
+                              SKU
+                            </Badge>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums text-ink">
+                          Rp {Number(o.totalAmount ?? 0).toLocaleString('id-ID')}
+                        </td>
+                        <td className="px-4 py-3 text-right text-ink-faint whitespace-nowrap">
+                          {formatDate(o.createdAt)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div className="flex-1 overflow-y-auto">
-                {orders.map(order => (
-                  <div key={order.id} className="grid grid-cols-[1fr_100px_100px_130px] items-center px-6 py-3.5 border-b border-border-light gap-4">
-                    <span className="font-mono text-xs text-ink truncate">{order.orderId}</span>
-                    <Badge color={PLATFORM_COLORS[order.platform] || 'neutral'}>{order.platform}</Badge>
-                    <span className="text-[13px] font-medium tabular-nums">{formatRp(order.totalAmount)}</span>
-                    <span className="text-[13px] text-ink-muted">{formatDate(order.createdAt)}</span>
-                  </div>
-                ))}
-              </div>
-            </>
+            </Card>
           )}
-        </Card>
+        </div>
       )}
 
+      {/* ─── Webhooks tab ─── */}
       {activeTab === 'webhooks' && (
-        <Card padding={false} className="flex-1 flex flex-col overflow-hidden animate-in stagger-3">
+        <div className="animate-in stagger-3">
           {webhooksLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 size={24} className="animate-spin text-ink-faint" />
-            </div>
-          ) : webhooks.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 gap-3">
-              <Webhook size={32} className="text-ink-faint" />
+            <Card className="flex items-center justify-center py-16">
+              <Loader2 size={24} className="text-ink-faint animate-spin" />
+            </Card>
+          ) : webhookEvents.length === 0 ? (
+            <Card className="flex flex-col items-center justify-center py-16 gap-3">
+              <RefreshCw size={32} className="text-ink-faint" />
               <p className="text-sm font-medium text-ink-muted">Belum ada webhook event</p>
-              <p className="text-xs text-ink-faint max-w-xs text-center">
-                Event webhook dari marketplace akan muncul di sini. Gunakan untuk debugging jika order tidak masuk.
+              <p className="text-xs text-ink-faint max-w-sm text-center">
+                Log webhook dari marketplace akan muncul di sini. Gunakan untuk debugging jika order tidak masuk.
               </p>
-            </div>
+            </Card>
           ) : (
-            <>
-              <div className="grid grid-cols-[1fr_160px_160px] items-center px-6 py-3 bg-surface-subtle border-b border-border gap-4">
-                <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Tipe Event</span>
-                <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Diproses</span>
-                <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Diterima</span>
+            <Card padding={false} className="overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-[13px]">
+                  <thead>
+                    <tr className="border-b border-border bg-surface-subtle">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-ink-muted uppercase tracking-wider">Event Type</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-ink-muted uppercase tracking-wider">Status</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-ink-muted uppercase tracking-wider">Error</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-ink-muted uppercase tracking-wider">Waktu</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-light">
+                    {webhookEvents.map(e => (
+                      <tr key={e.id} className="hover:bg-surface-subtle transition-colors">
+                        <td className="px-4 py-3 font-mono text-xs text-ink">{e.eventType}</td>
+                        <td className="px-4 py-3">
+                          <Badge color={WEBHOOK_STATUS_COLORS[e.processingStatus] ?? 'neutral'}>
+                            {e.processingStatus}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3 text-ink-faint max-w-[240px] truncate">
+                          {e.errorMessage
+                            ? <span className="text-danger text-xs">{e.errorMessage.slice(0, 80)}{e.errorMessage.length > 80 ? '…' : ''}</span>
+                            : '—'
+                          }
+                        </td>
+                        <td className="px-4 py-3 text-right text-ink-faint whitespace-nowrap">
+                          {formatDate(e.createdAt)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div className="flex-1 overflow-y-auto">
-                {webhooks.map(wh => (
-                  <div key={wh.id} className="grid grid-cols-[1fr_160px_160px] items-center px-6 py-3.5 border-b border-border-light gap-4">
-                    <span className="font-mono text-xs text-ink">{wh.eventType}</span>
-                    <div className="flex items-center gap-1.5">
-                      <Clock size={12} className="text-ink-faint" />
-                      <span className="text-[13px] text-ink-muted">{formatDate(wh.processedAt)}</span>
-                    </div>
-                    <span className="text-[13px] text-ink-muted">{formatDate(wh.createdAt)}</span>
-                  </div>
-                ))}
-              </div>
-            </>
+            </Card>
           )}
-        </Card>
+        </div>
       )}
     </DashboardLayout>
   )
