@@ -17,6 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1B2B3A" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
       <body className="bg-surface text-ink antialiased">
         <a href="#main-content" className="skip-link">Langsung ke konten utama</a>

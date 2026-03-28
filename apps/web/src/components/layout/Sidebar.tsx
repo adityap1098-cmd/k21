@@ -116,7 +116,7 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <aside className={clsx(
-        'flex flex-col w-[220px] h-screen flex-shrink-0 bg-sidebar px-4 py-6 gap-1 overflow-y-auto z-50',
+        'flex flex-col w-[220px] h-dvh flex-shrink-0 bg-sidebar px-4 py-6 gap-1 overflow-y-auto z-50',
         'lg:relative lg:translate-x-0',
         'fixed top-0 left-0 transition-transform duration-200 ease-out',
         mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
@@ -162,7 +162,7 @@ export function Sidebar() {
         )}
 
         {/* Theme + User profile — pushed to bottom */}
-        <div className="mt-auto flex flex-col gap-2">
+        <div className="mt-auto flex flex-col gap-2 pb-[env(safe-area-inset-bottom)]">
           <div className="flex items-center justify-between px-3">
             <ThemeToggle />
             <NotificationBell />
