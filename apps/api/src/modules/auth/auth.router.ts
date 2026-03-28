@@ -59,7 +59,15 @@ authRouter.post('/refresh', async (req, res) => {
     return
   }
   try {
-    const { accessToken } = await refresh({ token })
+    const { accessToken, refreshToken } = await refresh({ token })
+    // H-02: Set rotated refresh token cookie
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/',
+    })
     res.status(200).json({ success: true, data: { accessToken }, error: null })
   } catch {
     res.status(401).json({ success: false, data: null, error: 'Invalid or expired refresh token' })

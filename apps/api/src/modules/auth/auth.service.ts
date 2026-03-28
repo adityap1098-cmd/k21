@@ -71,7 +71,7 @@ export async function login(params: {
 
 export async function refresh(params: {
   token: string
-}): Promise<{ accessToken: string }> {
+}): Promise<{ accessToken: string; refreshToken: string }> {
   const { token } = params
 
   const rows = await db
@@ -110,7 +110,19 @@ export async function refresh(params: {
     user.mustChangePassword
   )
 
-  return { accessToken }
+  // H-02: Rotate refresh token — delete old, issue new
+  // A stolen token can only be used once before it becomes invalid
+  await db.delete(refreshTokens).where(eq(refreshTokens.token, token))
+
+  const newRefreshToken = randomUUID()
+  await db.insert(refreshTokens).values({
+    id: randomUUID(),
+    userId: user.id,
+    token: newRefreshToken,
+    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  })
+
+  return { accessToken, refreshToken: newRefreshToken }
 }
 
 export async function logout(params: {
