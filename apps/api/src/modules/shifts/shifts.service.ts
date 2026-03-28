@@ -61,43 +61,46 @@ export async function closeShift(params: {
 }): Promise<ShiftReconciliation> {
   const { shiftId, cashierId, closingCash } = params
 
-  const updated = await db
-    .update(shifts)
-    .set({
-      status: 'CLOSED',
-      closingCash,
-      closedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(shifts.id, shiftId),
-        eq(shifts.cashierId, cashierId),
-        eq(shifts.status, 'OPEN')
+  // H-09: Wrap UPDATE + INSERT in a transaction to prevent data loss on crash
+  return db.transaction(async (tx) => {
+    const updated = await (tx as unknown as typeof db)
+      .update(shifts)
+      .set({
+        status: 'CLOSED',
+        closingCash,
+        closedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(shifts.id, shiftId),
+          eq(shifts.cashierId, cashierId),
+          eq(shifts.status, 'OPEN')
+        )
       )
-    )
-    .returning()
+      .returning()
 
-  if (updated.length === 0) {
-    throw new Error('SHIFT_NOT_FOUND')
-  }
+    if (updated.length === 0) {
+      throw new Error('SHIFT_NOT_FOUND')
+    }
 
-  const recon = await aggregateReconciliation(updated[0])
+    const recon = await aggregateReconciliation(updated[0])
 
-  // Auto-record selisih ke shift_cash_transactions supaya arus kas tetap terlacak
-  if (recon.discrepancy !== 0) {
-    const isShortage = recon.discrepancy < 0
-    await db.insert(shiftCashTransactions).values({
-      shiftId,
-      type: isShortage ? 'OUT' : 'IN',
-      amount: Math.abs(recon.discrepancy),
-      description: isShortage
-        ? `[PERINGATAN] Kas kurang Rp ${Math.abs(recon.discrepancy).toLocaleString('id-ID')} — kemungkinan pemakaian kas tidak tercatat. Harap diperiksa.`
-        : `[PERINGATAN] Kas lebih Rp ${recon.discrepancy.toLocaleString('id-ID')} — kemungkinan pemasukan tidak tercatat atau kembalian kurang. Harap diperiksa.`,
-      createdBy: cashierId,
-    })
-  }
+    // Auto-record selisih ke shift_cash_transactions supaya arus kas tetap terlacak
+    if (recon.discrepancy !== 0) {
+      const isShortage = recon.discrepancy < 0
+      await (tx as unknown as typeof db).insert(shiftCashTransactions).values({
+        shiftId,
+        type: isShortage ? 'OUT' : 'IN',
+        amount: Math.abs(recon.discrepancy),
+        description: isShortage
+          ? `[PERINGATAN] Kas kurang Rp ${Math.abs(recon.discrepancy).toLocaleString('id-ID')} — kemungkinan pemakaian kas tidak tercatat. Harap diperiksa.`
+          : `[PERINGATAN] Kas lebih Rp ${recon.discrepancy.toLocaleString('id-ID')} — kemungkinan pemasukan tidak tercatat atau kembalian kurang. Harap diperiksa.`,
+        createdBy: cashierId,
+      })
+    }
 
-  return recon
+    return recon
+  })
 }
 
 // ─── getActiveShift ────────────────────────────────────────────────────────
