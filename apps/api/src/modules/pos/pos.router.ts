@@ -96,6 +96,16 @@ posRouter.post(
     }
 
     try {
+      // forceComplete bypasses stock checks — restrict to Owner/Admin only
+      if (result.data.forceComplete && !['Owner', 'Admin'].includes(req.user!.role)) {
+        res.status(403).json({
+          success: false,
+          data: null,
+          error: 'Hanya Owner/Admin yang dapat menggunakan force complete',
+        })
+        return
+      }
+
       const syncResult = await syncOfflineTx({
         ...result.data,
         cashierId: req.user!.sub,

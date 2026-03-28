@@ -126,7 +126,12 @@ webhookRouter.post(
     }
 
     // Verify HMAC signature
-    const partnerKey = process.env.SHOPEE_PARTNER_KEY ?? ''
+    const partnerKey = process.env.SHOPEE_PARTNER_KEY
+    if (!partnerKey) {
+      console.error('[webhook] SHOPEE_PARTNER_KEY not configured — rejecting webhook')
+      res.status(500).json({ success: false, error: 'Webhook verification not configured' })
+      return
+    }
     const isValid = verifyShopeeSignature(rawBody, incomingSignature, partnerKey)
 
     if (!isValid) {

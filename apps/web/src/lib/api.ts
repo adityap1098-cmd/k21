@@ -10,24 +10,14 @@ let accessToken: string | null = null
 
 export function setAccessToken(token: string) {
   accessToken = token
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('accessToken', token)
-  }
 }
 
 export function getAccessToken(): string | null {
-  if (accessToken) return accessToken
-  if (typeof window !== 'undefined') {
-    accessToken = localStorage.getItem('accessToken')
-  }
   return accessToken
 }
 
 export function clearAccessToken() {
   accessToken = null
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('accessToken')
-  }
 }
 
 async function refreshToken(): Promise<boolean> {

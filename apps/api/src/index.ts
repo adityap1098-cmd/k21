@@ -55,18 +55,15 @@ const allowedOrigins = [
 ]
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile, curl, etc)
+    // Allow requests with no origin (mobile, curl, server-to-server)
     if (!origin) return callback(null, true)
     if (allowedOrigins.includes(origin)) return callback(null, true)
-    callback(null, true) // Allow all for now — tighten after domain setup
+    callback(new Error('Origin not allowed by CORS'))
   },
   credentials: true,
 }))
 
-// Fail-fast: JWT_SECRET required in production
-if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is required in production')
-}
+// JWT_SECRET is validated at module import time in authenticate.ts and auth.service.ts
 
 // Health endpoint — used by Docker healthcheck and smoke tests
 app.get('/health', (_req, res) => {
