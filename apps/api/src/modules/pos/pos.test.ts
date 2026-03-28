@@ -127,8 +127,8 @@ function setupSuccessfulSaleTx() {
       .mockReturnValueOnce(selectChainNone)  // duplicate check
       .mockReturnValueOnce(selectChainShift) // shift check
 
-    // 3. FOR UPDATE stock check — enough stock
-    tx.execute.mockResolvedValue([{ stock_qty: 100 }])
+    // 3. FOR UPDATE stock check — enough stock, price matches unitPrice (5000)
+    tx.execute.mockResolvedValue([{ stock_qty: 100, price: 5000 }])
 
     // 4. Insert transaction
     const insertTxChain = {
@@ -220,7 +220,7 @@ describe('completeSale — POS-11: atomic sale', () => {
         .mockReturnValueOnce(selectChainShift)
 
       // Stock insufficient: stock_qty = 1, requested qty = 2
-      tx.execute.mockResolvedValue([{ stock_qty: 1 }])
+      tx.execute.mockResolvedValue([{ stock_qty: 1, price: 5000 }])
 
       return fn(tx)
     })
@@ -294,7 +294,7 @@ describe('syncOfflineTx — offline sync wrapper', () => {
         .mockReturnValueOnce(selectChainNone)
         .mockReturnValueOnce(selectChainShift)
       // stock = 0
-      tx.execute.mockResolvedValue([{ stock_qty: 0 }])
+      tx.execute.mockResolvedValue([{ stock_qty: 0, price: 5000 }])
       return fn(tx)
     })
 

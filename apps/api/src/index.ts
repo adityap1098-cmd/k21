@@ -29,6 +29,8 @@ import { createMarketplaceWorker } from './queue/marketplace.worker.js'
 import { webhookRouter } from './modules/marketplace/webhook.router.js'
 import { globalErrorHandler } from './middleware/error-handler.js'
 import { sql } from 'drizzle-orm'
+import { Redis } from 'ioredis'
+import { db } from './db/index.js'
 
 export const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -88,7 +90,6 @@ app.get('/health', async (_req, res) => {
 
   // Check DB
   try {
-    const { db } = await import('./db/index.js')
     await db.execute(sql`SELECT 1`)
     checks.db = 'ok'
   } catch (err) {
@@ -98,11 +99,13 @@ app.get('/health', async (_req, res) => {
 
   // Check Redis (via ioredis — used by BullMQ)
   try {
-    const IORedis = (await import('ioredis')).default
-    const redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
+    const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
       connectTimeout: 2000,
+      maxRetriesPerRequest: 0,
+      retryStrategy: () => null, // Don't retry — one-shot check
       lazyConnect: true,
     })
+    await redis.connect()
     await redis.ping()
     await redis.quit()
     checks.redis = 'ok'
