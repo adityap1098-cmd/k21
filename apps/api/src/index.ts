@@ -69,6 +69,9 @@ const allowedOrigins = [
   'http://localhost:3003',
   `http://${process.env.VPS_HOST ?? '151.240.0.236'}:3003`,
   'http://151.240.0.236:3003',
+  `https://${process.env.DOMAIN ?? 'localhost'}`,
+  'https://k21.usahasukses.net',
+  'http://k21.usahasukses.net',
 ]
 app.use(cors({
   origin: (origin, callback) => {
