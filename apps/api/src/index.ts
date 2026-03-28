@@ -28,6 +28,7 @@ import { createLowStockWorker } from './queues/lowstock.queue.js'
 import { createMarketplaceWorker } from './queue/marketplace.worker.js'
 import { webhookRouter } from './modules/marketplace/webhook.router.js'
 import { globalErrorHandler } from './middleware/error-handler.js'
+import { sql } from 'drizzle-orm'
 
 export const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -43,7 +44,21 @@ app.use('/api/v1/webhooks', webhookRouter)
 
 app.use(express.json({ limit: '1mb' }))
 app.use(cookieParser()) // Must be before routes
-app.use(helmet({ contentSecurityPolicy: false })) // CSP handled by Next.js
+// H-05: Enable Content Security Policy — restrict script/style/connect sources
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      connectSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"],
+    },
+  },
+}))
 app.use(compression())
 
 // CORS — allow web frontend origins
@@ -66,8 +81,41 @@ app.use(cors({
 // JWT_SECRET is validated at module import time in authenticate.ts and auth.service.ts
 
 // Health endpoint — used by Docker healthcheck and smoke tests
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+// H-31: Deep health check verifies DB and Redis connectivity
+app.get('/health', async (_req, res) => {
+  const checks: Record<string, string> = { api: 'ok' }
+  let healthy = true
+
+  // Check DB
+  try {
+    const { db } = await import('./db/index.js')
+    await db.execute(sql`SELECT 1`)
+    checks.db = 'ok'
+  } catch (err) {
+    checks.db = 'error'
+    healthy = false
+  }
+
+  // Check Redis (via ioredis — used by BullMQ)
+  try {
+    const IORedis = (await import('ioredis')).default
+    const redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
+      connectTimeout: 2000,
+      lazyConnect: true,
+    })
+    await redis.ping()
+    await redis.quit()
+    checks.redis = 'ok'
+  } catch {
+    checks.redis = 'error'
+    healthy = false
+  }
+
+  res.status(healthy ? 200 : 503).json({
+    status: healthy ? 'ok' : 'degraded',
+    timestamp: new Date().toISOString(),
+    checks,
+  })
 })
 
 // API versioning — all future routes registered under this prefix
@@ -121,6 +169,15 @@ app.use(globalErrorHandler)
 
 // Only start listening when run directly (not during tests)
 if (process.env.NODE_ENV !== 'test') {
+  // H-30: Catch unhandled rejections and exceptions to prevent silent crashes
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('[fatal] Unhandled rejection at:', promise, 'reason:', reason)
+  })
+  process.on('uncaughtException', (err) => {
+    console.error('[fatal] Uncaught exception:', err)
+    process.exit(1)
+  })
+
   const server = app.listen(PORT, () => {
     console.log(`Teladan27 Motor API listening on port ${PORT}`)
   })

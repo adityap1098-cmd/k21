@@ -19,12 +19,15 @@ COPY . .
 
 RUN pnpm --filter @k21/shared build
 ENV NEXT_TELEMETRY_DISABLED=1
+ARG API_URL=http://api:3001
+ENV API_URL=${API_URL}
 RUN pnpm --filter @k21/web build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV API_URL=http://api:3001
 
 # Next.js standalone output
 COPY --from=builder /app/apps/web/.next/standalone ./

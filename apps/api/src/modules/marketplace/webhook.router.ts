@@ -92,6 +92,22 @@ webhookRouter.post(
     const eventType = String(payload.code ?? payload.event_type ?? 'unknown')
     const incomingSignature = String(req.headers['authorization'] ?? req.headers['x-shopee-signature'] ?? '')
 
+    // H-08: Verify HMAC signature BEFORE writing anything to the database
+    // This prevents unsigned/forged payloads from polluting the webhook events table
+    const partnerKey = process.env.SHOPEE_PARTNER_KEY
+    if (!partnerKey) {
+      console.error('[webhook] SHOPEE_PARTNER_KEY not configured — rejecting webhook')
+      res.status(500).json({ success: false, error: 'Webhook verification not configured' })
+      return
+    }
+    const isValid = verifyShopeeSignature(rawBody, incomingSignature, partnerKey)
+
+    if (!isValid) {
+      console.log(`[webhook] HMAC verification failed for eventType=${eventType} shopId=${shopId}`)
+      res.status(401).json({ success: false, error: 'Invalid signature' })
+      return
+    }
+
     // Resolve channelId from marketplace_channels by shop_id (null if not found)
     let channelId: string | null = null
     try {
@@ -107,8 +123,7 @@ webhookRouter.post(
       // Non-fatal — proceed without channelId
     }
 
-    // Insert webhook event log BEFORE returning any response
-    // This ensures all inbound requests are traceable regardless of validity.
+    // Insert webhook event log AFTER signature verification passes
     const eventId = randomUUID()
     try {
       await db.insert(marketplaceWebhookEvents).values({
@@ -122,31 +137,6 @@ webhookRouter.post(
     } catch (err) {
       console.error('[webhook] Failed to insert webhook event:', err)
       res.status(500).json({ success: false, error: 'Internal server error' })
-      return
-    }
-
-    // Verify HMAC signature
-    const partnerKey = process.env.SHOPEE_PARTNER_KEY
-    if (!partnerKey) {
-      console.error('[webhook] SHOPEE_PARTNER_KEY not configured — rejecting webhook')
-      res.status(500).json({ success: false, error: 'Webhook verification not configured' })
-      return
-    }
-    const isValid = verifyShopeeSignature(rawBody, incomingSignature, partnerKey)
-
-    if (!isValid) {
-      // Mark event as SKIPPED with error message
-      try {
-        await db
-          .update(marketplaceWebhookEvents)
-          .set({ processingStatus: 'SKIPPED', errorMessage: 'Invalid HMAC signature' })
-          .where(eq(marketplaceWebhookEvents.id, eventId))
-      } catch (updateErr) {
-        console.error('[webhook] Failed to update event status to SKIPPED:', updateErr)
-      }
-
-      console.log(`[webhook] HMAC verification failed for eventId=${eventId} eventType=${eventType}`)
-      res.status(401).json({ success: false, error: 'Invalid signature' })
       return
     }
 

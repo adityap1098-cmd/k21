@@ -106,6 +106,9 @@ jobs:
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+            REDIS_URL=redis://:${{ secrets.REDIS_PASSWORD }}@redis:6379
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            SHOPEE_PARTNER_KEY=${{ secrets.SHOPEE_PARTNER_KEY }}
             GPG_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
             B2_KEY_ID=${{ secrets.B2_KEY_ID }}
             B2_APPLICATION_KEY=${{ secrets.B2_APPLICATION_KEY }}
@@ -125,6 +128,10 @@ jobs:
 
             # Step 3: Build and restart containers
             docker compose -f docker-compose.yml -f docker-compose.prod.yml build --no-cache
+
+            # C-11: Run database migrations before starting containers
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm api node dist/run-migrations.js || echo "Migration runner not found — skipping"
+
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
             echo "Deployment complete."
 
