@@ -143,7 +143,7 @@ describe('AuthService', () => {
         updatedAt: new Date(),
       }
 
-      // First call for refreshTokens, second for users
+      // First select: refreshTokens, second select: users
       mockDbSelect
         .mockReturnValueOnce({
           from: vi.fn().mockReturnValue({
@@ -160,10 +160,22 @@ describe('AuthService', () => {
           }),
         })
 
+      // H-02: refresh now rotates token — needs delete + insert mocks
+      mockDbDelete.mockReturnValue({
+        where: vi.fn().mockResolvedValue(undefined),
+      })
+      mockDbInsert.mockReturnValue({
+        values: vi.fn().mockReturnValue({
+          returning: vi.fn().mockResolvedValue([]),
+        }),
+      })
+
       const result = await refresh({ token: 'valid-refresh-token' })
 
       expect(result).toHaveProperty('accessToken')
       expect(typeof result.accessToken).toBe('string')
+      expect(result).toHaveProperty('refreshToken')
+      expect(typeof result.refreshToken).toBe('string')
     })
 
     it('throws INVALID_TOKEN for expired/missing refresh token', async () => {

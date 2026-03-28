@@ -51,7 +51,24 @@ productsRouter.get('/', authenticate, async (req, res) => {
     const includeVariants = req.query.variants === 'true'
 
     const data = await listProducts({ categoryId, isActive, includeVariants })
-    res.json({ success: true, data, error: null })
+
+    // H-06: Strip cost price from response for roles that shouldn't see it
+    const canSeeCost = ['Owner', 'Admin', 'Finance'].includes(req.user!.role)
+    const sanitized = canSeeCost ? data : data.map(p => {
+      const { variants, ...rest } = p as any
+      const cleaned = { ...rest }
+      delete cleaned.costPrice
+      delete cleaned.defaultCostPrice
+      if (variants) {
+        cleaned.variants = variants.map((v: any) => {
+          const { costPrice, ...vRest } = v
+          return vRest
+        })
+      }
+      return cleaned
+    })
+
+    res.json({ success: true, data: sanitized, error: null })
   } catch (err) {
     const { status, message } = resolveError(err)
     if (status >= 500) console.error('[products] GET / failed:', err)
@@ -80,6 +97,23 @@ productsRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Warehouse 
 productsRouter.get('/:id', authenticate, async (req, res) => {
   try {
     const data = await getProduct(req.params.id)
+
+    // H-06: Strip cost price for non-privileged roles
+    const canSeeCost = ['Owner', 'Admin', 'Finance'].includes(req.user!.role)
+    if (!canSeeCost) {
+      const cleaned = { ...data } as any
+      delete cleaned.costPrice
+      delete cleaned.defaultCostPrice
+      if (cleaned.variants) {
+        cleaned.variants = cleaned.variants.map((v: any) => {
+          const { costPrice, ...vRest } = v
+          return vRest
+        })
+      }
+      res.json({ success: true, data: cleaned, error: null })
+      return
+    }
+
     res.json({ success: true, data, error: null })
   } catch (err) {
     const { status, message } = resolveError(err)
