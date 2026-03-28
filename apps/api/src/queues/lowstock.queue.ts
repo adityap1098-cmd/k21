@@ -9,6 +9,10 @@ export interface LowStockJobData {
 
 export const lowStockQueue = new Queue<LowStockJobData>('low-stock-alerts', {
   connection: bullmqRedis,
+  defaultJobOptions: {
+    removeOnComplete: { count: 500 },
+    removeOnFail: { count: 200 },
+  },
 })
 
 /**

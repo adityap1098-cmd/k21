@@ -1,9 +1,11 @@
 import { jwtVerify } from 'jose'
 import type { RequestHandler } from 'express'
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? 'dev-secret-change-in-production'
-)
+const JWT_SECRET_RAW = process.env.JWT_SECRET
+if (!JWT_SECRET_RAW) {
+  throw new Error('JWT_SECRET environment variable is required')
+}
+const JWT_SECRET = new TextEncoder().encode(JWT_SECRET_RAW)
 
 export const authenticate: RequestHandler = async (req, res, next) => {
   const authHeader = req.headers.authorization
@@ -13,7 +15,7 @@ export const authenticate: RequestHandler = async (req, res, next) => {
   }
   try {
     const token = authHeader.slice(7)
-    const { payload } = await jwtVerify(token, JWT_SECRET)
+    const { payload } = await jwtVerify(token, JWT_SECRET, { algorithms: ['HS256'] })
     req.user = {
       sub: payload.sub as string,
       role: payload['role'] as string,

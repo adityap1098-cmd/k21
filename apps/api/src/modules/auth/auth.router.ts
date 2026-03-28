@@ -1,11 +1,22 @@
 import { Router } from 'express'
 import { z } from 'zod'
+import rateLimit from 'express-rate-limit'
 import { login, refresh, logout } from './auth.service.js'
 import { authenticate } from '../../middleware/authenticate.js'
 import { resolveError } from '../../middleware/error-handler.js'
 import { changePassword } from '../users/users.service.js'
 
 export const authRouter = Router()
+
+// Rate limiting — 10 requests per minute per IP on auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, data: null, error: 'Terlalu banyak percobaan, coba lagi dalam 1 menit' },
+})
+authRouter.use(authLimiter)
 
 const loginSchema = z.object({
   email: z.string().email(),

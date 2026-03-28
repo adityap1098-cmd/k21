@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { eq, sql } from 'drizzle-orm'
+import { eq, sql, and, inArray } from 'drizzle-orm'
 import { db } from '../../db/index.js'
 import { products, productVariants } from '../../db/schema/index.js'
 import { logAudit } from '../../middleware/audit.js'
@@ -116,32 +116,33 @@ export async function listProducts(filters?: {
   isActive?: boolean
   includeVariants?: boolean
 }): Promise<Array<Product & { variantCount: number; variants?: ProductVariant[] }>> {
-  // Build query with optional filters
-  const allProducts = await db
-    .select()
-    .from(products)
-
-  // Apply in-memory filters since we're using a simple mock-friendly pattern
-  let filtered = allProducts
+  // C-13: Push WHERE into SQL instead of loading all rows into memory
+  const conditions = []
   if (filters?.categoryId != null) {
-    filtered = filtered.filter((p) => p.categoryId === filters.categoryId)
+    conditions.push(eq(products.categoryId, filters.categoryId))
   }
   if (filters?.isActive != null) {
-    filtered = filtered.filter((p) => p.isActive === filters.isActive)
+    conditions.push(eq(products.isActive, filters.isActive))
   }
 
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined
+  const filtered = await db
+    .select()
+    .from(products)
+    .where(whereClause)
+
   if (filters?.includeVariants) {
-    // Fetch all variants for matched products
     const productIds = filtered.map(p => p.id)
     if (productIds.length === 0) return []
 
-    const allVariants = await db
+    // Fetch only variants for matched products, not the entire table
+    const matchedVariants = await db
       .select()
       .from(productVariants)
+      .where(inArray(productVariants.productId, productIds))
 
     const variantsByProduct = new Map<string, ProductVariant[]>()
-    for (const v of allVariants) {
-      if (!productIds.includes(v.productId)) continue
+    for (const v of matchedVariants) {
       const list = variantsByProduct.get(v.productId) || []
       list.push(v)
       variantsByProduct.set(v.productId, list)
@@ -153,8 +154,16 @@ export async function listProducts(filters?: {
     })
   }
 
-  // Return with variant count placeholder (no variants loaded)
-  return filtered.map((p) => ({ ...p, variantCount: 0 }))
+  // Without variants, get variant counts via subquery
+  const countsRaw = await db.execute(
+    sql`SELECT product_id, COUNT(*)::int AS cnt FROM product_variants GROUP BY product_id`
+  )
+  const countMap = new Map<string, number>()
+  for (const row of countsRaw as unknown as Array<{ product_id: string; cnt: number }>) {
+    countMap.set(row.product_id, row.cnt)
+  }
+
+  return filtered.map((p) => ({ ...p, variantCount: countMap.get(p.id) ?? 0 }))
 }
 
 export async function updateProduct(

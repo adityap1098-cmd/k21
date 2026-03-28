@@ -6,6 +6,7 @@ vi.mock('../../db/index.js', () => {
     select: vi.fn(),
     insert: vi.fn(),
     update: vi.fn(),
+    transaction: vi.fn(),
   }
   return { db: mockDb }
 })
@@ -92,16 +93,10 @@ describe('shifts — POS-05: closeShift', () => {
       openedAt: new Date(),
       closedAt: new Date(),
     }
-    const mockUpdateChain = {
-      set: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      returning: vi.fn().mockResolvedValue([closedShift]),
-    }
-    mockDb.update.mockReturnValue(mockUpdateChain)
 
-    // Reconciliation query: transaction_payments joined with transactions
-    // Returns: [{ method: 'CASH', total: '150000' }, { method: 'TRANSFER', total: '0' }, { method: 'QRIS', total: '0' }]
-    const mockSelectChain = {
+    // closeShift now uses db.transaction — mock tx to behave like db
+    // aggregateReconciliation uses the module-level db.select, not tx.select
+    const mockPaymentSelectChain = {
       from: vi.fn().mockReturnThis(),
       innerJoin: vi.fn().mockReturnThis(),
       where: vi.fn().mockReturnThis(),
@@ -109,7 +104,29 @@ describe('shifts — POS-05: closeShift', () => {
         { method: 'CASH', total: '150000' },
       ]),
     }
-    mockDb.select.mockReturnValue(mockSelectChain)
+    const mockCashTxSelectChain = {
+      from: vi.fn().mockReturnThis(),
+      where: vi.fn().mockReturnThis(),
+      groupBy: vi.fn().mockResolvedValue([]),
+    }
+    mockDb.select
+      .mockReturnValueOnce(mockPaymentSelectChain)
+      .mockReturnValueOnce(mockCashTxSelectChain)
+
+    mockDb.transaction.mockImplementation(async (fn: any) => {
+      const tx = {
+        update: vi.fn().mockReturnValue({
+          set: vi.fn().mockReturnThis(),
+          where: vi.fn().mockReturnThis(),
+          returning: vi.fn().mockResolvedValue([closedShift]),
+        }),
+        insert: vi.fn().mockReturnValue({
+          values: vi.fn().mockReturnThis(),
+          returning: vi.fn().mockResolvedValue([]),
+        }),
+      }
+      return fn(tx)
+    })
 
     const result = await closeShift({ shiftId: SHIFT_ID, cashierId: CASHIER_ID, closingCash: 650000 })
 
@@ -124,12 +141,16 @@ describe('shifts — POS-05: closeShift', () => {
   })
 
   it('closeShift throws SHIFT_NOT_FOUND when shift does not exist or does not belong to cashier', async () => {
-    const mockUpdateChain = {
-      set: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      returning: vi.fn().mockResolvedValue([]),
-    }
-    mockDb.update.mockReturnValue(mockUpdateChain)
+    mockDb.transaction.mockImplementation(async (fn: any) => {
+      const tx = {
+        update: vi.fn().mockReturnValue({
+          set: vi.fn().mockReturnThis(),
+          where: vi.fn().mockReturnThis(),
+          returning: vi.fn().mockResolvedValue([]),
+        }),
+      }
+      return fn(tx)
+    })
 
     await expect(
       closeShift({ shiftId: SHIFT_ID, cashierId: CASHIER_ID, closingCash: 100000 })
@@ -210,9 +231,17 @@ describe('shifts — POS-05: getShiftReconciliation', () => {
       ]),
     }
 
+    // Third select: shift cash transactions aggregation
+    const mockSelectCashTxChain = {
+      from: vi.fn().mockReturnThis(),
+      where: vi.fn().mockReturnThis(),
+      groupBy: vi.fn().mockResolvedValue([]),
+    }
+
     mockDb.select
       .mockReturnValueOnce(mockSelectShiftChain)
       .mockReturnValueOnce(mockSelectPaymentsChain)
+      .mockReturnValueOnce(mockSelectCashTxChain)
 
     const result = await getShiftReconciliation(SHIFT_ID)
 
@@ -253,9 +282,17 @@ describe('shifts — POS-05: getShiftReconciliation', () => {
       ]),
     }
 
+    // Cash transactions aggregation
+    const mockSelectCashTxChain = {
+      from: vi.fn().mockReturnThis(),
+      where: vi.fn().mockReturnThis(),
+      groupBy: vi.fn().mockResolvedValue([]),
+    }
+
     mockDb.select
       .mockReturnValueOnce(mockSelectShiftChain)
       .mockReturnValueOnce(mockSelectPaymentsChain)
+      .mockReturnValueOnce(mockSelectCashTxChain)
 
     const result = await getShiftReconciliation(SHIFT_ID)
 

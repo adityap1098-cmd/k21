@@ -5,9 +5,11 @@ import { eq } from 'drizzle-orm'
 import { db } from '../../db/index.js'
 import { users, refreshTokens } from '../../db/schema/index.js'
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? 'dev-secret-change-in-production'
-)
+const JWT_SECRET_RAW = process.env.JWT_SECRET
+if (!JWT_SECRET_RAW) {
+  throw new Error('JWT_SECRET environment variable is required')
+}
+const JWT_SECRET = new TextEncoder().encode(JWT_SECRET_RAW)
 
 async function signAccessToken(
   userId: string,

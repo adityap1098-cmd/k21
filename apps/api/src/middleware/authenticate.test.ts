@@ -5,7 +5,7 @@ import { SignJWT } from 'jose'
 // Decouple from live DB connection
 vi.mock('../db/index.js', () => ({ db: {} }))
 
-const JWT_SECRET_RAW = 'dev-secret-change-in-production'
+const JWT_SECRET_RAW = process.env.JWT_SECRET || 'test-jwt-secret-for-vitest'
 const JWT_SECRET = new TextEncoder().encode(JWT_SECRET_RAW)
 
 async function makeJwt(payload: Record<string, unknown>, expired = false) {
@@ -38,11 +38,17 @@ function makeRes() {
 }
 
 function makeReq(overrides: Partial<Request> = {}): Request {
-  return {
+  const merged = {
     headers: {},
     path: '/api/v1/some-resource',
+    originalUrl: '/api/v1/some-resource',
     ...overrides,
-  } as unknown as Request
+  }
+  // Ensure originalUrl stays in sync with path if only path is provided
+  if (overrides.path && !overrides.originalUrl) {
+    merged.originalUrl = overrides.path as string
+  }
+  return merged as unknown as Request
 }
 
 describe('authenticate middleware', () => {

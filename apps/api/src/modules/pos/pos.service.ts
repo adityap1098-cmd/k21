@@ -67,15 +67,31 @@ export async function completeSale(params: CompleteSaleParams): Promise<Transact
       throw new Error('SHIFT_NOT_OPEN')
     }
 
-    // 3. FOR each item: SELECT FOR UPDATE + stock check (before any inserts)
-    for (const item of params.items) {
+    // 3. FOR each item: SELECT FOR UPDATE + stock check + price validation
+    //    Sort variant IDs to prevent deadlocks when multiple concurrent transactions
+    //    lock the same rows in different order (H-34)
+    const sortedItems = [...params.items].sort((a, b) => a.variantId.localeCompare(b.variantId))
+    for (const item of sortedItems) {
       const rows = await (tx as DrizzleTx).execute(
-        sql`SELECT stock_qty FROM product_variants WHERE id = ${item.variantId} FOR UPDATE`
+        sql`SELECT stock_qty, price FROM product_variants WHERE id = ${item.variantId} FOR UPDATE`
       )
-      const variant = (rows as unknown as Array<{ stock_qty: number }>)[0]
-      if (!variant || variant.stock_qty < item.qty) {
+      const variant = (rows as unknown as Array<{ stock_qty: number; price: number }>)[0]
+      if (!variant) {
+        throw new Error('VARIANT_NOT_FOUND')
+      }
+      if (variant.stock_qty < item.qty) {
         throw new Error('INSUFFICIENT_STOCK')
       }
+      // C-03: Validate client-submitted price matches canonical DB price
+      if (item.unitPrice !== variant.price) {
+        throw new Error(`PRICE_MISMATCH:${item.variantId}:expected=${variant.price}:got=${item.unitPrice}`)
+      }
+    }
+
+    // C-03: Validate payment total covers transaction total
+    const paymentTotal = params.payments.reduce((sum, p) => sum + p.amount, 0)
+    if (paymentTotal < params.total) {
+      throw new Error(`PAYMENT_INSUFFICIENT:total=${params.total}:paid=${paymentTotal}`)
     }
 
     // 4. Insert transaction header
@@ -497,6 +513,16 @@ export async function getTransactionDetail(transactionId: string) {
  * Updates the note/keterangan field on a transaction.
  */
 export async function updateTransactionNote(transactionId: string, note: string): Promise<Transaction> {
+  // H-12: Prevent modifying VOIDED transactions
+  const existing = await db
+    .select({ status: transactions.status })
+    .from(transactions)
+    .where(eq(transactions.id, transactionId))
+    .limit(1)
+
+  if (existing.length === 0) throw new Error('TRANSACTION_NOT_FOUND')
+  if (existing[0].status === 'VOIDED') throw new Error('TRANSACTION_VOIDED')
+
   const [updated] = await db
     .update(transactions)
     .set({ note })
