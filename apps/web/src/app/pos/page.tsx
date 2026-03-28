@@ -182,8 +182,8 @@ export default function PosPage() {
   // Gates
   if (checkingShift) {
     return (
-      <AppShell><div className="flex h-screen overflow-hidden bg-surface"><Sidebar />
-        <div className="flex-1 flex items-center justify-center">
+      <AppShell><div className="flex h-dvh overflow-hidden bg-surface"><Sidebar />
+        <div className="flex-1 flex items-center justify-center pt-14 lg:pt-0">
           <div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin" />
         </div>
       </div></AppShell>
@@ -192,8 +192,8 @@ export default function PosPage() {
 
   if (!activeShift) {
     return (
-      <AppShell><div className="flex h-screen overflow-hidden bg-surface"><Sidebar />
-        <div className="flex-1 flex items-center justify-center">
+      <AppShell><div className="flex h-dvh overflow-hidden bg-surface"><Sidebar />
+        <div className="flex-1 flex items-center justify-center pt-14 lg:pt-0">
           <div className="flex flex-col items-center text-center animate-in">
             <div className="mb-4"><T27Logo size={80} variant="dark" /></div>
             <h1 className="text-2xl font-bold mb-2 text-ink">Buka Shift untuk Mulai</h1>
@@ -217,9 +217,9 @@ export default function PosPage() {
 
   return (
     <AppShell>
-      <div className="flex h-screen overflow-hidden bg-surface">
+      <div className="flex h-dvh overflow-hidden bg-surface">
         <Sidebar />
-        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden pt-14 lg:pt-0">
           <div className="sr-only"><SyncStatusBar isSyncing={isSyncing} /></div>
           <SyncIssuesPanel />
           <h1 className="sr-only">Point of Sale</h1>
