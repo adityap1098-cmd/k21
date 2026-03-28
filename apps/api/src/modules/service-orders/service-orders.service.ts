@@ -595,62 +595,47 @@ export async function recordServicePayment(
 // --- Receivables Query (BKL-21) ---
 
 export async function getReceivables(customerId?: string) {
-  // Fetch UNPAID/PARTIAL service orders joined to vehicles and customers
-  let query = db
-    .select({
-      serviceOrderId: serviceOrders.id,
-      orderNumber: serviceOrders.orderNumber,
-      customerId: vehicles.customerId,
-      customerName: customers.name,
-      vehicleId: serviceOrders.vehicleId,
-      plateNumber: vehicles.plateNumber,
-      workStatus: serviceOrders.workStatus,
-      paymentStatus: serviceOrders.paymentStatus,
-    })
-    .from(serviceOrders)
-    .innerJoin(vehicles, eq(serviceOrders.vehicleId, vehicles.id))
-    .innerJoin(customers, eq(vehicles.customerId, customers.id))
-    .where(inArray(serviceOrders.paymentStatus, ['UNPAID', 'PARTIAL']))
-    .$dynamic()
-
+  // H-13: Single query with SQL aggregation instead of N+1
+  const conditions = [
+    sql`so.payment_status IN ('UNPAID', 'PARTIAL')`,
+  ]
   if (customerId) {
-    query = query.where(
-      and(
-        inArray(serviceOrders.paymentStatus, ['UNPAID', 'PARTIAL']),
-        eq(vehicles.customerId, customerId),
-      ),
-    )
+    conditions.push(sql`v.customer_id = ${customerId}`)
   }
+  const whereClause = sql.join(conditions, sql` AND `)
 
-  const orders = await query
+  const results = await db.execute(sql`
+    SELECT
+      so.id AS service_order_id,
+      so.order_number,
+      v.customer_id,
+      c.name AS customer_name,
+      so.vehicle_id,
+      v.plate_number,
+      so.work_status,
+      so.payment_status,
+      COALESCE((SELECT SUM(soi.line_total) FROM service_order_items soi WHERE soi.service_order_id = so.id), 0)::int AS total,
+      COALESCE((SELECT SUM(sp.amount) FROM service_payments sp WHERE sp.service_order_id = so.id), 0)::int AS total_paid
+    FROM service_orders so
+    INNER JOIN vehicles v ON v.id = so.vehicle_id
+    INNER JOIN customers c ON c.id = v.customer_id
+    WHERE ${whereClause}
+    ORDER BY so.created_at DESC
+  `)
 
-  // For each order, compute total from line items and totalPaid from payments
-  const results = await Promise.all(
-    orders.map(async (order) => {
-      const items = await db
-        .select()
-        .from(serviceOrderItems)
-        .where(eq(serviceOrderItems.serviceOrderId, order.serviceOrderId))
-
-      const total = items.reduce((sum, i) => sum + i.lineTotal, 0)
-
-      const payments = await db
-        .select()
-        .from(servicePayments)
-        .where(eq(servicePayments.serviceOrderId, order.serviceOrderId))
-
-      const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0)
-
-      return {
-        ...order,
-        total,
-        totalPaid,
-        outstanding: total - totalPaid,
-      }
-    }),
-  )
-
-  return results
+  return (results as unknown as Array<Record<string, unknown>>).map((row: any) => ({
+    serviceOrderId: row.service_order_id,
+    orderNumber: row.order_number,
+    customerId: row.customer_id,
+    customerName: row.customer_name,
+    vehicleId: row.vehicle_id,
+    plateNumber: row.plate_number,
+    workStatus: row.work_status,
+    paymentStatus: row.payment_status,
+    total: Number(row.total),
+    totalPaid: Number(row.total_paid),
+    outstanding: Number(row.total) - Number(row.total_paid),
+  }))
 }
 
 // --- Service History Query (BKL-15/BKL-22) ---

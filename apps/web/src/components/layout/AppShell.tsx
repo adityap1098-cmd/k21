@@ -5,6 +5,7 @@ import { getAccessToken } from '@/lib/api'
 import { usePathname, useRouter } from 'next/navigation'
 import { ThemeProvider } from '@/components/ui/ThemeToggle'
 import { ToastProvider } from '@/components/ui/Toast'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -48,7 +49,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <ToastProvider>
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </ToastProvider>
     </ThemeProvider>
   )

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useShiftStore, type ActiveShift } from '@/lib/store/shift.store'
 import { authFetch } from '@/lib/auth-fetch'
+import { ModalOverlay } from '@/components/ui/ModalOverlay'
 
 interface Props {
   isOpen: boolean
@@ -171,7 +172,7 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50">
+    <ModalOverlay onClose={onClose} ariaLabel={activeShift ? 'Tutup Shift' : 'Buka Shift'}>
       <div className="bg-surface-raised rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-md mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
@@ -438,6 +439,6 @@ export function ShiftDrawer({ isOpen, onClose }: Props) {
           )}
         </div>
       </div>
-    </div>
+    </ModalOverlay>
   )
 }
