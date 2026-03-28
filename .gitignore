@@ -67,3 +67,4 @@ vendor/
 coverage/
 .cache/
 tmp/
+backups/*.sql.gz
