@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { apiGet, apiPost } from '@/lib/api'
+import { ModalOverlay } from '@/components/ui/ModalOverlay'
 
 function formatRp(n: number): string {
   return `Rp ${n.toLocaleString('id-ID')}`
@@ -170,8 +171,7 @@ export function ReturnModal({ isOpen, transactionId, items, onClose, onSuccess }
   const hasReturnableItems = lines.some(l => l.maxReturnable > 0)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+    <ModalOverlay onClose={onClose} ariaLabel="Retur Barang">
 
       <div className="relative bg-surface-raised rounded-xl border border-border shadow-xl w-[520px] max-h-[85vh] overflow-hidden flex flex-col animate-in">
         {/* Header */}
@@ -327,6 +327,6 @@ export function ReturnModal({ isOpen, transactionId, items, onClose, onSuccess }
           </div>
         )}
       </div>
-    </div>
+    </ModalOverlay>
   )
 }

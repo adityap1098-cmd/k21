@@ -39,6 +39,7 @@ vi.mock('../../db/index.js', () => ({
     update: mockDbUpdate,
     delete: mockDbDelete,
     transaction: mockDbTransaction,
+    execute: vi.fn(),
   },
 }))
 
@@ -86,6 +87,9 @@ import { getVehicleById } from '../vehicles/vehicles.service.js'
 import { getServiceItemById } from '../service-catalog/service-catalog.service.js'
 import { recordMovement } from '../inventory/movement.service.js'
 import { invalidateStockCache } from '../inventory/stock.service.js'
+import { db } from '../../db/index.js'
+
+const mockDb = db as any
 
 const ORDER_ID = '33333333-3333-3333-3333-333333333333'
 const USER_ID = '44444444-4444-4444-4444-444444444444'
@@ -1053,48 +1057,21 @@ describe('service-orders service', () => {
 
   describe('BKL-21: getReceivables', () => {
     it('returns outstanding receivables per customer', async () => {
-      // 1. Main query: select from serviceOrders join vehicles join customers
-      mockDbSelect.mockReturnValueOnce({
-        from: vi.fn().mockReturnValue({
-          innerJoin: vi.fn().mockReturnValue({
-            innerJoin: vi.fn().mockReturnValue({
-              where: vi.fn().mockReturnValue({
-                $dynamic: vi.fn().mockResolvedValue([
-                  {
-                    serviceOrderId: ORDER_ID,
-                    orderNumber: 'SO-20260321-AB12',
-                    customerId: '11111111-1111-1111-1111-111111111111',
-                    customerName: 'John Doe',
-                    vehicleId: VEHICLE_ID,
-                    plateNumber: 'B 1234 XYZ',
-                    workStatus: 'COMPLETED',
-                    paymentStatus: 'PARTIAL',
-                  },
-                ]),
-              }),
-            }),
-          }),
-        }),
-      })
-
-      // 2. Line items for order total
-      mockDbSelect.mockReturnValueOnce({
-        from: vi.fn().mockReturnValue({
-          where: vi.fn().mockResolvedValue([
-            { lineTotal: 100000 },
-            { lineTotal: 50000 },
-          ]),
-        }),
-      })
-
-      // 3. Payments for totalPaid
-      mockDbSelect.mockReturnValueOnce({
-        from: vi.fn().mockReturnValue({
-          where: vi.fn().mockResolvedValue([
-            { amount: 60000 },
-          ]),
-        }),
-      })
+      // H-13: getReceivables now uses a single db.execute() query
+      mockDb.execute.mockResolvedValueOnce([
+        {
+          service_order_id: ORDER_ID,
+          order_number: 'SO-20260321-AB12',
+          customer_id: '11111111-1111-1111-1111-111111111111',
+          customer_name: 'John Doe',
+          vehicle_id: VEHICLE_ID,
+          plate_number: 'B 1234 XYZ',
+          work_status: 'COMPLETED',
+          payment_status: 'PARTIAL',
+          total: 150000,
+          total_paid: 60000,
+        },
+      ])
 
       const result = await getReceivables()
 

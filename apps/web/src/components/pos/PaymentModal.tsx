@@ -3,6 +3,7 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import { useCartStore, computeCartTotals } from '@/lib/store/cart.store'
 import { useShiftStore } from '@/lib/store/shift.store'
 import { useAuth } from '@/lib/auth'
+import { ModalOverlay } from '@/components/ui/ModalOverlay'
 import { offlineDB } from '@/lib/db/offline-db'
 import { authFetch } from '@/lib/auth-fetch'
 import type { ReceiptData } from '@/lib/receipt/encoder'
@@ -269,7 +270,7 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <ModalOverlay onClose={onClose} ariaLabel="Pembayaran">
       <div className="bg-surface-raised rounded-xl shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
@@ -420,6 +421,6 @@ export function PaymentModal({ isOpen, total, onSuccess, onClose }: Props) {
           </button>
         </div>
       </div>
-    </div>
+    </ModalOverlay>
   )
 }

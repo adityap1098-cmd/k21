@@ -1,4 +1,4 @@
-import { eq, and, sum, desc, count, gte, lte, sql } from 'drizzle-orm'
+import { eq, and, sum, desc, count, gte, lte, sql, inArray } from 'drizzle-orm'
 import { db } from '../../db/index.js'
 import { shifts, transactions, transactionPayments, shiftCashTransactions } from '../../db/schema/pos.js'
 import type { Shift, ShiftCashTransaction } from '../../db/schema/pos.js'
@@ -334,65 +334,87 @@ export async function getDailyCashReport(date: string): Promise<DailyCashReport>
     ))
     .orderBy(shifts.openedAt)
 
-  const shiftDetails = await Promise.all(dayShifts.map(async (shift) => {
-    // Get cashier name
-    const userRows = await db
-      .select({ name: users.name, email: users.email })
-      .from(users)
-      .where(eq(users.id, shift.cashierId))
-      .limit(1)
-
-    const cashierName = userRows[0]?.name || userRows[0]?.email?.split('@')[0] || 'Unknown'
-
-    // Aggregate payment totals
-    const paymentTotals = await db
-      .select({
-        method: transactionPayments.method,
-        total: sum(transactionPayments.amount),
-      })
-      .from(transactionPayments)
-      .innerJoin(transactions, eq(transactionPayments.transactionId, transactions.id))
-      .where(and(
-        eq(transactions.shiftId, shift.id),
-        eq(transactions.status, 'COMPLETED'),
-      ))
-      .groupBy(transactionPayments.method)
-
-    // Transaction count
-    const txCountResult = await db
-      .select({ cnt: count() })
-      .from(transactions)
-      .where(and(
-        eq(transactions.shiftId, shift.id),
-        eq(transactions.status, 'COMPLETED'),
-      ))
-
-    // Cash in/out
-    const cashTxTotals = await db
-      .select({
-        type: shiftCashTransactions.type,
-        total: sum(shiftCashTransactions.amount),
-      })
-      .from(shiftCashTransactions)
-      .where(eq(shiftCashTransactions.shiftId, shift.id))
-      .groupBy(shiftCashTransactions.type)
-
-    let salesByCash = 0, salesByTransfer = 0, salesByQris = 0
-    for (const row of paymentTotals) {
-      const total = Number(row.total ?? 0)
-      if (row.method === 'CASH') salesByCash = total
-      else if (row.method === 'TRANSFER') salesByTransfer = total
-      else if (row.method === 'QRIS') salesByQris = total
+  if (dayShifts.length === 0) {
+    return {
+      date,
+      shifts: [],
+      summary: {
+        totalOpeningFloat: 0, totalSalesByCash: 0, totalSalesByTransfer: 0,
+        totalSalesByQris: 0, totalSales: 0, totalCashIn: 0, totalCashOut: 0,
+        totalExpectedCash: 0, totalActualCash: 0, totalDiscrepancy: 0, totalTransactions: 0,
+      },
     }
+  }
 
-    let cashIn = 0, cashOut = 0
-    for (const row of cashTxTotals) {
-      const total = Number(row.total ?? 0)
-      if (row.type === 'IN') cashIn = total
-      else if (row.type === 'OUT') cashOut = total
-    }
+  const shiftIds = dayShifts.map(s => s.id)
+  const cashierIds = [...new Set(dayShifts.map(s => s.cashierId))]
 
-    const expectedCash = shift.openingFloat + salesByCash + cashIn - cashOut
+  // H-13: Batch all queries instead of N+1 per shift
+  // 1. Cashier names — single query
+  const cashierRows = await db
+    .select({ id: users.id, name: users.name, email: users.email })
+    .from(users)
+    .where(inArray(users.id, cashierIds))
+
+  const cashierMap = new Map<string, string>()
+  for (const u of cashierRows) {
+    cashierMap.set(u.id, u.name || u.email.split('@')[0] || 'Unknown')
+  }
+
+  // 2. Payment totals — single query grouped by shift + method
+  const paymentRows = await db.execute(sql`
+    SELECT t.shift_id, tp.method, SUM(tp.amount)::int AS total
+    FROM transaction_payments tp
+    INNER JOIN transactions t ON t.id = tp.transaction_id
+    WHERE t.shift_id = ANY(${shiftIds}) AND t.status = 'COMPLETED'
+    GROUP BY t.shift_id, tp.method
+  `) as unknown as Array<{ shift_id: string; method: string; total: number }>
+
+  // 3. Transaction counts — single query grouped by shift
+  const txCountRows = await db.execute(sql`
+    SELECT shift_id, COUNT(*)::int AS cnt
+    FROM transactions
+    WHERE shift_id = ANY(${shiftIds}) AND status = 'COMPLETED'
+    GROUP BY shift_id
+  `) as unknown as Array<{ shift_id: string; cnt: number }>
+
+  // 4. Cash in/out — single query grouped by shift + type
+  const cashTxRows = await db.execute(sql`
+    SELECT shift_id, type, SUM(amount)::int AS total
+    FROM shift_cash_transactions
+    WHERE shift_id = ANY(${shiftIds})
+    GROUP BY shift_id, type
+  `) as unknown as Array<{ shift_id: string; type: string; total: number }>
+
+  // Build lookup maps
+  const paymentMap = new Map<string, { CASH: number; TRANSFER: number; QRIS: number }>()
+  for (const row of paymentRows) {
+    const entry = paymentMap.get(row.shift_id) || { CASH: 0, TRANSFER: 0, QRIS: 0 }
+    if (row.method === 'CASH') entry.CASH = row.total
+    else if (row.method === 'TRANSFER') entry.TRANSFER = row.total
+    else if (row.method === 'QRIS') entry.QRIS = row.total
+    paymentMap.set(row.shift_id, entry)
+  }
+
+  const txCountMap = new Map<string, number>()
+  for (const row of txCountRows) txCountMap.set(row.shift_id, row.cnt)
+
+  const cashTxMap = new Map<string, { IN: number; OUT: number }>()
+  for (const row of cashTxRows) {
+    const entry = cashTxMap.get(row.shift_id) || { IN: 0, OUT: 0 }
+    if (row.type === 'IN') entry.IN = row.total
+    else if (row.type === 'OUT') entry.OUT = row.total
+    cashTxMap.set(row.shift_id, entry)
+  }
+
+  // Assemble shift details from maps (no more per-shift queries)
+  const shiftDetails = dayShifts.map((shift) => {
+    const cashierName = cashierMap.get(shift.cashierId) || 'Unknown'
+    const payments = paymentMap.get(shift.id) || { CASH: 0, TRANSFER: 0, QRIS: 0 }
+    const cashTx = cashTxMap.get(shift.id) || { IN: 0, OUT: 0 }
+    const transactionCount = txCountMap.get(shift.id) || 0
+
+    const expectedCash = shift.openingFloat + payments.CASH + cashTx.IN - cashTx.OUT
     const actualCash = shift.closingCash ?? 0
     const discrepancy = actualCash - expectedCash
 
@@ -402,17 +424,17 @@ export async function getDailyCashReport(date: string): Promise<DailyCashReport>
       openedAt: shift.openedAt,
       closedAt: shift.closedAt ?? null,
       openingFloat: shift.openingFloat,
-      salesByCash,
-      salesByTransfer,
-      salesByQris,
-      cashIn,
-      cashOut,
+      salesByCash: payments.CASH,
+      salesByTransfer: payments.TRANSFER,
+      salesByQris: payments.QRIS,
+      cashIn: cashTx.IN,
+      cashOut: cashTx.OUT,
       closingCash: shift.closingCash ?? null,
       expectedCash,
       discrepancy,
-      transactionCount: Number(txCountResult[0]?.cnt ?? 0),
+      transactionCount,
     }
-  }))
+  })
 
   // Summary
   const summary = shiftDetails.reduce((acc, s) => ({

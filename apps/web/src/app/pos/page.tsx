@@ -267,10 +267,39 @@ export default function PosPage() {
           </div>
 
           {/* ═══ MAIN: Left (POS Retail) | Right (Service Bengkel) ═══ */}
-          <div className="flex flex-1 overflow-hidden min-h-0 gap-2 p-2 bg-surface-subtle">
+          {/* H-25: Responsive — stacked tabs on tablet/mobile, side-by-side on desktop */}
+          <div className="flex flex-col lg:flex-row flex-1 overflow-hidden min-h-0 gap-2 p-2 bg-surface-subtle">
+
+            {/* Tab switcher — visible only on tablet/mobile */}
+            <div className="flex lg:hidden gap-1 shrink-0">
+              <button
+                onClick={() => setSelectedOrderType('RETAIL')}
+                className={`flex items-center gap-1.5 flex-1 justify-center py-2 rounded-lg text-xs font-semibold transition-colors ${
+                  selectedOrderType === 'RETAIL'
+                    ? 'bg-brand text-white'
+                    : 'bg-surface border border-border text-ink-secondary'
+                }`}
+              >
+                <ShoppingCart size={14} />
+                POS Retail
+              </button>
+              <button
+                onClick={() => setSelectedOrderType('SERVICE')}
+                className={`flex items-center gap-1.5 flex-1 justify-center py-2 rounded-lg text-xs font-semibold transition-colors ${
+                  selectedOrderType === 'SERVICE'
+                    ? 'bg-success text-white'
+                    : 'bg-surface border border-border text-ink-secondary'
+                }`}
+              >
+                <Wrench size={14} />
+                Service
+              </button>
+            </div>
 
             {/* ── LEFT: POS RETAIL ── */}
-            <div className="flex flex-col w-1/2 rounded-xl overflow-hidden bg-surface">
+            <div className={`flex flex-col lg:w-1/2 rounded-xl overflow-hidden bg-surface ${
+              selectedOrderType !== 'RETAIL' ? 'hidden lg:flex' : 'flex'
+            }`}>
               {/* Header */}
               <div className="flex items-center gap-2 px-4 py-2.5 shrink-0 bg-surface-raised rounded-t-xl">
                 <ShoppingCart size={16} className="text-brand" />
@@ -287,7 +316,9 @@ export default function PosPage() {
             </div>
 
             {/* ── RIGHT: SERVICE BENGKEL ── */}
-            <div className="flex flex-col w-1/2 rounded-xl overflow-hidden bg-surface">
+            <div className={`flex flex-col lg:w-1/2 rounded-xl overflow-hidden bg-surface ${
+              selectedOrderType !== 'SERVICE' ? 'hidden lg:flex' : 'flex'
+            }`}>
               {/* Header */}
               <div className="flex items-center gap-2 px-4 py-2.5 shrink-0 bg-surface-raised rounded-t-xl">
                 <Wrench size={16} className="text-success" />
