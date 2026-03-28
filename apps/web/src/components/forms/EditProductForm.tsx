@@ -158,7 +158,7 @@ export function EditProductForm({ open, onClose, onUpdated, productId, categorie
           )}
 
           {/* Basic info */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input label="Nama Produk" value={name} onChange={e => setName(e.target.value)} />
             <Select
               label="Kategori"
@@ -247,72 +247,74 @@ function VariantRow({ variant, onUpdate, onAdjustStock }: {
 
   return (
     <>
-    <div className="flex items-center gap-3 py-3 border-b border-border-light last:border-0">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 py-3 border-b border-border-light last:border-0">
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-medium text-ink truncate">{attrs}</p>
         <p className="text-[11px] text-ink-muted font-mono">{variant.sku}</p>
       </div>
 
-      {/* Price */}
-      <div className="w-24">
-        {editField === 'price' ? (
-          <input
-            autoFocus
-            type="number"
-            min="0"
-            value={editValue}
-            onChange={e => setEditValue(e.target.value)}
-            onBlur={saveEdit}
-            onKeyDown={e => e.key === 'Enter' && saveEdit()}
-            className="w-full px-2 py-1 text-xs border border-brand rounded bg-surface-raised text-ink outline-none"
-          />
-        ) : (
-          <button onClick={() => startEdit('price', variant.price)} className="text-xs font-medium text-ink hover:text-brand transition-colors tabular-nums">
-            Rp {variant.price.toLocaleString('id-ID')}
-          </button>
-        )}
-        <p className="text-[10px] text-ink-faint">Harga</p>
-      </div>
+      <div className="flex items-center gap-3">
+        {/* Price */}
+        <div className="flex-1 sm:flex-none sm:w-24">
+          {editField === 'price' ? (
+            <input
+              autoFocus
+              type="number"
+              min="0"
+              value={editValue}
+              onChange={e => setEditValue(e.target.value)}
+              onBlur={saveEdit}
+              onKeyDown={e => e.key === 'Enter' && saveEdit()}
+              className="w-full px-2 py-1 text-xs border border-brand rounded bg-surface-raised text-ink outline-none"
+            />
+          ) : (
+            <button onClick={() => startEdit('price', variant.price)} className="text-xs font-medium text-ink hover:text-brand transition-colors tabular-nums">
+              Rp {variant.price.toLocaleString('id-ID')}
+            </button>
+          )}
+          <p className="text-[10px] text-ink-faint">Harga</p>
+        </div>
 
-      {/* Cost */}
-      <div className="w-24">
-        {editField === 'costPrice' ? (
-          <input
-            autoFocus
-            type="number"
-            min="0"
-            value={editValue}
-            onChange={e => setEditValue(e.target.value)}
-            onBlur={saveEdit}
-            onKeyDown={e => e.key === 'Enter' && saveEdit()}
-            className="w-full px-2 py-1 text-xs border border-brand rounded bg-surface-raised text-ink outline-none"
-          />
-        ) : (
-          <button onClick={() => startEdit('costPrice', variant.costPrice)} className="text-xs font-medium text-ink-secondary hover:text-brand transition-colors tabular-nums">
-            Rp {variant.costPrice.toLocaleString('id-ID')}
-          </button>
-        )}
-        <p className="text-[10px] text-ink-faint">Modal</p>
-      </div>
+        {/* Cost */}
+        <div className="flex-1 sm:flex-none sm:w-24">
+          {editField === 'costPrice' ? (
+            <input
+              autoFocus
+              type="number"
+              min="0"
+              value={editValue}
+              onChange={e => setEditValue(e.target.value)}
+              onBlur={saveEdit}
+              onKeyDown={e => e.key === 'Enter' && saveEdit()}
+              className="w-full px-2 py-1 text-xs border border-brand rounded bg-surface-raised text-ink outline-none"
+            />
+          ) : (
+            <button onClick={() => startEdit('costPrice', variant.costPrice)} className="text-xs font-medium text-ink-secondary hover:text-brand transition-colors tabular-nums">
+              Rp {variant.costPrice.toLocaleString('id-ID')}
+            </button>
+          )}
+          <p className="text-[10px] text-ink-faint">Modal</p>
+        </div>
 
-      {/* Stock + Adjust */}
-      <div className="w-16 text-center">
-        <button
-          onClick={() => setShowAdjust(!showAdjust)}
-          className={`text-xs font-semibold tabular-nums hover:text-brand transition-colors ${
-            variant.stockQty <= variant.lowStockThreshold ? 'text-danger' : 'text-success'
-          }`}
-          title="Klik untuk adjust stok"
-        >
-          {variant.stockQty}
-        </button>
-        <p className="text-[10px] text-ink-faint">Stok</p>
+        {/* Stock + Adjust */}
+        <div className="w-14 sm:w-16 text-center">
+          <button
+            onClick={() => setShowAdjust(!showAdjust)}
+            className={`text-xs font-semibold tabular-nums hover:text-brand transition-colors ${
+              variant.stockQty <= variant.lowStockThreshold ? 'text-danger' : 'text-success'
+            }`}
+            title="Klik untuk adjust stok"
+          >
+            {variant.stockQty}
+          </button>
+          <p className="text-[10px] text-ink-faint">Stok</p>
+        </div>
       </div>
     </div>
 
     {/* Adjust stock panel */}
     {showAdjust && (
-      <div className="flex items-end gap-2 px-3 pb-3 -mt-1 animate-in" style={{ animationDuration: '150ms' }}>
+      <div className="flex flex-wrap items-end gap-2 px-3 pb-3 -mt-1 animate-in" style={{ animationDuration: '150ms' }}>
         <div className="flex-shrink-0">
           <p className="text-[10px] text-ink-muted mb-1">Jumlah (+/-)</p>
           <input
@@ -323,7 +325,7 @@ function VariantRow({ variant, onUpdate, onAdjustStock }: {
             className="w-24 px-2 py-1.5 text-xs border border-border rounded-md bg-surface-raised text-ink outline-none"
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-[120px]">
           <p className="text-[10px] text-ink-muted mb-1">Alasan (wajib)</p>
           <input
             placeholder="Stok opname / koreksi / dll"
@@ -332,26 +334,28 @@ function VariantRow({ variant, onUpdate, onAdjustStock }: {
             className="w-full px-2 py-1.5 text-xs border border-border rounded-md bg-surface-raised text-ink outline-none"
           />
         </div>
-        <button
-          onClick={() => {
-            const qty = parseInt(adjustQty)
-            if (!qty || !adjustReason.trim()) return
-            onAdjustStock(variant.id, qty, adjustReason.trim())
-            setAdjustQty('')
-            setAdjustReason('')
-            setShowAdjust(false)
-          }}
-          disabled={!adjustQty || !adjustReason.trim()}
-          className="px-3 py-1.5 text-xs font-semibold bg-brand text-white rounded-md hover:bg-brand-hover disabled:opacity-40 disabled:pointer-events-none transition-colors"
-        >
-          Adjust
-        </button>
-        <button
-          onClick={() => setShowAdjust(false)}
-          className="px-2 py-1.5 text-xs text-ink-muted hover:text-ink transition-colors"
-        >
-          Batal
-        </button>
+        <div className="flex gap-1">
+          <button
+            onClick={() => {
+              const qty = parseInt(adjustQty)
+              if (!qty || !adjustReason.trim()) return
+              onAdjustStock(variant.id, qty, adjustReason.trim())
+              setAdjustQty('')
+              setAdjustReason('')
+              setShowAdjust(false)
+            }}
+            disabled={!adjustQty || !adjustReason.trim()}
+            className="px-3 py-1.5 text-xs font-semibold bg-brand text-white rounded-md hover:bg-brand-hover disabled:opacity-40 disabled:pointer-events-none transition-colors"
+          >
+            Adjust
+          </button>
+          <button
+            onClick={() => setShowAdjust(false)}
+            className="px-2 py-1.5 text-xs text-ink-muted hover:text-ink transition-colors"
+          >
+            Batal
+          </button>
+        </div>
       </div>
     )}
     </>
