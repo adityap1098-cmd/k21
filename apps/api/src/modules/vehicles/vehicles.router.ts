@@ -79,7 +79,7 @@ vehiclesRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Cashier'),
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await createVehicle(parsed.data, req.user!.sub, ipAddress)
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
@@ -104,7 +104,7 @@ vehiclesRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner', 'Cashie
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await updateVehicle({ id: req.params.id, ...parsed.data }, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {

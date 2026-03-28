@@ -67,7 +67,7 @@ productsRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Warehouse 
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await createProduct(parsed.data, req.user!.sub, ipAddress)
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
@@ -96,7 +96,7 @@ productsRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner'), async 
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await updateProduct({ id: req.params.id, ...parsed.data }, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
@@ -108,7 +108,7 @@ productsRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner'), async 
 
 productsRouter.delete('/:id', authenticate, requireRole('Admin', 'Owner'), async (req, res) => {
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await deleteProduct(req.params.id, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
@@ -126,7 +126,7 @@ productsRouter.post('/:id/variants', authenticate, requireRole('Admin', 'Owner',
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await addVariant(
       { productId: req.params.id, ...parsed.data },
       req.user!.sub,
@@ -148,7 +148,7 @@ productsRouter.patch('/:id/variants/:variantId', authenticate, requireRole('Admi
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await updateVariant(
       { variantId: req.params.variantId, ...parsed.data },
       req.user!.sub,

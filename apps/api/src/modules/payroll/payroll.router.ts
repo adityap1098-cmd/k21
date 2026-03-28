@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { authenticate } from '../../middleware/authenticate.js'
 import { requireRole } from '../../middleware/require-role.js'
 import { resolveError } from '../../middleware/error-handler.js'
-import { listEmployees, listPayrollRuns, createPayrollRun } from './payroll.service.js'
+import { listEmployees, listPayrollRuns, createPayrollRun, createEmployee } from './payroll.service.js'
 
 export const payrollRouter = Router()
 
@@ -13,10 +13,17 @@ const createPayrollRunBodySchema = z.object({
   period: z.string().min(1, 'Period is required'),
 })
 
+const createEmployeeBodySchema = z.object({
+  nama: z.string().min(1, 'Nama harus diisi').max(100),
+  jabatan: z.string().min(1, 'Jabatan harus diisi').max(100),
+  gajiPokok: z.union([z.string(), z.number()]).transform(v => typeof v === 'string' ? parseInt(v, 10) || 0 : v),
+  tunjangan: z.union([z.string(), z.number()]).transform(v => typeof v === 'string' ? parseInt(v, 10) || 0 : v),
+})
+
 // ─── GET /payroll/employees ───────────────────────────────────────────────
 
 /**
- * Lists all employees with salary info (derived from users table).
+ * Lists all employees with salary info (derived from users table + payroll_employees).
  * Requires: authenticated user with Owner or Finance role.
  * Returns 200 { success: true, data: Employee[] }
  */
@@ -31,6 +38,40 @@ payrollRouter.get(
     } catch (err) {
       console.error('[payroll] GET /employees failed:', err)
       res.status(500).json({ success: false, data: null, error: 'Internal server error' })
+    }
+  }
+)
+
+// ─── POST /payroll/employees ──────────────────────────────────────────────
+
+/**
+ * C-15: Creates a new payroll employee record.
+ * Requires: authenticated user with Owner or Finance role.
+ * Body: { nama: string, jabatan: string, gajiPokok: number, tunjangan: number }
+ * Returns 201 { success: true, data: PayrollEmployee }
+ */
+payrollRouter.post(
+  '/employees',
+  authenticate,
+  requireRole('Owner', 'Finance'),
+  async (req, res) => {
+    const result = createEmployeeBodySchema.safeParse(req.body)
+    if (!result.success) {
+      res.status(400).json({
+        success: false,
+        data: null,
+        error: result.error.issues[0]?.message ?? 'Invalid input',
+      })
+      return
+    }
+
+    try {
+      const employee = await createEmployee(result.data)
+      res.status(201).json({ success: true, data: employee, error: null })
+    } catch (err) {
+      const { status, message } = resolveError(err)
+      if (status >= 500) console.error('[payroll] POST /employees failed:', err)
+      res.status(status).json({ success: false, data: null, error: message })
     }
   }
 )

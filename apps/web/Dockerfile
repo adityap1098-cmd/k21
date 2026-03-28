@@ -24,6 +24,8 @@ ENV API_URL=${API_URL}
 RUN pnpm --filter @k21/web build
 
 FROM node:20-alpine AS runner
+# H-32: Install python3 for Excel export (xlsxwriter)
+RUN apk add --no-cache python3 py3-pip
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

@@ -1,4 +1,4 @@
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
 import { db } from '../../db/index.js'
 import { inventoryMovements, productVariants } from '../../db/schema/index.js'
@@ -83,6 +83,9 @@ export async function getWarehouseStock(warehouseId: string): Promise<WarehouseS
    * Query all inventory movements where reference starts with warehouse ID.
    * Convention: reference format = "{warehouseId}:{otherInfo}"
    * This allows us to track which movements belong to which warehouse.
+   *
+   * H-14: Previously used empty WHERE clause which returned all variants.
+   * Now properly filters by warehouse reference prefix.
    */
   const movements = await db
     .select({
@@ -91,10 +94,7 @@ export async function getWarehouseStock(warehouseId: string): Promise<WarehouseS
     })
     .from(inventoryMovements)
     .where(
-      and(
-        // Match movements with reference starting with warehouse ID (e.g., "warehouse-gudang-a:...")
-        // If no reference, we can't attribute to a warehouse, so we exclude
-      )
+      sql`${inventoryMovements.reference} LIKE ${warehouseId + ':%'}`
     )
 
   // Get variant details for all movements in this warehouse
@@ -112,7 +112,7 @@ export async function getWarehouseStock(warehouseId: string): Promise<WarehouseS
       stockQty: productVariants.stockQty,
     })
     .from(productVariants)
-    .where(and())
+    .where(sql`${productVariants.id} = ANY(${variantIds})`)
 
   /**
    * For now, return basic variant info with current stock.

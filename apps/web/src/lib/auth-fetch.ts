@@ -17,6 +17,22 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
 
   let res = await fetch(url, { ...options, headers, credentials: 'include' })
 
+  // H-20: Handle PASSWORD_CHANGE_REQUIRED before 401 refresh logic
+  if (res.status === 403) {
+    const cloned = res.clone()
+    try {
+      const body = await cloned.json()
+      if (body?.error === 'PASSWORD_CHANGE_REQUIRED') {
+        if (typeof window !== 'undefined' && !window.location.pathname.includes('/change-password')) {
+          window.location.href = '/change-password'
+        }
+        return res
+      }
+    } catch {
+      // Not JSON — fall through
+    }
+  }
+
   // If 401, try refresh once
   if (res.status === 401 && token) {
     try {
