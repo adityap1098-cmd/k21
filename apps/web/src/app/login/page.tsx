@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { T27Logo, T27LogoCompact } from '@/components/ui/Logo'
@@ -16,6 +17,7 @@ async function doLogin(email: string, password: string) {
 }
 
 export default function LoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -39,8 +41,8 @@ export default function LoginPage() {
         return
       }
 
-      // Token already stored by doLogin
-      window.location.href = '/dashboard'
+      // Token already stored by doLogin — client-side navigate (no page reload)
+      router.push('/dashboard')
     } catch {
       setError('Tidak dapat terhubung ke server')
     } finally {
