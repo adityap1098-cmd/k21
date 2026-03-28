@@ -31,13 +31,20 @@ echo "🔨 Building Web..."
 pnpm --filter @k21/web build
 echo ""
 
-# 5. Restart PM2
+# 5. Copy static files for Next.js standalone mode
+echo "📂 Copying static assets to standalone..."
+mkdir -p apps/web/.next/standalone/apps/web/.next
+cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static
+cp -r apps/web/public apps/web/.next/standalone/apps/web/public
+echo ""
+
+# 6. Restart PM2
 echo "🔄 Restarting services..."
 pm2 restart k21-api --update-env
 pm2 restart k21-web --update-env
 echo ""
 
-# 6. Status
+# 7. Status
 echo "✅ Deploy selesai!"
 echo ""
 pm2 status
