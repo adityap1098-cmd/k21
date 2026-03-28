@@ -68,7 +68,7 @@ customersRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Cashier')
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await createCustomer(parsed.data, req.user!.sub, ipAddress)
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
@@ -91,7 +91,7 @@ customersRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner', 'Cashi
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await updateCustomer({ id: req.params.id, ...parsed.data }, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {

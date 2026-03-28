@@ -55,7 +55,7 @@ serviceCatalogRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Cash
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await createServiceItem(parsed.data, req.user!.sub, ipAddress)
     res.status(201).json({ success: true, data, error: null })
   } catch (err) {
@@ -73,7 +73,7 @@ serviceCatalogRouter.patch('/:id', authenticate, requireRole('Admin', 'Owner', '
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await updateServiceItem({ id: req.params.id, ...parsed.data }, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {

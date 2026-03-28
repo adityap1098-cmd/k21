@@ -373,40 +373,41 @@ export async function processOrderShipped(
 ): Promise<void> {
   const { order_sn } = payload
 
-  // Find the order row for the journal entry
-  const [order] = await db
-    .select()
-    .from(marketplaceOrders)
-    .where(eq(marketplaceOrders.orderSn, order_sn))
-    .limit(1)
+  // H-10: Wrap fulfillReservation + decrementStock + journal in a single transaction
+  await db.transaction(async (tx: DrizzleTx) => {
+    // Find the order row for the journal entry
+    const [order] = await (tx as unknown as typeof db)
+      .select()
+      .from(marketplaceOrders)
+      .where(eq(marketplaceOrders.orderSn, order_sn))
+      .limit(1)
 
-  // Find all active reservations for this order
-  const activeReservations = await db
-    .select()
-    .from(stockReservations)
-    .where(
-      and(
-        eq(stockReservations.orderRef, order_sn),
-        eq(stockReservations.status, 'ACTIVE')
+    // Find all active reservations for this order
+    const activeReservations = await (tx as unknown as typeof db)
+      .select()
+      .from(stockReservations)
+      .where(
+        and(
+          eq(stockReservations.orderRef, order_sn),
+          eq(stockReservations.status, 'ACTIVE')
+        )
       )
-    )
 
-  // Fulfill each reservation and decrement stock
-  for (const reservation of activeReservations) {
-    await fulfillReservation(reservation.id)
-    await decrementStock({
-      variantId: reservation.variantId,
-      qty: reservation.qty,
-      movementType: 'SALE',
-      reference: order_sn,
-      performedBy: MARKETPLACE_SYSTEM_USER,
-    })
-  }
+    // Fulfill each reservation and decrement stock
+    for (const reservation of activeReservations) {
+      await fulfillReservation(reservation.id)
+      await decrementStock({
+        variantId: reservation.variantId,
+        qty: reservation.qty,
+        movementType: 'SALE',
+        reference: order_sn,
+        performedBy: MARKETPLACE_SYSTEM_USER,
+      })
+    }
 
-  // Write journal entry (best-effort — failure is logged, not re-thrown)
-  if (order) {
-    try {
-      await db.transaction(async (tx: DrizzleTx) => {
+    // Write journal entry
+    if (order) {
+      try {
         await createMarketplaceJournalEntry(
           {
             orderId: order.id,
@@ -414,20 +415,20 @@ export async function processOrderShipped(
           },
           tx
         )
-      })
-    } catch (err) {
-      console.error(
-        `[marketplace-service] journal entry failed for order_sn=${order_sn} orderId=${order.id}: ${(err as Error).message}`
-      )
-      // Best-effort: decrementStock has already committed — do not re-throw
+      } catch (err) {
+        console.error(
+          `[marketplace-service] journal entry failed for order_sn=${order_sn} orderId=${order.id}: ${(err as Error).message}`
+        )
+        // Best-effort: don't fail the whole transaction for journal issues
+      }
     }
-  }
 
-  // Update order status to SHIPPED
-  await db
-    .update(marketplaceOrders)
-    .set({ status: 'SHIPPED', updatedAt: new Date() })
-    .where(eq(marketplaceOrders.orderSn, order_sn))
+    // Update order status to SHIPPED
+    await (tx as unknown as typeof db)
+      .update(marketplaceOrders)
+      .set({ status: 'SHIPPED', updatedAt: new Date() })
+      .where(eq(marketplaceOrders.orderSn, order_sn))
+  })
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

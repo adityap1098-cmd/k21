@@ -1,5 +1,7 @@
 import { db } from '../../db/index.js'
-import { users } from '../../db/schema/index.js'
+import { users, payrollEmployees } from '../../db/schema/index.js'
+import type { PayrollEmployee } from '../../db/schema/index.js'
+import { eq } from 'drizzle-orm'
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -49,20 +51,64 @@ function generateEmployeeNumber(userId: string): string {
 // ─── listEmployees ────────────────────────────────────────────────────────
 
 /**
- * Lists all active users as employees with derived salary info.
- * Since there is no dedicated payroll table yet, data is derived from users table.
+ * Lists employees — merges users table with payroll_employees.
+ * Payroll employees take priority; users without payroll records are derived.
  */
 export async function listEmployees(): Promise<Employee[]> {
+  // Fetch payroll employees first
+  const payrollRows = await db.select().from(payrollEmployees).where(eq(payrollEmployees.isActive, true))
+
+  // Fetch all active users for fallback
   const allUsers = await db.select().from(users)
 
-  return allUsers.map((user) => ({
-    id: user.id,
-    employeeNumber: generateEmployeeNumber(user.id),
-    name: user.email.split('@')[0] ?? user.email, // Use email username as name
-    baseSalary: getSalaryByRole(user.role),
-    isActive: user.isActive,
-    taxStatus: user.isActive ? 'PTKP-TK/0' : 'INACTIVE', // Placeholder tax status
+  // Build set of user IDs that have payroll records
+  const payrollUserIds = new Set(payrollRows.filter(p => p.userId).map(p => p.userId!))
+
+  // Payroll employees
+  const fromPayroll: Employee[] = payrollRows.map((p) => ({
+    id: p.id,
+    employeeNumber: generateEmployeeNumber(p.id),
+    name: p.nama,
+    baseSalary: p.gajiPokok,
+    isActive: p.isActive,
+    taxStatus: 'PTKP-TK/0',
   }))
+
+  // Users without payroll records (fallback derived data)
+  const fromUsers: Employee[] = allUsers
+    .filter(u => !payrollUserIds.has(u.id))
+    .map((user) => ({
+      id: user.id,
+      employeeNumber: generateEmployeeNumber(user.id),
+      name: user.name || user.email.split('@')[0] || user.email,
+      baseSalary: getSalaryByRole(user.role),
+      isActive: user.isActive,
+      taxStatus: user.isActive ? 'PTKP-TK/0' : 'INACTIVE',
+    }))
+
+  return [...fromPayroll, ...fromUsers]
+}
+
+/**
+ * C-15: Creates a payroll employee record.
+ */
+export async function createEmployee(params: {
+  nama: string
+  jabatan: string
+  gajiPokok: number
+  tunjangan: number
+}): Promise<PayrollEmployee> {
+  const [employee] = await db
+    .insert(payrollEmployees)
+    .values({
+      nama: params.nama,
+      jabatan: params.jabatan,
+      gajiPokok: params.gajiPokok,
+      tunjangan: params.tunjangan,
+    })
+    .returning()
+
+  return employee
 }
 
 // ─── listPayrollRuns ──────────────────────────────────────────────────────

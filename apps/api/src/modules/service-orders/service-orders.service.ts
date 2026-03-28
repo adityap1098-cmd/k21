@@ -312,9 +312,9 @@ export async function deleteServiceOrder(
 ) {
   const order = await getServiceOrderById(id)
 
-  // Don't allow deleting completed orders that have payments
-  if (order.workStatus === 'COMPLETED' && order.paymentStatus !== 'UNPAID') {
-    throw new Error('CANNOT_DELETE_PAID_ORDER')
+  // H-11: Never allow deleting COMPLETED orders — they have inventory movements and journal entries
+  if (order.workStatus === 'COMPLETED') {
+    throw new Error('CANNOT_DELETE_COMPLETED_ORDER')
   }
 
   await db.transaction(async (tx) => {

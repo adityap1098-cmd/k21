@@ -210,6 +210,13 @@ shiftsRouter.get(
   async (req, res) => {
     try {
       const reconciliation = await getShiftReconciliation(req.params.id)
+
+      // H-15: Cashiers can only view their own shift reconciliation
+      if (req.user!.role === 'Cashier' && reconciliation.cashierId !== req.user!.sub) {
+        res.status(403).json({ success: false, data: null, error: 'Anda hanya dapat melihat rekonsiliasi shift Anda sendiri' })
+        return
+      }
+
       res.status(200).json({ success: true, data: reconciliation, error: null })
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to get reconciliation'

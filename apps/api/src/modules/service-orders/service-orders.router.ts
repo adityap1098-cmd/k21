@@ -131,7 +131,7 @@ serviceOrdersRouter.post('/', authenticate, requireRole('Admin', 'Owner', 'Cashi
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await createServiceOrder(
       { ...parsed.data, createdBy: req.user!.sub },
       req.user!.sub,
@@ -158,7 +158,7 @@ serviceOrdersRouter.patch('/:id/status', authenticate, requireRole('Admin', 'Own
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await updateWorkStatus(req.params.id, parsed.data.status, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
@@ -183,7 +183,7 @@ serviceOrdersRouter.patch('/:id/mechanic', authenticate, requireRole('Admin', 'O
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await assignMechanic(req.params.id, parsed.data.mechanicId, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
@@ -206,7 +206,7 @@ serviceOrdersRouter.patch('/:id/estimate', authenticate, requireRole('Admin', 'O
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await updateEstimate(req.params.id, parsed.data, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
@@ -223,7 +223,7 @@ serviceOrdersRouter.patch('/:id/estimate', authenticate, requireRole('Admin', 'O
 // POST /:id/complete — complete service order with atomic inventory decrement
 serviceOrdersRouter.post('/:id/complete', authenticate, requireRole('Admin', 'Owner', 'Cashier'), async (req, res) => {
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await completeServiceOrder(req.params.id, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
@@ -248,7 +248,7 @@ serviceOrdersRouter.post('/:id/payments', authenticate, requireRole('Admin', 'Ow
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await recordServicePayment(
       req.params.id,
       parsed.data,
@@ -272,13 +272,15 @@ serviceOrdersRouter.post('/:id/payments', authenticate, requireRole('Admin', 'Ow
 // DELETE /:id — delete service order (only if not paid)
 serviceOrdersRouter.delete('/:id', authenticate, requireRole('Admin', 'Owner', 'Cashier'), async (req, res) => {
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await deleteServiceOrder(req.params.id, req.user!.sub, ipAddress)
     res.json({ success: true, data, error: null })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     if (message === 'SERVICE_ORDER_NOT_FOUND') {
       res.status(404).json({ success: false, data: null, error: message })
+    } else if (message === 'CANNOT_DELETE_COMPLETED_ORDER') {
+      res.status(422).json({ success: false, data: null, error: 'Tidak bisa menghapus order yang sudah selesai' })
     } else if (message === 'CANNOT_DELETE_PAID_ORDER') {
       res.status(422).json({ success: false, data: null, error: 'Tidak bisa menghapus order yang sudah dibayar' })
     } else {
@@ -308,7 +310,7 @@ serviceOrdersRouter.post('/:id/items', authenticate, requireRole('Admin', 'Owner
   }
 
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await addLineItem(
       { serviceOrderId: req.params.id, ...parsed.data },
       req.user!.sub,
@@ -333,7 +335,7 @@ serviceOrdersRouter.post('/:id/items', authenticate, requireRole('Admin', 'Owner
 // DELETE /:id/items/:itemId — remove line item
 serviceOrdersRouter.delete('/:id/items/:itemId', authenticate, requireRole('Admin', 'Owner', 'Cashier'), async (req, res) => {
   try {
-    const ipAddress = (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '0.0.0.0'
+    const ipAddress = req.ip ?? '0.0.0.0'
     const data = await removeLineItem(
       { serviceOrderId: req.params.id, itemId: req.params.itemId },
       req.user!.sub,
